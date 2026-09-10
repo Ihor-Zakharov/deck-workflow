@@ -90,7 +90,7 @@ Everything runs on three universal things: **Claude Code**, **Google Chrome** (a
 | `scripts/audit.sh <deck> all` | Chrome | the visibility and motion audit: text without an entrance, cascade children without their own delay, contrast on flat backgrounds, text under stamps/bands/figures, text outside the sheet frame, headings wrapping without a composed break, text under 12 px; stamps and text over images listed for a look |
 | `scripts/frames.sh <deck> <n> [--gif]` | Chrome + Pillow | a slide's entrance at six moments tiled into a strip, or an animated GIF |
 | `scripts/serve.py <deck-dir>` | Python only | a live-reload preview: the open tab reloads on every save and keeps the slide number |
-| `scripts/gen-images.py <deck-dir>` | `pip install google-genai` + `GEMINI_API_KEY` in `LOCAL.md` | generates the 3–4 images from the prompts in `brief.md` — the last manual step disappears; without a key it prints the prompts |
+| `scripts/gen-images.py <deck-dir>` | `pip install google-genai` + `GEMINI_API_KEY` in `LOCAL.md` | optional: generates the 3–4 images from the prompts in `brief.md` so even that step is automatic; without a key nothing changes — Claude sends the prompts in the chat and you paste the images, as always |
 | `scripts/setup-playwright.sh` | internet, ~150 MB | optional private venv (`.venv`, git-ignored) with Playwright + Chromium; nothing else depends on it |
 | `.venv/bin/python scripts/pw_frames.py <deck> <n> [--gif] [--video]` | the venv above | entrance frames with measured real-time labels (no virtual-time drift), an animated GIF, a WebM video of the entrance |
 | `scripts/verify.sh` | — | checks the install manifest; `--print` gives an md5 of the workflow text so two installs can be compared |
