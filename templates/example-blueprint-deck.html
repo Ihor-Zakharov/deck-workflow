@@ -424,12 +424,15 @@ svg.org text.dim-lbl { fill: var(--blue-3); }
 svg.org .dim { stroke: var(--blue-3); }
 svg.org text.cap { fill: var(--steel); font-size: 11px; letter-spacing: .16em; }
 svg.loop { color: var(--line); }
-svg.loop .ring { stroke-width: 2.5; }
+svg.loop .ring { stroke-width: 2.5; transition: stroke-dashoffset var(--t, .7s) linear var(--d, .7s); }
+svg.loop .fill { transition: stroke-dashoffset .5s var(--ease) var(--d, .7s), fill-opacity .4s ease calc(var(--d, .7s) + .2s); }
+svg.loop .mark { transition: opacity .4s ease var(--d, 1s), transform .7s var(--ease-snappy) var(--d, 1s); }
+svg.loop text { transition: opacity .7s ease var(--d, 1s); }
 svg.loop text.st { font-size: 14px; letter-spacing: .14em; }
 svg.loop text.big { fill: var(--yellow); font-size: 72px; }
 svg.loop text.it { fill: var(--line); font-size: 40px; }
-svg.loop .orbit { transform-origin: 260px 270px; opacity: 0; transition: opacity .8s ease 2.6s; }
-.slide.visible svg.loop .orbit { opacity: 1; animation: ring-turn 16s linear 2.6s infinite; }
+svg.loop .orbit { transform-origin: 260px 270px; opacity: 0; transition: opacity .8s ease 2.9s; }
+.slide.visible svg.loop .orbit { opacity: 1; animation: ring-turn 16s linear 2.9s infinite; }
 svg.loop .orbit circle { fill: var(--yellow); stroke: none; stroke-dasharray: none; }
 
 /* portrait in a line frame — no mount, cyanotype duotone, a caption strip */
@@ -661,21 +664,21 @@ body.editing .edit-hint { opacity: .85; }
                 <div class="slab"><div class="kicker">Пітер · 1969</div><h3>Принцип Пітера</h3><p>В ієрархії кожного підвищують до рівня його некомпетентності. Посади займають ті, хто вже не справляється.</p></div>
                 <div class="slab" style="border-top-color: var(--line);"><div class="kicker">Крозьє · 1963</div><h3>Замкнене коло</h3><p>Помилки лікують новими правилами; нові правила породжують нові зони невизначеності. «Організація, нездатна вчитися на помилках».</p></div>
             </div>
-            <svg class="mech loop" viewBox="0 0 520 520" style="width: 560px; height: 560px;" aria-label="Замкнене коло Крозьє">
-                <path class="ring" d="M260 100 A170 170 0 0 1 414.1 341.8" style="--lv: 0;"/>
-                <path class="ring" d="M407.2 355 A170 170 0 0 1 120.7 367.5" style="--lv: 2;"/>
-                <path class="ring" d="M112.8 355 A170 170 0 0 1 245.2 100.6" style="--lv: 4;"/>
-                <g transform="translate(413 346) rotate(120)"><path class="mark" d="M-16 -9 L0 0 L-16 9 Z" style="--lv: 1;"/></g>
-                <g transform="translate(118 364) rotate(240)"><path class="mark" d="M-16 -9 L0 0 L-16 9 Z" style="--lv: 3;"/></g>
-                <g transform="translate(250 100) rotate(0)"><path class="mark" d="M-16 -9 L0 0 L-16 9 Z" style="--lv: 5;"/></g>
-                <rect class="fill" x="252" y="92" width="16" height="16" style="--lv: 0;"/>
-                <rect class="fill" x="399" y="347" width="16" height="16" style="--lv: 2;"/>
-                <rect class="fill" x="105" y="347" width="16" height="16" style="--lv: 4;"/>
-                <text class="st" x="260" y="70" style="--lv: 0;">Помилка</text>
-                <text class="st" x="437" y="372" text-anchor="start" style="--lv: 2;">Нове</text><text class="st" x="437" y="392" text-anchor="start" style="--lv: 2;">правило</text>
-                <text class="st" x="86" y="372" text-anchor="end" style="--lv: 4;">Нова зона</text><text class="st" x="86" y="392" text-anchor="end" style="--lv: 4;">невизначеності</text>
-                <text class="it" x="260" y="258" style="--lv: 5;">cercle vicieux</text>
-                <text class="dim-lbl" x="260" y="296" style="--lv: 6;">Крозьє · Le phénomène bureaucratique · 1963</text>
+            <svg class="mech loop" viewBox="0 0 520 520" style="width: 540px; height: 540px; margin-left: auto;" aria-label="Замкнене коло Крозьє">
+                <path class="ring" d="M260 100 A170 170 0 0 1 414.1 341.8" style="--d: .7s; --t: .7s;"/>
+                <path class="ring" d="M407.2 355 A170 170 0 0 1 120.7 367.5" style="--d: 1.4s; --t: .67s;"/>
+                <path class="ring" d="M112.8 355 A170 170 0 0 1 245.2 100.6" style="--d: 2.07s; --t: .67s;"/>
+                <g transform="translate(413 346) rotate(120)"><path class="mark" d="M-16 -9 L0 0 L-16 9 Z" style="--d: 1.35s;"/></g>
+                <g transform="translate(118 364) rotate(240)"><path class="mark" d="M-16 -9 L0 0 L-16 9 Z" style="--d: 2.02s;"/></g>
+                <g transform="translate(250 100) rotate(0)"><path class="mark" d="M-16 -9 L0 0 L-16 9 Z" style="--d: 2.7s;"/></g>
+                <rect class="fill" x="252" y="92" width="16" height="16" style="--d: .55s;"/>
+                <rect class="fill" x="399" y="347" width="16" height="16" style="--d: 1.35s;"/>
+                <rect class="fill" x="105" y="347" width="16" height="16" style="--d: 2.02s;"/>
+                <text class="st" x="260" y="70" style="--d: .8s;">Помилка</text>
+                <text class="st" x="430" y="376" style="--d: 1.5s; text-anchor: start;">Нове</text><text class="st" x="430" y="396" style="--d: 1.5s; text-anchor: start;">правило</text>
+                <text class="st" x="90" y="376" style="--d: 2.15s; text-anchor: end;">Нова зона</text><text class="st" x="90" y="396" style="--d: 2.15s; text-anchor: end;">невизначеності</text>
+                <text class="it" x="260" y="258" style="--d: 2.3s;">cercle vicieux</text>
+                <text class="dim-lbl" x="260" y="296" style="--d: 2.45s;">Крозьє · Le phénomène bureaucratique · 1963</text>
                 <g class="orbit"><circle cx="260" cy="100" r="7"/></g>
             </svg>
         </div>
@@ -931,7 +934,7 @@ class SlidePresentation {
 /* ===========================================
    INLINE EDITOR — hover top-left corner or press E; Ctrl+S saves (BUILD-versioned)
    =========================================== */
-const BUILD = '1789133211';
+const BUILD = '1789133413';
 class InlineEditor {
     constructor() { this.isActive = false; this.toggle = document.getElementById('editToggle'); this.hotzone = document.querySelector('.edit-hotzone'); this.editable = 'h1, h2, h3, p, li > span, .hero, .kicker, .chrome-head span, .chrome-foot span, .authors div, .tag, .band span, .giant, .tblock td'; this.restore(); this.bind(); }
     bind() { let t = null; const hideLater = () => { t = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); }; this.hotzone.addEventListener('mouseenter', () => { clearTimeout(t); this.toggle.classList.add('show'); }); this.hotzone.addEventListener('mouseleave', hideLater); this.toggle.addEventListener('mouseenter', () => clearTimeout(t)); this.toggle.addEventListener('mouseleave', hideLater); this.hotzone.addEventListener('click', () => this.toggleEditMode()); this.toggle.addEventListener('click', () => this.toggleEditMode()); document.addEventListener('keydown', (e) => { if ((e.key === 'e' || e.key === 'E') && e.target.getAttribute('contenteditable') !== 'true') this.toggleEditMode(); if ((e.ctrlKey || e.metaKey) && e.key === 's' && this.isActive) { e.preventDefault(); this.save(); this.download(); } }); document.addEventListener('input', () => { if (this.isActive) this.save(); }); }
