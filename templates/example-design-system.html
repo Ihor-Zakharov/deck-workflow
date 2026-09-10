@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Апарат — Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;700;900&family=Manrope:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ===== TOKENS ===== */
+  :root {
+    --vermilion: #E4391B;
+    --ink:       #121110;
+    --paper:     #F1EADB;
+    --paper-2:   #E7DEC9;
+    --steel:     #8B8780;
+    --white:     #FFFDF8;
+
+    --bg: var(--paper);
+    --surface: var(--white);
+    --border: var(--ink);
+    --text: var(--ink);
+    --muted: var(--steel);
+
+    --display: 'Unbounded', sans-serif;
+    --body: 'Manrope', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+  body { padding: 0 0 80px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+
+  /* ===== HEADER ===== */
+  header { border-bottom: 3px solid var(--ink); background: var(--paper); }
+  header .wrap { display: grid; grid-template-columns: 1fr auto; align-items: end; padding-top: 56px; padding-bottom: 40px; gap: 40px; }
+  .lockup { display: flex; align-items: center; gap: 22px; }
+  .lockup h1 { margin: 0; font-family: var(--display); font-weight: 900; font-size: 64px; letter-spacing: -0.03em; line-height: 0.95; }
+  .lockup h1 span { color: var(--vermilion); }
+  .lockup .sub { font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-top: 10px; }
+  .meta { text-align: right; font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); line-height: 1.9; }
+  .meta b { color: var(--vermilion); font-weight: 500; }
+
+  /* ===== SECTIONS ===== */
+  section { padding: 56px 0 8px; }
+  .label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--vermilion); display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .label::before { content: ""; width: 34px; height: 3px; background: var(--vermilion); }
+  h2 { font-family: var(--display); font-weight: 700; font-size: 30px; letter-spacing: -0.02em; margin: 0 0 12px; }
+  .lead { color: var(--muted); max-width: 720px; margin: 0 0 28px; }
+
+  /* Colors */
+  .colors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .sw { border: 2px solid var(--ink); background: var(--surface); }
+  .sw .fill { height: 140px; border-bottom: 2px solid var(--ink); }
+  .sw .m { padding: 14px 16px; }
+  .sw .tier { font-family: var(--display); font-weight: 700; font-size: 14px; display: block; }
+  .sw .hex { font-family: var(--mono); font-size: 12px; color: var(--muted); display: block; margin-top: 3px; }
+  .sw .use { font-size: 13px; color: var(--muted); margin-top: 8px; display: block; }
+  .ext { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-top: 20px; }
+  .ext .sw .fill { height: 56px; }
+  .ext .sw .m { padding: 10px 12px; }
+
+  /* Typography */
+  .type { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .card { border: 2px solid var(--ink); background: var(--surface); padding: 28px; }
+  .card.dark { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .card.red { background: var(--vermilion); color: var(--paper); border-color: var(--ink); }
+  .t-display { font-family: var(--display); font-weight: 900; font-size: 64px; line-height: 0.95; letter-spacing: -0.03em; margin: 0; }
+  .t-display-light { font-family: var(--display); font-weight: 300; font-size: 44px; line-height: 1.05; margin: 12px 0 0; }
+  .t-body { font-size: 17px; line-height: 1.6; margin: 18px 0 0; }
+  .t-mono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); display: block; margin-top: 18px; }
+  .ladder { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 20px; }
+  .ladder div { border: 2px solid var(--ink); padding: 14px; background: var(--surface); }
+  .ladder .w { font-family: var(--display); font-size: 30px; line-height: 1; }
+  .ladder .n { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+
+  /* Principles */
+  .principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .p { border: 2px solid var(--ink); background: var(--surface); padding: 24px; position: relative; }
+  .p .num { font-family: var(--display); font-weight: 900; font-size: 40px; color: var(--vermilion); line-height: 1; }
+  .p h3 { font-family: var(--display); font-weight: 700; font-size: 17px; margin: 14px 0 8px; letter-spacing: -0.01em; }
+  .p p { margin: 0; font-size: 14px; color: var(--muted); }
+
+  /* Components */
+  .comps { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .btn { display: inline-block; font-family: var(--display); font-weight: 700; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; padding: 14px 22px; border: 2px solid var(--ink); background: var(--ink); color: var(--paper); margin: 0 10px 10px 0; box-shadow: 6px 6px 0 var(--vermilion); }
+  .btn.ghost { background: transparent; color: var(--ink); box-shadow: none; }
+  .btn.red { background: var(--vermilion); color: var(--paper); box-shadow: 6px 6px 0 var(--ink); }
+  .badge { display: inline-block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; padding: 6px 10px; border: 2px solid var(--ink); margin: 0 8px 8px 0; }
+  .badge.red { background: var(--vermilion); color: var(--paper); border-color: var(--vermilion); }
+  .badge.ink { background: var(--ink); color: var(--paper); }
+  .band { background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; padding: 10px 16px; transform: rotate(-3deg); display: inline-block; margin: 14px 0; }
+  .stat { border-top: 3px solid var(--ink); padding-top: 12px; }
+  .stat .v { font-family: var(--display); font-weight: 900; font-size: 56px; line-height: 1; letter-spacing: -0.03em; color: var(--vermilion); }
+  .stat .l { font-size: 14px; color: var(--muted); margin-top: 6px; }
+  .list { list-style: none; padding: 0; margin: 12px 0 0; }
+  .list li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--ink); font-size: 15px; }
+  .list li b { font-family: var(--mono); font-weight: 500; color: var(--vermilion); font-size: 12px; letter-spacing: 0.1em; align-self: baseline; }
+
+  /* Icons */
+  .icons { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; }
+  .ic { border: 2px solid var(--ink); background: var(--surface); aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+  .ic svg { width: 40px; height: 40px; }
+  .ic span { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+  /* Wordmarks */
+  .wms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .wm { border: 2px solid var(--ink); padding: 32px 24px; min-height: 170px; display: flex; flex-direction: column; justify-content: center; gap: 10px; background: var(--surface); }
+  .wm.dark { background: var(--ink); color: var(--paper); }
+  .wm.red { background: var(--vermilion); color: var(--paper); }
+  .wm .name { font-family: var(--display); font-weight: 900; font-size: 34px; letter-spacing: -0.02em; line-height: 1; }
+  .wm .name .lo { font-weight: 300; }
+  .wm .name .ac { color: var(--vermilion); }
+  .wm.red .name .ac { color: var(--ink); }
+  .wm .mono { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.7; }
+
+  footer { margin-top: 64px; border-top: 3px solid var(--ink); padding-top: 18px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
+
+  @media (max-width: 800px) {
+    header .wrap { grid-template-columns: 1fr; }
+    .meta { text-align: left; }
+    .colors, .type, .principles, .comps, .wms { grid-template-columns: 1fr; }
+    .ext { grid-template-columns: repeat(3, 1fr); }
+    .icons { grid-template-columns: repeat(4, 1fr); }
+    .ladder { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="lockup">
+      <svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true">
+        <circle cx="36" cy="36" r="34" fill="#E4391B"/>
+        <rect x="6" y="31" width="60" height="10" fill="#121110" transform="rotate(-20 36 36)"/>
+        <circle cx="36" cy="36" r="7" fill="#F1EADB"/>
+      </svg>
+      <div>
+        <h1>АПА<span>РАТ</span></h1>
+        <div class="sub">Design system · Презентація «Бюрократія як феномен влади та управління»</div>
+      </div>
+    </div>
+    <div class="meta">
+      v1 · 10.09.2026<br/>
+      <b>Влада — це процедура</b>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ===== COLORS ===== -->
+<section>
+  <div class="label">01 · Ієрархія кольорів</div>
+  <h2>Три кольори. Жодного більше.</h2>
+  <p class="lead">Конструктивістська тріада: кіновар як сигнал, туш як структура, папір як поверхня. Сталевий сірий дозволений лише для другорядного тексту.</p>
+  <div class="colors">
+    <div class="sw"><div class="fill" style="background:var(--vermilion)"></div><div class="m"><span class="tier">Кіновар · Primary</span><span class="hex">#E4391B</span><span class="use">Номери, акценти, заливка секційних слайдів, тіні кнопок. Максимум одна велика пляма на слайд.</span></div></div>
+    <div class="sw"><div class="fill" style="background:var(--ink)"></div><div class="m"><span class="tier">Туш · Secondary</span><span class="hex">#121110</span><span class="use">Увесь основний текст, рамки 2px, діагональні стрічки, темні слайди для цитат.</span></div></div>
+    <div class="sw"><div class="fill" style="background:var(--paper)"></div><div class="m"><span class="tier">Папір · Tertiary</span><span class="hex">#F1EADB</span><span class="use">Фон контентних слайдів, текст на темному. Ніколи не чисто білий.</span></div></div>
+  </div>
+  <div class="ext">
+    <div class="sw"><div class="fill" style="background:var(--paper-2)"></div><div class="m"><span class="hex">#E7DEC9 · папір-2</span></div></div>
+    <div class="sw"><div class="fill" style="background:var(--white)"></div><div class="m"><span class="hex">#FFFDF8 · поверхня</span></div></div>
+    <div class="sw"><div class="fill" style="background:var(--steel)"></div><div class="m"><span class="hex">#8B8780 · сталь</span></div></div>
+    <div class="sw"><div class="fill" style="background:#B62B12"></div><div class="m"><span class="hex">#B62B12 · кіновар-темна</span></div></div>
+    <div class="sw"><div class="fill" style="background:#2A2724"></div><div class="m"><span class="hex">#2A2724 · туш-2</span></div></div>
+    <div class="sw"><div class="fill" style="background:repeating-linear-gradient(45deg,#121110 0 6px,#F1EADB 6px 12px)"></div><div class="m"><span class="hex">штрихування</span></div></div>
+  </div>
+</section>
+
+<!-- ===== TYPOGRAPHY ===== -->
+<section>
+  <div class="label">02 · Типографіка</div>
+  <h2>Unbounded кричить, Manrope пояснює, JetBrains Mono нумерує.</h2>
+  <div class="type">
+    <div class="card">
+      <p class="t-display">Бюро­кратія</p>
+      <p class="t-display-light">як феномен влади</p>
+      <span class="t-mono">Unbounded · 900 / 300 · −0.03em</span>
+    </div>
+    <div class="card dark">
+      <p class="t-body" style="margin-top:0">Повністю розвинена бюрократія належить до тих соціальних структур, які найважче зруйнувати. Апарат вирішує, що фіксувати, кому показувати і як формулювати.</p>
+      <span class="t-mono" style="color:#E7DEC9;opacity:.7">Manrope · 400 · 17–26px · 1.55</span>
+      <span class="t-mono" style="color:#E4391B">§ 04 · Форма № 12 · JetBrains Mono · 0.18em</span>
+    </div>
+  </div>
+  <div class="ladder">
+    <div><div class="w" style="font-weight:300">Aa Бб</div><div class="n">Unbounded 300</div></div>
+    <div><div class="w" style="font-weight:500">Aa Бб</div><div class="n">Unbounded 500</div></div>
+    <div><div class="w" style="font-weight:700">Aa Бб</div><div class="n">Unbounded 700</div></div>
+    <div><div class="w" style="font-weight:900">Aa Бб</div><div class="n">Unbounded 900</div></div>
+  </div>
+</section>
+
+<!-- ===== PRINCIPLES ===== -->
+<section>
+  <div class="label">03 · Принципи</div>
+  <h2>Шість правил апарату</h2>
+  <div class="principles">
+    <div class="p"><div class="num">01</div><h3>Одна плакатна думка</h3><p>Кожен слайд має один заголовок, який можна прочитати з останнього ряду. Решта — коментар.</p></div>
+    <div class="p"><div class="num">02</div><h3>Діагональ = енергія</h3><p>Чорні стрічки під −6°…−12° розрізають статичну сітку. Не більше однієї діагоналі на слайд.</p></div>
+    <div class="p"><div class="num">03</div><h3>Кіновар як сигнал</h3><p>Червоне тільки там, куди має впасти око: номер, коло, ключове слово. Не для декору.</p></div>
+    <div class="p"><div class="num">04</div><h3>Рамка 2px, тінь 8px</h3><p>Жодних розмиттів і градієнтів. Об'єм задає жорстка зміщена тінь кольору туші або кіноварі.</p></div>
+    <div class="p"><div class="num">05</div><h3>Номер — герой</h3><p>Порядкові номери, параграфи та роки набираються найбільшим кеглем на слайді. Апарат любить лічити.</p></div>
+    <div class="p"><div class="num">06</div><h3>Папір, не екран</h3><p>Фон завжди теплий папір або суцільна туш. Білий і сірі градієнти заборонені.</p></div>
+  </div>
+</section>
+
+<!-- ===== COMPONENTS ===== -->
+<section>
+  <div class="label">04 · Компоненти</div>
+  <h2>Кнопки, теги, стрічки, лічильники</h2>
+  <div class="comps">
+    <div class="card">
+      <a class="btn">Розглянути справу</a><a class="btn red">Погодити</a><a class="btn ghost">Відхилити</a>
+      <div style="margin-top:18px">
+        <span class="badge">Форма № 07</span><span class="badge red">§ 4 · Влада</span><span class="badge ink">1922</span>
+      </div>
+      <div class="band">Зареєстровано · Вхідний № 0001 · Розглянуто</div>
+      <ul class="list">
+        <li><b>01</b><span>Ієрархія посад — вертикаль підпорядкування.</span></li>
+        <li><b>02</b><span>Розподіл компетенцій — сфера закріплена нормою.</span></li>
+        <li><b>03</b><span>Формальні правила — рішення за абстрактною нормою.</span></li>
+      </ul>
+    </div>
+    <div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-content:start">
+      <div class="stat"><div class="v">06</div><div class="l">ознак ідеального типу</div></div>
+      <div class="stat"><div class="v">III</div><div class="l">типи легітимного панування</div></div>
+      <div class="stat"><div class="v">1922</div><div class="l">«Господарство і суспільство»</div></div>
+      <div class="stat"><div class="v">§ 8</div><div class="l">український контекст</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ICONS ===== -->
+<section>
+  <div class="label">05 · Іконки</div>
+  <h2>Геометрія 2px: коло, стрічка, штамп</h2>
+  <div class="icons">
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><circle cx="20" cy="20" r="16"/><circle cx="20" cy="20" r="6" fill="#E4391B" stroke="none"/></svg><span>печатка</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><rect x="6" y="4" width="28" height="32"/><path d="M12 12h16M12 19h16M12 26h10"/></svg><span>документ</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><path d="M20 6v28M8 14h24M12 14l-6 10h12zM28 14l-6 10h12z"/></svg><span>право</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><rect x="16" y="4" width="8" height="8" fill="#E4391B"/><rect x="4" y="28" width="8" height="8"/><rect x="16" y="28" width="8" height="8"/><rect x="28" y="28" width="8" height="8"/><path d="M20 12v8M8 28v-8h24v8"/></svg><span>ієрархія</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><path d="M6 20h28M24 10l10 10-10 10"/></svg><span>процедура</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><circle cx="20" cy="20" r="15"/><path d="M20 10v10l7 4"/></svg><span>тяганина</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><rect x="5" y="9" width="30" height="22"/><path d="M5 9l15 12 15-12" /></svg><span>вхідний</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><path d="M8 32L32 8M8 8l24 24" stroke="#E4391B"/></svg><span>відхилено</span></div>
+  </div>
+</section>
+
+<!-- ===== WORDMARKS ===== -->
+<section>
+  <div class="label">06 · Лого-блоки</div>
+  <h2>Три написання</h2>
+  <div class="wms">
+    <div class="wm"><div class="name">АПА<span class="ac">РАТ</span></div><div class="mono">Акцент · кіновар на папері</div></div>
+    <div class="wm dark"><div class="name">АПА<span class="lo">РАТ</span></div><div class="mono">Розрізна вага · 900 / 300</div></div>
+    <div class="wm red"><div class="name">АПА<span class="ac">РАТ</span></div><div class="mono">Інверсія · туш на кіноварі</div></div>
+  </div>
+</section>
+
+<footer>
+  <span>presentations/aparat/design/design-system.html</span>
+  <span>Див. brand-book-a4.pdf · Дека: ../burokratiya-aparat.html</span>
+</footer>
+
+</div>
+</body>
+</html>

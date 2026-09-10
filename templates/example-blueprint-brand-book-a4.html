@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<title>Креслення апарату — Brand Book</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Extra+Condensed:wght@600;800&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=IBM+Plex+Sans:wght@300;400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --blue: #0F3B6E; --blue-2: #0A2C55; --blue-3: #1D4F8A; --line: #DCE9F7; --line-soft: rgba(220,233,247,.4); --paper: #F3F6FA; --ink: #0E2F57; --yellow: #F4C542; --muted: #8FA9C6; --steel: #6C7F95;
+    --display: 'Fira Sans Extra Condensed', Impact, sans-serif; --serif: 'Cormorant Garamond', Georgia, serif; --body: 'IBM Plex Sans', sans-serif; --mono: 'JetBrains Mono', monospace; }
+  @page { size: A4; margin: 0; }
+  html, body { margin: 0; padding: 0; background: var(--blue); }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 210mm; height: 297mm; background: var(--blue); color: var(--line); font-family: var(--body); padding: 13mm 14mm 11mm; display: flex; flex-direction: column; gap: 4.5mm; position: relative; overflow: hidden;
+    background-image: linear-gradient(rgba(220,233,247,.14) .3mm, transparent .3mm), linear-gradient(90deg, rgba(220,233,247,.14) .3mm, transparent .3mm), linear-gradient(rgba(220,233,247,.05) .25mm, transparent .25mm), linear-gradient(90deg, rgba(220,233,247,.05) .25mm, transparent .25mm); background-size: 40mm 40mm, 40mm 40mm, 8mm 8mm, 8mm 8mm; }
+  .page::after { content: ""; position: absolute; inset: 6mm; border: .4mm solid var(--line-soft); pointer-events: none; }
+  .head { display: flex; align-items: flex-end; justify-content: space-between; border-bottom: .5mm solid var(--line-soft); padding-bottom: 4mm; }
+  .brand { display: flex; align-items: center; gap: 5mm; }
+  .brand h1 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 34px; line-height: .9; text-transform: uppercase; }
+  .brand h1 span { font-family: var(--serif); font-style: italic; font-weight: 500; text-transform: none; color: var(--yellow); }
+  .brand .sub { margin: 2mm 0 0; font-size: 8.5px; color: var(--muted); font-family: var(--mono); letter-spacing: 1.5px; text-transform: uppercase; }
+  .meta { text-align: right; font-family: var(--mono); font-size: 8.5px; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; line-height: 1.8; }
+  .meta .tag { color: var(--yellow); }
+  .label { font-family: var(--mono); font-size: 8.5px; letter-spacing: 2px; color: var(--yellow); text-transform: uppercase; margin-bottom: 2.5mm; display: flex; align-items: center; gap: 2.5mm; }
+  .label::before { content: ""; width: 2.4mm; height: 2.4mm; border: .5mm solid var(--yellow); }
+  .colors { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3.5mm; }
+  .sw { border: .3mm solid var(--line-soft); overflow: hidden; background: rgba(10,44,85,.5); }
+  .sw .fill { height: 16mm; border-bottom: .3mm solid var(--line-soft); }
+  .sw .m { padding: 2.2mm 2.6mm; }
+  .sw .tier { font-size: 9.5px; font-weight: 600; display: block; }
+  .sw .hex { font-family: var(--mono); font-size: 8px; color: var(--muted); display: block; margin-top: .8mm; }
+  .sw .use { font-size: 7.6px; color: var(--muted); line-height: 1.35; margin-top: 1.3mm; display: block; }
+  .twocol { display: grid; grid-template-columns: 1.15fr 1fr; gap: 4mm; }
+  .card { border: .3mm solid var(--line-soft); padding: 4.5mm 5mm; background: rgba(10,44,85,.5); }
+  .card.paper { background: var(--paper); color: var(--ink); border: .5mm solid var(--ink); box-shadow: 2.5mm 2.5mm 0 var(--yellow); }
+  .t-display { font-family: var(--display); font-weight: 800; font-size: 40px; line-height: .86; text-transform: uppercase; margin: 1.5mm 0 0; }
+  .t-display span { font-family: var(--serif); font-style: italic; font-weight: 500; text-transform: none; display: block; font-size: 20px; margin-top: 1.5mm; color: var(--yellow); }
+  .t-body { font-size: 9.2px; line-height: 1.5; margin: 3mm 0 0; }
+  .t-mono { font-family: var(--mono); font-size: 7.6px; letter-spacing: 1.2px; text-transform: uppercase; margin-top: 2.5mm; display: block; opacity: .75; }
+  .principles ol { margin: 0; padding: 0; list-style: none; font-size: 8.6px; line-height: 1.4; display: grid; gap: 1.5mm; }
+  .principles li { display: grid; grid-template-columns: 7mm 1fr; gap: 1.5mm; }
+  .principles li b { font-family: var(--display); font-weight: 800; font-size: 12px; line-height: 1.1; color: var(--yellow); }
+  .principles li strong { font-weight: 600; }
+  .comps { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3mm; }
+  .tile { border: .3mm solid var(--line-soft); background: rgba(10,44,85,.5); padding: 3mm 2mm; display: flex; flex-direction: column; align-items: center; gap: 1.5mm; text-align: center; }
+  .tile .v { font-family: var(--display); font-weight: 800; font-size: 20px; line-height: 1; color: var(--yellow); }
+  .tile .n { font-size: 7.3px; color: var(--muted); line-height: 1.3; }
+  .tile.paper { background: var(--paper); color: var(--ink); border-color: var(--ink); } .tile.paper .v { color: var(--blue-3); } .tile.paper .n { color: var(--steel); }
+  .wms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.5mm; }
+  .wm { border: .3mm solid var(--line-soft); padding: 4.5mm 4mm; background: rgba(10,44,85,.5); display: flex; flex-direction: column; gap: 2mm; min-height: 22mm; justify-content: center; }
+  .wm.paper { background: var(--paper); color: var(--ink); border: .5mm solid var(--ink); }
+  .wm.yellow { background: var(--yellow); color: var(--ink); border: .5mm solid var(--ink); }
+  .wm .name { font-family: var(--display); font-weight: 800; font-size: 26px; text-transform: uppercase; line-height: 1; }
+  .wm .name .ac { color: var(--yellow); } .wm.yellow .name .ac { color: var(--blue); } .wm.paper .name .ac { color: var(--blue-3); }
+  .wm .mono { font-family: var(--mono); font-size: 7.3px; letter-spacing: 1.2px; text-transform: uppercase; opacity: .7; }
+  .icons { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3mm; }
+  .ic { border: .3mm solid var(--line-soft); background: rgba(10,44,85,.5); aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5mm; }
+  .ic svg { width: 9mm; height: 9mm; }
+  .ic span { font-family: var(--mono); font-size: 6.3px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+  .tblock { border-collapse: collapse; font-family: var(--mono); font-size: 7.2px; letter-spacing: .8px; text-transform: uppercase; width: 100%; margin-top: 2mm; }
+  .tblock th, .tblock td { border: .3mm solid var(--line-soft); padding: 1.6mm 2.4mm; text-align: left; font-weight: 400; }
+  .tblock th { color: var(--muted); } .tblock td.y { color: var(--yellow); }
+  .poster { background: var(--yellow); color: var(--ink); padding: 5mm 6mm; display: flex; justify-content: space-between; align-items: center; gap: 6mm; position: relative; overflow: hidden; }
+  .poster .big { font-family: var(--serif); font-style: italic; font-weight: 600; font-size: 22px; line-height: 1.08; position: relative; z-index: 1; }
+  .poster .big span { color: var(--blue); }
+  .poster .m { font-family: var(--mono); font-size: 7.3px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink); opacity: .75; text-align: right; line-height: 1.7; position: relative; z-index: 1; }
+  .foot { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; padding-top: 3mm; border-top: .5mm solid var(--line-soft); font-family: var(--mono); font-size: 7.3px; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="head">
+    <div class="brand">
+      <svg width="50" height="50" viewBox="0 0 72 72" aria-hidden="true"><rect width="72" height="72" fill="#0A2C55" stroke="#DCE9F7" stroke-width="2"/><rect x="14" y="14" width="44" height="44" fill="none" stroke="#DCE9F7" stroke-width="2"/><path d="M14 26h44M14 38h30M14 50h36" stroke="#DCE9F7" stroke-width="2"/><circle cx="50" cy="46" r="9" fill="none" stroke="#F4C542" stroke-width="3"/></svg>
+      <div><h1>Креслення <span>апарату</span> Brand Book</h1><p class="sub">Дизайн-система презентації «Бюрократія як феномен влади та управління» · v2</p></div>
+    </div>
+    <div class="meta">v2 · 10.09.2026<br/><span class="tag">Апарат — це машина на синьці</span></div>
+  </div>
+
+  <div>
+    <div class="label">Колір</div>
+    <div class="colors">
+      <div class="sw"><div class="fill" style="background:var(--blue)"></div><div class="m"><span class="tier">Синька · Surface</span><span class="hex">#0F3B6E · #0A2C55</span><span class="use">Основні слайди, стіна форм, плашки.</span></div></div>
+      <div class="sw"><div class="fill" style="background:var(--line)"></div><div class="m"><span class="tier">Лінія · Text</span><span class="hex">#DCE9F7 · сітка 15 % / 6 %</span><span class="use">Текст і креслені лінії на синьці.</span></div></div>
+      <div class="sw"><div class="fill" style="background:var(--yellow)"></div><div class="m"><span class="tier" style="color:var(--yellow)">Інспекційний жовтий</span><span class="hex">#F4C542</span><span class="use">Штампи, стрічка, кікери, один жовтий слайд, маркер.</span></div></div>
+      <div class="sw"><div class="fill" style="background:var(--paper)"></div><div class="m"><span class="tier">Папір · Inverted</span><span class="hex">#F3F6FA · чорнило #0E2F57</span><span class="use">Форми, таблиці, щільні слайди.</span></div></div>
+    </div>
+  </div>
+
+  <div class="twocol">
+    <div class="card">
+      <div class="label">Типографіка</div>
+      <p class="t-display">Бюрократія<span>як феномен влади та управління</span></p>
+      <p class="t-body">Fira Sans Extra Condensed 800 капітелями — плакатна лінія; Cormorant Garamond italic — підпис і акцентна фраза; IBM Plex Sans пояснює; JetBrains Mono нумерує аркуші. Усі з повною кирилицею.</p>
+      <span class="t-mono">Fira Extra Condensed · Cormorant · Plex Sans · JetBrains Mono</span>
+    </div>
+    <div class="card principles">
+      <div class="label">Принципи</div>
+      <ol>
+        <li><b>01</b><span><strong>Апарат — машина.</strong> Кожен слайд — аркуш креслення.</span></li>
+        <li><b>02</b><span><strong>Одна палітра, три гами.</strong> Синька · папір · один жовтий.</span></li>
+        <li><b>03</b><span><strong>Без рамок-карток.</strong> Специфікації, форми, плашки.</span></li>
+        <li><b>04</b><span><strong>Штамп — вердикт.</strong> Шість на деку, два геройські.</span></li>
+        <li><b>05</b><span><strong>Стіна форм — фон.</strong> 3D, без кліків, слайди 08 і 15.</span></li>
+        <li><b>06</b><span><strong>Небагато всього.</strong> Один каскад, один амбієнт, три тихі слайди.</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <div>
+    <div class="label">Компоненти · лічильники</div>
+    <div class="comps">
+      <div class="tile"><div class="v">06</div><div class="n">ознак ідеального типу</div></div>
+      <div class="tile paper"><div class="v">III</div><div class="n">типи панування</div></div>
+      <div class="tile"><div class="v">1922</div><div class="n">Вебер, «Господарство і суспільство»</div></div>
+      <div class="tile paper"><div class="v">4</div><div class="n">закони патології</div></div>
+      <div class="tile"><div class="v">№ 0001</div><div class="n">вхідний реєстру</div></div>
+      <div class="tile paper"><div class="v">19</div><div class="n">аркушів у деці</div></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="label">Основний напис (title block)</div>
+    <table class="tblock"><tr><th>Розроб.</th><td>Захаров І.</td><th>Перевір.</th><td>Богачов А.</td><th>Т. контр.</th><td>Шульгачик П.</td><th>Н. контр.</th><td>Йозеф К.</td><th>Затв.</th><td>Григораш Д.</td><th>Арк.</th><td class="y">1 / 19</td></tr></table>
+  </div>
+
+  <div>
+    <div class="label">Лого-блоки</div>
+    <div class="wms">
+      <div class="wm"><div class="name">Апа<span class="ac">рат</span></div><div class="mono">Лінія на синьці</div></div>
+      <div class="wm paper"><div class="name">Апа<span class="ac">рат</span></div><div class="mono">Чорнило на папері</div></div>
+      <div class="wm yellow"><div class="name">Апа<span class="ac">рат</span></div><div class="mono">Чорнило на жовтому</div></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="label">Іконки · креслярські, 2 px</div>
+    <div class="icons">
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#DCE9F7" stroke-width="2"><rect x="5" y="7" width="30" height="26"/><path d="M5 14h30"/></svg><span>аркуш</span></div>
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#F4C542" stroke-width="2.5"><circle cx="20" cy="20" r="14"/><circle cx="20" cy="20" r="9"/></svg><span>штамп</span></div>
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#DCE9F7" stroke-width="2"><path d="M6 28c6-14 10 6 14-6s8 4 14-4"/></svg><span>підпис</span></div>
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#DCE9F7" stroke-width="2"><path d="M6 20h28M10 16l-4 4 4 4M30 16l4 4-4 4M6 12v16M34 12v16"/></svg><span>розмір</span></div>
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#DCE9F7" stroke-width="2"><rect x="8" y="6" width="24" height="28"/><path d="M12 14h16M12 20h16M12 26h10"/></svg><span>форма</span></div>
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#DCE9F7" stroke-width="2"><path d="M20 6v28M8 14h24M12 14l-6 10h12zM28 14l-6 10h12z"/></svg><span>право</span></div>
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#DCE9F7" stroke-width="2"><rect x="16" y="4" width="8" height="8" fill="#F4C542" stroke="none"/><rect x="4" y="28" width="8" height="8"/><rect x="16" y="28" width="8" height="8"/><rect x="28" y="28" width="8" height="8"/><path d="M20 12v8M8 28v-8h24v8"/></svg><span>ієрархія</span></div>
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#F4C542" stroke-width="2.5"><path d="M8 32L32 8M8 8l24 24"/></svg><span>відмовлено</span></div>
+    </div>
+  </div>
+
+  <div class="poster">
+    <div class="big">Повністю розвинена бюрократія —<br/>структура, яку <span>найважче зруйнувати</span>.</div>
+    <div class="m">Макс Вебер · 1922<br/>аркуш 06 · цитата на жовтому</div>
+  </div>
+
+  <div class="foot"><span>presentations/burokratiya-v2/design/brand-book-a4.pdf</span><span>Повна система: design-system.html · Дека: burokratiya-v2.html</span></div>
+</div>
+</body>
+</html>

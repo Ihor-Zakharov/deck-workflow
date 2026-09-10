@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Бюрократія як феномен влади та управління</title>
+
+<!-- Fonts from the «Апарат» design system: Unbounded (display), Manrope (body), JetBrains Mono (chrome) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;700;900&family=Manrope:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ===========================================
+   THEME — «Апарат» design system tokens
+   See design/design-system.html for the full reference.
+   =========================================== */
+:root {
+    --vermilion: #E4391B;
+    --vermilion-2: #B62B12;
+    --ink: #121110;
+    --ink-2: #2A2724;
+    --paper: #F1EADB;
+    --paper-2: #E7DEC9;
+    --white: #FFFDF8;
+    --steel: #8B8780;
+
+    --stage-bg: var(--ink);
+    --slide-bg: var(--paper);
+
+    --font-display: 'Unbounded', sans-serif;
+    --font-body: 'Manrope', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* Type scale at 1920×1080 */
+    --size-hero: 168px;
+    --size-h1: 112px;
+    --size-h2: 72px;
+    --size-h3: 34px;
+    --size-lead: 30px;
+    --size-body: 24px;
+    --size-caption: 17px;
+    --size-label: 15px;
+    --size-num: 260px;
+
+    --pad-x: 120px;
+    --pad-y: 96px;
+    --gap: 40px;
+
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --dur: 0.7s;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===========================================
+   FIXED 16:9 STAGE: MANDATORY BASE STYLES
+   (full contents of viewport-base.css)
+   =========================================== */
+
+/* 1. Lock the browser viewport */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+/* 2. Full-window deck viewport */
+.deck-viewport {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+/* 3. Fixed 16:9 design canvas.
+   JavaScript sets transform: translate(...) scale(...). */
+.deck-stage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    transform-origin: 0 0;
+    background: var(--slide-bg, #fff);
+}
+
+/* 4. Slides stack inside the fixed stage.
+   Content must be laid out at 1920×1080, not reflowed per device. */
+.slide {
+    position: absolute;
+    inset: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    background: var(--slide-bg, #fff);
+}
+
+.slide.active,
+.slide.visible {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+/* 5. Keep media inside authored slide bounds */
+img,
+video,
+canvas,
+svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* 6. Presentation chrome stays outside the slide design system */
+.deck-controls {
+    position: fixed;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+/* 7. Print one fixed-size slide per page */
+@media print {
+    html,
+    body {
+        width: 1920px;
+        height: auto;
+        overflow: visible;
+        background: #fff;
+    }
+
+    .deck-viewport {
+        position: static;
+        overflow: visible;
+        background: #fff;
+    }
+
+    .deck-stage {
+        position: static;
+        width: auto;
+        height: auto;
+        transform: none !important;
+        background: none;
+    }
+
+    .slide {
+        position: relative;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: 1920px;
+        height: 1080px;
+        break-after: page;
+        page-break-after: always;
+    }
+
+    .slide:last-child {
+        break-after: auto;
+        page-break-after: auto;
+    }
+
+    .deck-controls {
+        display: none !important;
+    }
+}
+
+/* 8. Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+/* === END viewport-base.css === */
+
+
+/* ===========================================
+   SLIDE BASE
+   =========================================== */
+.slide {
+    transition: opacity 0.9s ease-in-out, visibility 0.9s;
+    font-family: var(--font-body);
+    color: var(--ink);
+    font-weight: 400;
+}
+.slide.dark { background: var(--ink); color: var(--paper); }
+.slide.red  { background: var(--vermilion); color: var(--paper); }
+
+/* ===========================================
+   CHROME — mono form labels top and bottom, 2px rules
+   =========================================== */
+.chrome-head, .chrome-foot {
+    position: absolute;
+    left: var(--pad-x);
+    right: var(--pad-x);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: var(--size-label);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink);
+    z-index: 3;
+}
+.chrome-head { top: 44px; height: 48px; border-bottom: 2px solid currentColor; }
+.chrome-foot { bottom: 44px; height: 48px; border-top: 2px solid currentColor; }
+.chrome-head .red, .chrome-foot .red { color: var(--vermilion); }
+.dark .chrome-head, .dark .chrome-foot { color: var(--paper); }
+.red .chrome-head, .red .chrome-foot { color: var(--paper); }
+.red .chrome-head .red, .red .chrome-foot .red { color: var(--ink); }
+
+.slide-content {
+    position: absolute;
+    left: var(--pad-x);
+    right: var(--pad-x);
+    top: 150px;
+    bottom: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 2;
+}
+
+/* ===========================================
+   TYPOGRAPHY
+   =========================================== */
+.kicker {
+    font-family: var(--font-mono);
+    font-size: var(--size-label);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--vermilion);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+.kicker::before { content: ""; width: 44px; height: 4px; background: var(--vermilion); }
+.red .kicker { color: var(--ink); }
+.red .kicker::before { background: var(--ink); }
+
+.hero { font-family: var(--font-display); font-weight: 900; font-size: var(--size-hero); line-height: 0.92; letter-spacing: -0.04em; }
+h1 { font-family: var(--font-display); font-weight: 900; font-size: var(--size-h1); line-height: 0.95; letter-spacing: -0.04em; }
+h2 { font-family: var(--font-display); font-weight: 900; font-size: var(--size-h2); line-height: 1.0; letter-spacing: -0.03em; }
+h3 { font-family: var(--font-display); font-weight: 700; font-size: var(--size-h3); line-height: 1.15; letter-spacing: -0.02em; }
+.light { font-weight: 300; }
+.acc { color: var(--vermilion); }
+.dark .acc { color: var(--vermilion); }
+.red .acc { color: var(--ink); }
+.lead { font-size: var(--size-lead); line-height: 1.5; font-weight: 400; max-width: 1100px; }
+p, li { font-size: var(--size-body); line-height: 1.5; }
+.caption { font-size: var(--size-caption); color: var(--steel); line-height: 1.45; }
+.dark .caption { color: var(--paper-2); opacity: .7; }
+
+/* Numbered list — red mono numerals, 2px rule between items */
+ol.num { list-style: none; }
+ol.num li {
+    display: grid;
+    grid-template-columns: 84px 1fr;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 2px solid currentColor;
+    align-items: baseline;
+}
+ol.num li:first-child { border-top: 2px solid currentColor; }
+ol.num li b {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 22px;
+    color: var(--vermilion);
+    letter-spacing: -0.02em;
+}
+ol.num li strong { font-weight: 700; }
+ol.num.compact li { padding: 13px 0; }
+ol.num.compact li span { font-size: 23px; }
+
+/* Tag */
+.tag {
+    display: inline-block;
+    border: 2px solid currentColor;
+    padding: 8px 14px;
+    font-family: var(--font-mono);
+    font-size: var(--size-label);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+.tag.fill { background: var(--vermilion); border-color: var(--vermilion); color: var(--paper); }
+.tag.ink { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+/* ===========================================
+   DECORATIVE DEVICES — the deck's poster vocabulary
+   =========================================== */
+/* Diagonal black band with mono text */
+.band {
+    position: absolute;
+    left: -200px;
+    width: 2400px;
+    padding: 18px 0;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 20px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    z-index: 1;
+}
+.band.red { background: var(--vermilion); color: var(--paper); }
+.band.paper { background: var(--paper); color: var(--ink); }
+.band span { display: inline-block; animation: marquee 40s linear infinite; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Big vermilion circle */
+.disc {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--vermilion);
+    z-index: 0;
+}
+.disc.ink { background: var(--ink); }
+.disc.paper { background: var(--paper); }
+
+/* Giant numeral */
+.giant {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: var(--size-num);
+    line-height: 0.85;
+    letter-spacing: -0.06em;
+}
+
+/* Hard-shadow card */
+.card {
+    border: 3px solid var(--ink);
+    background: var(--white);
+    padding: 36px 36px 32px;
+    box-shadow: 14px 14px 0 var(--ink);
+    color: var(--ink);
+}
+.card.red { background: var(--vermilion); color: var(--paper); box-shadow: 14px 14px 0 var(--ink); border-color: var(--ink); }
+.card.ink { background: var(--ink); color: var(--paper); box-shadow: 14px 14px 0 var(--vermilion); border-color: var(--ink); }
+
+/* Hatched fill */
+.hatch { background: repeating-linear-gradient(45deg, var(--ink) 0 8px, transparent 8px 20px); }
+
+/* ===========================================
+   LAYOUT HELPERS
+   =========================================== */
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+.two.wide-left { grid-template-columns: 1.15fr 1fr; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+
+/* Six-trait grid (Weber) */
+.trait { border-top: 4px solid var(--ink); padding-top: 18px; }
+.trait .n { font-family: var(--font-display); font-weight: 900; font-size: 64px; letter-spacing: -0.05em; color: var(--vermilion); line-height: 1; margin-bottom: 14px; }
+.trait h3 { margin-bottom: 8px; font-size: 28px; }
+.trait p { font-size: 20px; line-height: 1.45; color: var(--ink-2); }
+
+/* Three columns (domination types) */
+.col { border-left: 3px solid var(--paper); padding-left: 32px; }
+.col .n { font-family: var(--font-display); font-weight: 900; font-size: 120px; line-height: 0.9; letter-spacing: -0.05em; margin-bottom: 24px; color: var(--paper); }
+.col.marked { background: var(--vermilion); border-left-color: var(--vermilion); padding: 32px; margin: -32px 0; }
+.col.marked .n { color: var(--ink); }
+.col h3 { margin-bottom: 14px; }
+.col p { font-size: 21px; line-height: 1.45; margin-bottom: 16px; }
+.col .who { font-family: var(--font-mono); font-size: var(--size-label); letter-spacing: 0.16em; text-transform: uppercase; opacity: .75; }
+
+/* Ledger table (pros/cons) */
+.ledger { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 3px solid var(--ink); background: var(--white); box-shadow: 16px 16px 0 var(--vermilion); }
+.ledger .side { padding: 36px 40px; }
+.ledger .side + .side { border-left: 3px solid var(--ink); }
+.ledger h3 { margin-bottom: 20px; display: flex; align-items: center; gap: 14px; }
+.ledger h3 .dot { width: 22px; height: 22px; border-radius: 50%; background: var(--ink); }
+.ledger h3 .dot.red { background: var(--vermilion); }
+.ledger ul { list-style: none; display: grid; gap: 12px; }
+.ledger li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; font-size: 22px; line-height: 1.4; }
+.ledger li::before { content: "—"; font-family: var(--font-mono); color: var(--vermilion); }
+
+/* Timeline */
+.timeline { position: relative; }
+.timeline .track { position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--paper); }
+.timeline .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; padding-top: 44px; }
+.timeline .step { position: relative; }
+.timeline .step::before { content: ""; position: absolute; left: 0; top: -55px; width: 26px; height: 26px; border-radius: 50%; background: var(--vermilion); border: 4px solid var(--ink); box-shadow: 0 0 0 4px var(--paper); }
+.timeline .year { font-family: var(--font-mono); font-size: var(--size-label); letter-spacing: 0.16em; color: var(--vermilion); margin-bottom: 14px; }
+.timeline h3 { margin-bottom: 12px; font-size: 30px; }
+.timeline p { font-size: 20px; line-height: 1.45; opacity: .85; }
+
+/* Authors */
+.authors { display: grid; grid-template-columns: repeat(4, auto); gap: 48px; justify-content: start; }
+.authors div { font-family: var(--font-display); font-weight: 500; font-size: 24px; letter-spacing: -0.01em; }
+.authors .role { display: block; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--steel); margin-top: 8px; font-weight: 400; }
+
+/* ===========================================
+   ANIMATIONS — bold poster reveals
+   =========================================== */
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease); }
+.slide.visible .reveal { opacity: 1; transform: none; }
+.slide.visible .reveal:nth-child(1) { transition-delay: .05s; }
+.slide.visible .reveal:nth-child(2) { transition-delay: .18s; }
+.slide.visible .reveal:nth-child(3) { transition-delay: .31s; }
+.slide.visible .reveal:nth-child(4) { transition-delay: .44s; }
+.slide.visible .reveal:nth-child(5) { transition-delay: .57s; }
+.slide.visible .reveal:nth-child(6) { transition-delay: .70s; }
+
+/* Discs pop in with a spring */
+.disc.reveal { transform: scale(0.2); transition: transform 1s cubic-bezier(0.34, 1.4, 0.64, 1), opacity .4s; }
+.slide.visible .disc.reveal { transform: scale(1); }
+
+/* Bands slide in from the left */
+.band.reveal { transform: translateX(-120px); transition: transform .9s var(--ease) .3s, opacity .4s .3s; }
+.slide.visible .band.reveal { transform: none; }
+
+/* Giant numerals rise heavy */
+.giant.reveal { transform: translateY(120px); transition: transform 1s var(--ease), opacity .6s; }
+.slide.visible .giant.reveal { transform: none; }
+
+/* Stagger inside grids */
+.stagger > * { opacity: 0; transform: translateY(30px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+.slide.visible .stagger > * { opacity: 1; transform: none; }
+.slide.visible .stagger > *:nth-child(1) { transition-delay: .35s; }
+.slide.visible .stagger > *:nth-child(2) { transition-delay: .45s; }
+.slide.visible .stagger > *:nth-child(3) { transition-delay: .55s; }
+.slide.visible .stagger > *:nth-child(4) { transition-delay: .65s; }
+.slide.visible .stagger > *:nth-child(5) { transition-delay: .75s; }
+.slide.visible .stagger > *:nth-child(6) { transition-delay: .85s; }
+.slide.visible .stagger > *:nth-child(7) { transition-delay: .95s; }
+.slide.visible .stagger > *:nth-child(8) { transition-delay: 1.05s; }
+
+
+/* ===========================================
+   STAMP — circular ink stamp, slams in and slowly turns
+   Built from data-ring / data-center / data-sub by JS.
+   =========================================== */
+.stamp { position: absolute; z-index: 3; color: var(--vermilion); mix-blend-mode: multiply; pointer-events: none; }
+.stamp.ink { color: var(--ink); }
+.stamp.paper { color: var(--paper); mix-blend-mode: normal; }
+.dark .stamp { mix-blend-mode: normal; }
+.stamp svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.stamp circle { fill: none; stroke: currentColor; }
+.stamp .ring text { font-family: var(--font-mono); font-size: 21px; letter-spacing: 0.24em; text-transform: uppercase; fill: currentColor; font-weight: 500; }
+.stamp .center { font-family: var(--font-display); font-weight: 900; font-size: 40px; letter-spacing: -0.02em; fill: currentColor; text-anchor: middle; }
+.stamp .sub { font-family: var(--font-mono); font-size: 18px; letter-spacing: 0.18em; text-transform: uppercase; fill: currentColor; text-anchor: middle; }
+.stamp .ring { transform-origin: 150px 150px; animation: ring-turn 36s linear infinite; }
+@keyframes ring-turn { to { transform: rotate(360deg); } }
+/* slam: from big and faint to pressed */
+.stamp.reveal { opacity: 0; transform: scale(2.4); filter: blur(6px); transition: opacity .35s ease, transform .55s cubic-bezier(.2,1.6,.4,1), filter .5s ease; }
+.slide.visible .stamp.reveal { opacity: .92; transform: scale(1); filter: blur(0); transition-delay: .9s; }
+.stamp::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: repeating-radial-gradient(circle at 40% 30%, transparent 0 3px, rgba(255,255,255,.35) 3px 4px); mix-blend-mode: screen; opacity: .35; }
+
+
+/* ===========================================
+   AMBIENT MOTION — discs drift, rules draw, bands pulse
+   =========================================== */
+@keyframes drift { from { translate: 0 0; } to { translate: 0 -34px; } }
+.slide.visible .disc { animation: drift 7s ease-in-out 1.2s infinite alternate; }
+.chrome-head, .chrome-foot { border-color: transparent !important; }
+.chrome-head::after, .chrome-foot::after { content: ""; position: absolute; left: 0; right: 0; height: 2px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 1.1s var(--ease) .2s; }
+.chrome-head::after { bottom: -2px; }
+.chrome-foot::after { top: -2px; }
+.slide.visible .chrome-head::after, .slide.visible .chrome-foot::after { transform: scaleX(1); }
+.trait { border-top-color: transparent; position: relative; }
+.trait::before { content: ""; position: absolute; left: 0; right: 0; top: -4px; height: 4px; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform .9s var(--ease) .5s; }
+.slide.visible .trait::before { transform: scaleX(1); }
+.timeline .track { transform: scaleX(0); transform-origin: left; transition: transform 1.4s var(--ease) .4s; }
+.slide.visible .timeline .track { transform: scaleX(1); }
+.timeline .step::before { transform: scale(0); transition: transform .5s cubic-bezier(.34,1.5,.64,1); }
+.slide.visible .timeline .step::before { transform: scale(1); }
+.slide.visible .timeline .step:nth-child(1)::before { transition-delay: .6s; }
+.slide.visible .timeline .step:nth-child(2)::before { transition-delay: .85s; }
+.slide.visible .timeline .step:nth-child(3)::before { transition-delay: 1.1s; }
+.slide.visible .timeline .step:nth-child(4)::before { transition-delay: 1.35s; }
+.hero, h1 { transform-origin: left bottom; }
+.hero.reveal { transform: translateY(40px) skewY(2deg); }
+.slide.visible .hero.reveal { transform: none; }
+.card { transition: transform .25s ease, box-shadow .25s ease; will-change: transform; }
+.card:hover { transform: translate(-4px, -4px); box-shadow: 18px 18px 0 var(--ink); }
+.card.ink:hover { box-shadow: 18px 18px 0 var(--vermilion); }
+.kicker::before { transform: scaleX(0); transform-origin: left; transition: transform .8s var(--ease) .25s; }
+.slide.visible .kicker::before { transform: scaleX(1); }
+.ledger h3 .dot { animation: pulse 2.4s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+
+/* progress bar along the bottom edge of the stage */
+.progress { position: absolute; left: 0; bottom: 0; height: 6px; background: var(--vermilion); z-index: 50; transition: width .6s var(--ease); }
+
+
+/* ===========================================
+   SIDE NAV — vertical ticks, left middle of the stage
+   Hover: tick stretches, label slides out; active tick is red.
+   =========================================== */
+.side-nav { position: absolute; left: 34px; top: 50%; transform: translateY(-50%); z-index: 60; display: flex; flex-direction: column; gap: 14px; }
+.side-nav button { all: unset; cursor: pointer; display: flex; align-items: center; gap: 14px; height: 22px; position: relative; }
+.side-nav .tick { width: 22px; height: 3px; background: currentColor; opacity: .35; transition: width .35s var(--ease), opacity .3s, background .3s, transform .35s var(--ease); transform-origin: left; }
+.side-nav .lbl { display: flex; align-items: center; gap: 10px; background: var(--ink); color: var(--paper); font-family: var(--font-mono); font-size: 13px; letter-spacing: .18em; text-transform: uppercase; padding: 8px 14px 8px 12px; white-space: nowrap; opacity: 0; transform: translateX(-14px) skewX(-6deg); transition: opacity .3s var(--ease), transform .4s var(--ease); pointer-events: none; box-shadow: 5px 5px 0 var(--vermilion); }
+.side-nav .lbl b { font-family: var(--font-display); font-weight: 900; color: var(--vermilion); font-size: 13px; letter-spacing: 0; }
+.side-nav button:hover .tick { width: 44px; opacity: 1; }
+.side-nav button:hover .lbl { opacity: 1; transform: translateX(0) skewX(0); }
+.side-nav button.active .tick { width: 44px; opacity: 1; background: var(--vermilion); box-shadow: 0 0 0 3px color-mix(in srgb, var(--vermilion) 25%, transparent); }
+.side-nav button:active .tick { transform: scaleX(.85); }
+.slide.dark .side-nav, .slide.red .side-nav { color: var(--paper); }
+.red .side-nav .lbl { box-shadow: 5px 5px 0 var(--paper); }
+.red .side-nav button.active .tick { background: var(--ink); box-shadow: 0 0 0 3px rgba(18,17,16,.25); }
+/* nav lives in the stage, above slides */
+.deck-stage > .side-nav { color: var(--ink); }
+.deck-stage > .side-nav.on-dark, .deck-stage > .side-nav.on-red { color: var(--paper); }
+.deck-stage > .side-nav.on-red .lbl { box-shadow: 5px 5px 0 var(--paper); }
+.deck-stage > .side-nav.on-red button.active .tick { background: var(--ink); box-shadow: 0 0 0 3px rgba(18,17,16,.25); }
+/* ripple pulse when a tick becomes active */
+@keyframes tick-pop { 0% { transform: scaleX(.4); } 60% { transform: scaleX(1.15); } 100% { transform: scaleX(1); } }
+.side-nav button.active .tick { animation: tick-pop .5s var(--ease); }
+
+
+/* ===========================================
+   KAFKA FIGURE — hard-shadow frame; hatched placeholder until the image lands
+   =========================================== */
+.kafka { position: relative; width: 560px; aspect-ratio: 4 / 5; border: 3px solid var(--paper); background: var(--ink); box-shadow: 16px 16px 0 var(--vermilion); margin: 0; }
+.kafka img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(1) contrast(1.15); transition: filter .6s ease, transform .8s var(--ease); }
+.kafka:hover img { filter: grayscale(0) contrast(1.05); transform: scale(1.03); }
+.kafka::before { content: ""; position: absolute; inset: 0; background: linear-gradient(160deg, transparent 55%, rgba(228,57,27,.55)); mix-blend-mode: multiply; pointer-events: none; }
+.kafka figcaption { position: absolute; left: -3px; bottom: -3px; background: var(--paper); color: var(--ink); font-family: var(--font-mono); font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 10px 14px; display: flex; gap: 12px; align-items: center; }
+.kafka figcaption b { white-space: nowrap; font-family: var(--font-display); font-weight: 900; color: var(--vermilion); font-size: 14px; letter-spacing: 0; }
+.kafka.missing img { display: none; }
+.kafka.missing { background: repeating-linear-gradient(45deg, var(--ink) 0 10px, #2A2724 10px 20px); }
+.kafka.missing::after { content: "Зображення: assets/kafka.png"; position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-mono); font-size: 14px; letter-spacing: .18em; text-transform: uppercase; color: var(--paper); background: rgba(18,17,16,.6); text-align: center; padding: 40px; }
+
+
+/* epigraph on the contents slide: small portrait + Kafka line */
+.epigraph { display: grid; grid-template-columns: 150px 1fr; gap: 28px; align-items: center; margin-top: 56px; max-width: 700px; }
+.kafka.small { width: 150px; box-shadow: 8px 8px 0 var(--vermilion); border-color: var(--ink); background: var(--paper-2); }
+.kafka.small.missing::after { content: "kafka.png"; font-size: 11px; padding: 10px; }
+.kafka.small.missing { background: repeating-linear-gradient(45deg, var(--paper-2) 0 8px, var(--paper) 8px 16px); }
+.kafka.small.missing::after { background: transparent; color: var(--ink); }
+.dossier .q { font-family: var(--font-display); font-weight: 700; font-size: 22px; line-height: 1.3; letter-spacing: -0.01em; }
+.dossier .who { font-family: var(--font-mono); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--steel); margin-top: 12px; line-height: 1.6; }
+.dossier .who b { color: var(--vermilion); font-weight: 500; }
+
+
+/* dossier card: the Kafka note "filed" into the register */
+.dossier { position: relative; display: grid; grid-template-columns: 150px 1fr; gap: 30px; align-items: center; margin-top: 52px; max-width: 720px; background: var(--white); border: 3px solid var(--ink); padding: 26px 30px 26px 26px; box-shadow: 12px 12px 0 var(--ink); rotate: -1.5deg; transform-origin: left center; transition: rotate .5s var(--ease), box-shadow .3s; }
+.dossier:hover { rotate: 0deg; box-shadow: 16px 16px 0 var(--vermilion); }
+.dossier .clip { position: absolute; width: 36px; height: 82px; left: 40px; top: -40px; rotate: 8deg; }
+.dossier .kafka.small { box-shadow: none; border: 3px solid var(--ink); }
+.dossier .kafka.small::before { display: none; }
+.dossier .kafka.small img { filter: none; object-position: center 20%; }
+.dossier:hover .kafka.small img { transform: scale(1.06); }
+.stamp.mini .ring text { font-size: 30px; letter-spacing: .3em; }
+.stamp.mini .center { font-size: 96px; }
+.dossier .stamp.mini { z-index: 3; }
+.slide.visible .dossier .stamp.reveal { transition-delay: 1.3s; opacity: .85; }
+
+/* ===========================================
+   INLINE EDITING — hover top-left or press E
+   =========================================== */
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle { position: fixed; top: 16px; left: 16px; z-index: 10001; width: 44px; height: 44px; border: 2px solid var(--paper); background: var(--vermilion); color: var(--paper); font-size: 18px; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s; }
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { background: var(--paper); color: var(--ink); }
+body.editing [contenteditable="true"] { outline: 2px dashed var(--vermilion); outline-offset: 4px; }
+.edit-hint { position: fixed; top: 26px; left: 72px; z-index: 10001; font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--paper); opacity: 0; transition: opacity .3s; pointer-events: none; }
+body.editing .edit-hint { opacity: .85; }
+</style>
+</head>
+<body>
+
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Режим редагування (E)">✎</button>
+<div class="edit-hint">Режим редагування · клік по тексту · Ctrl+S зберегти</div>
+
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage" aria-label="Презентація">
+<div class="progress" id="progress"></div>
+<nav class="side-nav" id="sideNav" aria-label="Навігація по слайдах"></nav>
+
+<!-- =========================================================
+     01 — TITLE: giant type, red disc, diagonal band
+     ========================================================= -->
+<section class="slide active" data-title="Титул">
+    <div class="disc reveal" style="width: 760px; height: 760px; right: -140px; top: -120px;"></div>
+    <div class="band reveal" style="top: 705px; rotate: -4deg;"><span>Форма № 01 · Титульний аркуш · Зареєстровано · Вхідний № 0001 · Розглянуто · Погоджено · Справа К. · Процес триває · Кафедра політології · 2026 · Форма № 01 · Титульний аркуш · Зареєстровано · Вхідний № 0001 · Розглянуто · Погоджено · Кафедра політології · 2026 ·</span></div>
+    <div class="stamp reveal" data-ring="Зареєстровано · Вхідний № 0001 · Розглянуто · " data-center="Погоджено" data-sub="10.09.2026" style="right: 640px; top: 130px; width: 290px; height: 290px; rotate: -12deg;"></div>
+    <div class="chrome-head"><span>Форма № 01 · Титульний аркуш</span><span class="red">Кафедра політології · 2026</span></div>
+    <div class="slide-content" style="justify-content: flex-start; padding-top: 40px;">
+        <div class="kicker reveal">Доповідь до семінарського заняття</div>
+        <div class="hero reveal">Бюро-<br>кратія</div>
+        <h2 class="light reveal" style="margin-top: 18px; font-size: 60px;">як феномен <span class="acc" style="font-weight: 900;">влади</span> та управління</h2>
+    </div>
+    <div class="authors reveal" style="position: absolute; left: var(--pad-x); bottom: 118px; z-index: 2;">
+        <div>Ігор Захаров<span class="role">доповідач</span></div>
+        <div>Андрій Богачов<span class="role">доповідач</span></div>
+        <div>Паша Шульгачик<span class="role">доповідач</span></div>
+        <div>Дмитро Григораш<span class="role">доповідач</span></div>
+    </div>
+    <div class="chrome-foot"><span>Бюрократія як феномен влади та управління</span><span>01 / 14</span></div>
+</section>
+
+<!-- =========================================================
+     02 — CONTENTS: two-column numbered register
+     ========================================================= -->
+<section class="slide" data-title="Зміст">
+    <div class="chrome-head"><span>Форма № 02 · Реєстр питань</span><span class="red">Опис справи</span></div>
+    <div class="slide-content" style="justify-content: flex-start; top: 170px;">
+        <div class="kicker reveal">Структура доповіді</div>
+        <h1 class="reveal" style="font-size: 104px; white-space: nowrap; margin-bottom: 44px;">Що ми <span class="acc">розглянемо</span></h1>
+        <div class="two" style="grid-template-columns: 700px 1fr; gap: 90px; align-items: start;">
+            <div>
+                <p class="caption reveal" style="max-width: 560px;">Вісім параграфів: від етимології до цифрової держави. Кожен параграф — одна теза і один автор, який її сформулював.</p>
+                <div class="dossier reveal" style="margin-top: 210px;">
+                    <svg class="clip" viewBox="0 0 40 90" aria-hidden="true"><path d="M12 22v52a8 8 0 0 0 16 0V16a6 6 0 0 0-12 0v50a3 3 0 0 0 6 0V24" fill="none" stroke="#121110" stroke-width="3" stroke-linecap="round"/></svg>
+                    <figure class="kafka small">
+                        <img src="assets/kafka.jpg" alt="Франц Кафка" onerror="this.parentNode.classList.add('missing')">
+                    </figure>
+                    <div class="stamp mini reveal" data-ring="Справа К. · Процес · Замок · " data-center="К." style="left: 118px; top: 118px; width: 110px; height: 110px; rotate: -16deg;"></div>
+                    <div>
+                        <p class="q">«Ланцюги змученого людства зроблені з канцелярського паперу».</p>
+                        <p class="who"><b>Франц Кафка</b> · службовець страхової компанії, Прага · автор «Процесу» і «Замку»</p>
+                    </div>
+                </div>
+            </div>
+            <ol class="num stagger compact">
+                <li><b>§ 1</b><span>Поняття і походження терміна</span></li>
+                <li><b>§ 2</b><span>Ідеальний тип бюрократії за Вебером</span></li>
+                <li><b>§ 3</b><span>Бюрократія і легітимне панування</span></li>
+                <li><b>§ 4</b><span>Бюрократія як влада: знання і невизначеність</span></li>
+                <li><b>§ 5</b><span>Дисфункції: Мертон, Паркінсон, Пітер, Крозьє</span></li>
+                <li><b>§ 6</b><span>Критична традиція: Маркс, Троцький, Джилас, Мізес</span></li>
+                <li><b>§ 7</b><span>Бюрократія як інструмент управління</span></li>
+                <li><b>§ 8</b><span>Еволюція моделей та український контекст</span></li>
+            </ol>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Бюрократія як феномен влади та управління</span><span>02 / 14</span></div>
+</section>
+
+<!-- =========================================================
+     03 — TERM: bureau + kratos, three meanings as cards
+     ========================================================= -->
+<section class="slide" data-title="Поняття">
+    <div class="stamp reveal" data-ring="Довідка · Форма № 03 · Зареєстровано · Вхідний № 0003 · " data-center="Довідка" data-sub="§ 1" style="left: 130px; top: 720px; width: 250px; height: 250px; rotate: -14deg;"></div>
+    <div class="chrome-head"><span>§ 1 · Поняття і походження</span><span class="red">Довідка</span></div>
+    <div class="slide-content">
+        <div class="two" style="grid-template-columns: 1fr 1.25fr; align-items: start;">
+            <div>
+                <div class="kicker reveal">Етимологія</div>
+                <h1 class="reveal" style="font-size: 120px;">bureau<br><span class="acc">+</span> krátos</h1>
+                <p class="lead reveal" style="margin-top: 32px; font-size: 26px;">Французьке <em>bureau</em> «письмовий стіл, канцелярія» та грецьке <em>κράτος</em> «влада». Буквально: <strong>влада канцелярії</strong>. Термін приписують Венсану де Гурне, середина XVIII століття. Спершу вживався іронічно.</p>
+            </div>
+            <div class="stagger" style="display: grid; gap: 28px; padding-top: 20px;">
+                <div class="card"><h3 style="margin-bottom: 8px;"><span class="acc">01</span> · Форма організації</h3><p style="font-size: 21px;">Раціональна система управління на основі правил, ієрархії та документів. Нейтральне, соціологічне значення.</p></div>
+                <div class="card"><h3 style="margin-bottom: 8px;"><span class="acc">02</span> · Соціальна група</h3><p style="font-size: 21px;">Прошарок професійних чиновників із власними інтересами, здатний протистояти і суспільству, і політикам.</p></div>
+                <div class="card red"><h3 style="margin-bottom: 8px;">03 · Дисфункція</h3><p style="font-size: 21px;">Побутове значення: тяганина, формалізм, байдужість до людини. «Бюрократизм» як хвороба апарату.</p></div>
+            </div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Бюрократія як феномен влади та управління</span><span>03 / 14</span></div>
+</section>
+
+<!-- =========================================================
+     04 — WEBER: six traits
+     ========================================================= -->
+<section class="slide" data-title="Ідеальний тип">
+    <div class="chrome-head"><span>§ 2 · Ідеальний тип за Вебером</span><span class="red">«Господарство і суспільство», 1922</span></div>
+    <div class="slide-content">
+        <div class="kicker reveal">Макс Вебер · раціональна бюрократія</div>
+        <h2 class="reveal" style="margin-bottom: 44px;">Шість ознак <span class="acc">ідеального типу</span></h2>
+        <div class="grid-3 stagger" style="row-gap: 40px;">
+            <div class="trait"><div class="n">01</div><h3>Ієрархія посад</h3><p>Чітка вертикаль підпорядкування; кожна нижча інстанція контролюється вищою.</p></div>
+            <div class="trait"><div class="n">02</div><h3>Розподіл компетенцій</h3><p>Сфера повноважень кожної посади закріплена нормативно й не залежить від особи.</p></div>
+            <div class="trait"><div class="n">03</div><h3>Формальні правила</h3><p>Рішення ухвалюються за загальними абстрактними нормами, а не на розсуд.</p></div>
+            <div class="trait"><div class="n">04</div><h3>Письмова документація</h3><p>Управління ведеться на основі документів; канцелярія є ядром апарату.</p></div>
+            <div class="trait"><div class="n">05</div><h3>Професіоналізм</h3><p>Служба є основною діяльністю; призначення за кваліфікацією, кар'єра, фіксована платня.</p></div>
+            <div class="trait"><div class="n">06</div><h3>Безособовість</h3><p>«Без гніву та упередження»: чиновник служить посаді, а не начальнику чи клієнту.</p></div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Ідеальний тип — не опис реальності, а аналітична модель</span><span>04 / 14</span></div>
+</section>
+
+<!-- =========================================================
+     05 — DOMINATION: dark slide, three columns, III marked red
+     ========================================================= -->
+<section class="slide dark" data-title="Панування">
+    <div class="chrome-head"><span>§ 3 · Бюрократія і легітимне панування</span><span class="red">Типологія Вебера</span></div>
+    <div class="slide-content">
+        <div class="kicker reveal">Три типи легітимного панування</div>
+        <h2 class="reveal" style="margin-bottom: 64px;">Бюрократія — апарат<br><span class="acc">раціонально-легальної</span> влади</h2>
+        <div class="grid-3 stagger" style="gap: 56px;">
+            <div class="col"><div class="n">I</div><h3>Традиційне</h3><p>Влада освячена звичаєм і «вічним учора». Апарат: слуги, васали, придворні; посада є особистим привілеєм.</p><div class="who">Патримоніальна держава</div></div>
+            <div class="col"><div class="n">II</div><h3>Харизматичне</h3><p>Влада на особистій відданості вождю, пророку, герою. Апарат: учні та послідовники; правил немає, є воля лідера.</p><div class="who">Революція, рух, секта</div></div>
+            <div class="col marked"><div class="n">III</div><h3>Раціонально-легальне</h3><p>Влада належить не особі, а нормі. Кориться закону, а не людині. Апарат такого панування і є бюрократія.</p><div class="who" style="opacity: 1;">Сучасна держава та корпорація</div></div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Бюрократія як феномен влади та управління</span><span>05 / 14</span></div>
+</section>
+
+<!-- =========================================================
+     06 — QUOTE: full red slide, giant quotation mark
+     ========================================================= -->
+<section class="slide red" data-title="Цитата Вебера">
+    <div class="giant reveal" style="position: absolute; left: 90px; top: 90px; font-size: 520px; color: var(--ink); opacity: 1; line-height: 1;">«</div>
+    <div class="stamp reveal ink" data-ring="Архів · Першоджерело · Без строку давності · " data-center="1922" data-sub="Weber" style="right: 150px; bottom: 130px; width: 260px; height: 260px; rotate: 9deg;"></div>
+    <div class="chrome-head"><span>§ 3 · Першоджерело</span><span class="red">Макс Вебер · 1922</span></div>
+    <div class="slide-content" style="left: 540px;">
+        <p class="reveal" style="font-family: var(--font-display); font-weight: 700; font-size: 50px; line-height: 1.18; letter-spacing: -0.02em; max-width: 1260px;">Повністю розвинена бюрократія належить до тих соціальних структур, які <span style="color: var(--ink);">найважче зруйнувати</span>. Там, де бюрократизація управління проведена до кінця, створюється форма владних відносин, яка є практично незламною.</p>
+        <div class="reveal" style="margin-top: 40px; display: flex; gap: 16px;"><span class="tag ink">Господарство і суспільство</span><span class="tag">Розділ про бюрократію</span></div>
+    </div>
+    <div class="chrome-foot"><span>Бюрократія як феномен влади та управління</span><span>06 / 14</span></div>
+</section>
+
+<!-- =========================================================
+     07 — POWER: three sources with giant words
+     ========================================================= -->
+<section class="slide" data-title="Влада апарату">
+    <div class="band reveal" style="top: 128px; rotate: -3deg;"><span>Dienstwissen · службове знання · службова таємниця · зони невизначеності · Вебер · Крозьє · 1963 · Dienstwissen · службове знання · службова таємниця · зони невизначеності · Вебер · Крозьє · 1963 ·</span></div>
+    <div class="chrome-head"><span>§ 4 · Бюрократія як влада</span><span class="red">Вебер · Крозьє</span></div>
+    <div class="slide-content" style="top: 230px;">
+        <div class="kicker reveal">Чому інструмент стає господарем</div>
+        <h2 class="reveal" style="margin-bottom: 48px;">Три джерела влади апарату</h2>
+        <div class="grid-3 stagger" style="gap: 48px;">
+            <div class="card"><div class="giant" style="font-size: 96px; color: var(--vermilion); margin-bottom: 16px;">знання</div><h3 style="font-size: 26px; margin-bottom: 8px;">Службове знання</h3><p style="font-size: 20px;">Чиновник знає процедуру, файли та прецеденти. Політик приходить і йде, апарат лишається. Вебер: «володар стоїть перед експертом як дилетант».</p></div>
+            <div class="card ink"><div class="giant" style="font-size: 96px; color: var(--vermilion); margin-bottom: 16px;">тайна</div><h3 style="font-size: 26px; margin-bottom: 8px;">Службова таємниця</h3><p style="font-size: 20px;">Апарат вирішує, що фіксувати, кому показувати і як формулювати. Той, хто складає протокол, визначає, що «сталося».</p></div>
+            <div class="card"><div class="giant" style="font-size: 96px; color: var(--vermilion); margin-bottom: 16px;">зони</div><h3 style="font-size: 26px; margin-bottom: 8px;">Зони невизначеності</h3><p style="font-size: 20px;">Правила не покривають усе. Той, хто контролює непередбачуване, отримує реальну владу поза формальною ієрархією. Крозьє, 1963.</p></div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Бюрократія як феномен влади та управління</span><span>07 / 14</span></div>
+</section>
+
+<!-- =========================================================
+     08 — DYSFUNCTIONS: four laws, dark, hard-shadow cards
+     ========================================================= -->
+<section class="slide dark" data-title="Дисфункції">
+    <div class="disc reveal" style="width: 900px; height: 900px; right: -300px; bottom: -420px;"></div>
+    <div class="chrome-head"><span>§ 5 · Дисфункції бюрократії</span><span class="red">Класичні діагнози</span></div>
+    <div class="slide-content">
+        <div class="kicker reveal">Коли засіб стає метою</div>
+        <h2 class="reveal" style="margin-bottom: 44px;">Чотири закони<br><span class="acc">бюрократичної патології</span></h2>
+        <div class="grid-4 stagger">
+            <div class="card"><div class="kicker" style="margin-bottom: 12px;">Мертон · 1940</div><h3 style="margin-bottom: 10px;">Зміщення мети</h3><p style="font-size: 19px;">Дотримання правила витісняє мету, заради якої правило ухвалили. «Я діяв за інструкцією» стає виправданням будь-якого результату.</p></div>
+            <div class="card"><div class="kicker" style="margin-bottom: 12px;">Паркінсон · 1955</div><h3 style="margin-bottom: 10px;">Закон Паркінсона</h3><p style="font-size: 19px;">Робота розширюється, щоб заповнити весь відведений час. Чиновник множить підлеглих, а не суперників; штат зростає незалежно від справ.</p></div>
+            <div class="card"><div class="kicker" style="margin-bottom: 12px;">Пітер · 1969</div><h3 style="margin-bottom: 10px;">Принцип Пітера</h3><p style="font-size: 19px;">В ієрархії кожного підвищують до рівня його некомпетентності. Посади займають ті, хто вже не справляється.</p></div>
+            <div class="card red"><div class="kicker" style="margin-bottom: 12px; color: var(--ink);">Крозьє · 1963</div><h3 style="margin-bottom: 10px;">Замкнене коло</h3><p style="font-size: 19px;">Помилки лікують новими правилами; нові правила породжують нові зони невизначеності. «Організація, нездатна вчитися на помилках».</p></div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Бюрократія як феномен влади та управління</span><span>08 / 14</span></div>
+</section>
+
+<!-- =========================================================
+     09 — CRITICAL TRADITION
+     ========================================================= -->
+<section class="slide" data-title="Критика">
+    <div class="chrome-head"><span>§ 6 · Критична традиція</span><span class="red">Бюрократія як клас</span></div>
+    <div class="slide-content">
+        <div class="two" style="grid-template-columns: 1fr 1.3fr; align-items: start;">
+            <div>
+                <div class="kicker reveal">Від інструменту до власника</div>
+                <h1 class="reveal" style="font-size: 92px;">Апарат, що <span class="acc">привласнює</span> державу</h1>
+                <p class="lead reveal" style="margin-top: 32px; font-size: 24px; color: var(--ink-2);">Вебер бачив у бюрократії неминучу ціну раціональності. Критична традиція побачила нового господаря, який керує від імені суспільства, але у власних інтересах.</p>
+            </div>
+            <ol class="num stagger" style="margin-top: 12px;">
+                <li><b>1843</b><span><strong>Карл Маркс.</strong> Бюрократія робить «державну мету своєю приватною метою»; вона є «уявною державою» поруч зі справжньою.</span></li>
+                <li><b>1936</b><span><strong>Лев Троцький.</strong> Радянська бюрократія як прошарок, що узурпував владу робітничої держави: «зраджена революція».</span></li>
+                <li><b>1944</b><span><strong>Людвіг фон Мізес.</strong> Ліберальна критика: бюрократія раціональна лише там, де немає ринку і прибутку як критерію. Її розростання — наслідок розростання держави.</span></li>
+                <li><b>1957</b><span><strong>Мілован Джилас.</strong> Партійна номенклатура є «новим класом»: колективно володіє державною власністю, не володіючи нею формально.</span></li>
+            </ol>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Бюрократія як феномен влади та управління</span><span>09 / 14</span></div>
+</section>
+
+<!-- =========================================================
+     10 — LEDGER: debit / credit
+     ========================================================= -->
+<section class="slide" data-title="Баланс">
+    <div class="stamp reveal" data-ring="Дебет · Кредит · Баланс зведено · Форма № 10 · " data-center="Баланс" data-sub="§ 7" style="right: 130px; top: 130px; width: 210px; height: 210px; rotate: 11deg; z-index: 4;"></div>
+    <div class="chrome-head"><span>§ 7 · Бюрократія як інструмент управління</span><span class="red">Дебет · Кредит</span></div>
+    <div class="slide-content">
+        <div class="kicker reveal">Баланс</div>
+        <h2 class="reveal" style="margin-bottom: 40px; font-size: 60px; ">Чому без неї не обійтись<br><span class="light">і чому з нею важко</span></h2>
+        <div class="ledger reveal">
+            <div class="side">
+                <h3><span class="dot"></span>Що дає апарат</h3>
+                <ul>
+                    <li>Передбачуваність: однакові справи вирішуються однаково.</li>
+                    <li>Рівність перед правилом замість залежності від прихильності.</li>
+                    <li>Масштаб: мільйони пенсій, паспортів, податків щодня.</li>
+                    <li>Неперервність: уряди змінюються, реєстри лишаються.</li>
+                    <li>Стримування свавілля: кожне рішення документоване.</li>
+                </ul>
+            </div>
+            <div class="side">
+                <h3><span class="dot red"></span>Що вона забирає</h3>
+                <ul>
+                    <li>Гнучкість: нестандартний випадок не вписується в форму.</li>
+                    <li>Відповідальність: рішення «ухвалює процедура», винних немає.</li>
+                    <li>Швидкість: узгодження множаться швидше за результат.</li>
+                    <li>Прозорість: таємниця та мова форм ізолюють апарат.</li>
+                    <li>Політичний контроль: міністр залежить від тих, кого контролює.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Бюрократія як феномен влади та управління</span><span>10 / 14</span></div>
+</section>
+
+<!-- =========================================================
+     11 — EVOLUTION: dark timeline
+     ========================================================= -->
+<section class="slide dark" data-title="Еволюція">
+    <div class="chrome-head"><span>§ 8 · Еволюція моделей управління</span><span class="red">XX–XXI століття</span></div>
+    <div class="slide-content">
+        <div class="kicker reveal">Чотири відповіді на одну проблему</div>
+        <h2 class="reveal" style="margin-bottom: 72px;">Як намагалися <span class="acc">приборкати</span> апарат</h2>
+        <div class="timeline reveal">
+            <div class="track"></div>
+            <div class="steps stagger">
+                <div class="step"><div class="year">1900-ті – 1970-ті</div><h3>Веберівська модель</h3><p>Кар'єрна служба, правила, ієрархія. Держава загального добробуту будується саме цим апаратом.</p></div>
+                <div class="step"><div class="year">1980-ті – 2000-ні</div><h3>New Public Management</h3><p>Держава як фірма: показники, контракти, агенції, аутсорсинг, «клієнт» замість «громадянина».</p></div>
+                <div class="step"><div class="year">2000-ні – 2010-ті</div><h3>Good Governance</h3><p>Повернення до правил, але з прозорістю, участю громадян та оцінкою результату. Нео-веберівська держава.</p></div>
+                <div class="step"><div class="year">2010-ті – сьогодні</div><h3>Цифрова держава</h3><p>Реєстри замість довідок, алгоритм замість чиновника. Нова проблема: влада того, хто пише код.</p></div>
+            </div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Бюрократія як феномен влади та управління</span><span>11 / 14</span></div>
+</section>
+
+<!-- =========================================================
+     12 — UKRAINE: heritage vs reform
+     ========================================================= -->
+<section class="slide" data-title="Україна">
+    <div class="chrome-head"><span>§ 8 · Український контекст</span><span class="red">Спадщина та реформа</span></div>
+    <div class="slide-content">
+        <div class="two" style="align-items: start; gap: 56px;">
+            <div>
+                <div class="kicker reveal">Спадщина</div>
+                <h2 class="reveal" style="margin-bottom: 28px; font-size: 60px;">Від номенклатури<br>до держслужби</h2>
+                <ol class="num stagger">
+                    <li><b>I</b><span>Радянська модель: апарат підпорядкований партії, а не закону; лояльність важливіша за компетенцію.</span></li>
+                    <li><b>II</b><span>1990-ті: старий апарат за новими вивісками, злиття посади й бізнесу, «телефонне право».</span></li>
+                    <li><b>III</b><span>Проблема довіри: громадянин бачить у чиновнику не слугу норми, а бар'єр, який треба обійти.</span></li>
+                </ol>
+            </div>
+            <div class="card ink" style="padding: 40px 44px; margin-top: 8px;">
+                <div class="kicker">Реформа</div>
+                <h2 style="margin-bottom: 28px; font-size: 60px;">Три вектори <span class="acc">змін</span></h2>
+                <ol class="num stagger">
+                    <li><b>2015</b><span><strong>Закон «Про державну службу»:</strong> конкурси, розмежування політичних і адміністративних посад, державні секретарі.</span></li>
+                    <li><b>2014</b><span><strong>Децентралізація:</strong> повноваження й кошти передано громадам; апарат наближено до людини.</span></li>
+                    <li><b>2020</b><span><strong>Цифровізація:</strong> «Дія», електронні реєстри, ЦНАПи. Зникає контакт із чиновником, а з ним і поле для свавілля.</span></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span class="red">Цифровізація усуває бюрократизм, але не бюрократію: влада переходить з кабінету в код</span><span>12 / 14</span></div>
+</section>
+
+<!-- =========================================================
+     13 — CONCLUSIONS: red slide, four theses
+     ========================================================= -->
+<section class="slide red" data-title="Висновки">
+    <div class="disc reveal ink" style="width: 620px; height: 620px; right: -160px; top: -200px;"></div>
+    <div class="stamp reveal paper" data-ring="Затверджено · Резолютивна частина · Форма № 13 · " data-center="Ухвалено" data-sub="4 тези" style="right: 130px; top: 84px; width: 230px; height: 230px; rotate: -10deg; z-index: 4;"></div>
+    <div class="chrome-head"><span>Висновки</span><span class="red">Резолютивна частина</span></div>
+    <div class="slide-content">
+        <div class="kicker reveal">Підсумок</div>
+        <h1 class="reveal" style="margin-bottom: 44px; font-size: 96px;">Бюрократія — не хвороба,<br>а <span class="acc">форма влади</span></h1>
+        <div class="grid-4 stagger" style="gap: 36px;">
+            <div class="card" style="box-shadow: 12px 12px 0 var(--ink);"><div class="giant" style="font-size: 72px; margin-bottom: 14px; color: var(--vermilion);">01</div><p style="font-size: 20px;">Найраціональніша форма організації влади, яку знає модерн. Її не можна скасувати, лише переналаштувати.</p></div>
+            <div class="card" style="box-shadow: 12px 12px 0 var(--ink);"><div class="giant" style="font-size: 72px; margin-bottom: 14px; color: var(--vermilion);">02</div><p style="font-size: 20px;">Джерело її влади — монополія на знання, документ і процедуру. Контроль починається з прозорості.</p></div>
+            <div class="card" style="box-shadow: 12px 12px 0 var(--ink);"><div class="giant" style="font-size: 72px; margin-bottom: 14px; color: var(--vermilion);">03</div><p style="font-size: 20px;">Дисфункції вбудовані в логіку правил: кожне правило породжує ритуал, зону невизначеності та нову інстанцію.</p></div>
+            <div class="card ink" style="box-shadow: 12px 12px 0 var(--paper);"><div class="giant" style="font-size: 72px; margin-bottom: 14px; color: var(--vermilion);">04</div><p style="font-size: 20px;">Відповідь одна в усі епохи: підпорядкувати апарат праву, публічності та обраній владі. Змінюються лише інструменти.</p></div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Бюрократія як феномен влади та управління</span><span>13 / 14</span></div>
+</section>
+
+<!-- =========================================================
+     14 — CLOSING: dark, giant type, red disc, band
+     ========================================================= -->
+<section class="slide dark" data-title="Питання">
+    <div class="disc reveal" style="width: 820px; height: 820px; right: -200px; top: 120px;"></div>
+    <div class="band reveal red" style="top: 740px; rotate: 5deg;"><span>Виконано · Доповідь заслухано · До справи · Форма № 14 · Справу закрито · Виконано · Доповідь заслухано · До справи · Форма № 14 · Справу закрито ·</span></div>
+    <div class="stamp reveal ink" data-ring="Виконано · Доповідь заслухано · До справи · " data-center="Закрито" data-sub="14 / 14" style="right: 250px; top: 300px; width: 320px; height: 320px; rotate: 14deg; z-index: 4;"></div>
+    <div class="chrome-head"><span>Форма № 14 · Заключний аркуш</span><span class="red">Справу закрито</span></div>
+    <div class="slide-content" style="justify-content: flex-start; padding-top: 30px;">
+        <div class="kicker reveal">Дякуємо за увагу</div>
+        <div class="hero reveal" style="font-size: 150px;">Питання<br><span class="light">приймаються</span><br><span class="acc">без черги</span></div>
+    </div>
+    <div class="authors reveal" style="position: absolute; left: var(--pad-x); bottom: 118px; z-index: 2;">
+        <div style="color: var(--paper);">Ігор Захаров</div>
+        <div style="color: var(--paper);">Андрій Богачов</div>
+        <div style="color: var(--paper);">Паша Шульгачик</div>
+        <div style="color: var(--paper);">Дмитро Григораш</div>
+    </div>
+    <div class="chrome-foot"><span>Weber 1922 · Merton 1940 · Mises 1944 · Parkinson 1955 · Djilas 1957 · Crozier 1963 · Peter 1969</span><span>14 / 14</span></div>
+</section>
+
+</main>
+</div>
+
+<div class="deck-controls" id="deckControls" aria-hidden="true" hidden></div>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   =========================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = Array.from(document.querySelectorAll('.slide'));
+        this.stage = document.getElementById('deckStage');
+        this.current = 0;
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupWheelNav();
+        const fromHash = parseInt(location.hash.replace('#', ''), 10);
+        this.showSlide(Number.isFinite(fromHash) ? fromHash - 1 : 0, true);
+    }
+    setupStageScale() {
+        const scale = () => {
+            const f = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            const x = (window.innerWidth - 1920 * f) / 2;
+            const y = (window.innerHeight - 1080 * f) / 2;
+            this.stage.style.transform = `translate(${x}px, ${y}px) scale(${f})`;
+        };
+        scale();
+        window.addEventListener('resize', scale);
+    }
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true') return;
+            switch (e.key) {
+                case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown': e.preventDefault(); this.next(); break;
+                case 'ArrowLeft': case 'ArrowUp': case 'PageUp': e.preventDefault(); this.prev(); break;
+                case 'Home': e.preventDefault(); this.showSlide(0); break;
+                case 'End': e.preventDefault(); this.showSlide(this.slides.length - 1); break;
+            }
+        });
+    }
+    setupTouchNav() {
+        let sx = 0, sy = 0;
+        document.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+            if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) dx < 0 ? this.next() : this.prev();
+        }, { passive: true });
+    }
+    setupWheelNav() {
+        let locked = false;
+        document.addEventListener('wheel', (e) => {
+            if (document.body.classList.contains('editing') || locked || Math.abs(e.deltaY) < 20) return;
+            locked = true; e.deltaY > 0 ? this.next() : this.prev();
+            setTimeout(() => { locked = false; }, 700);
+        }, { passive: true });
+    }
+    next() { this.showSlide(this.current + 1); }
+    prev() { this.showSlide(this.current - 1); }
+    showSlide(i, instant) {
+        const target = Math.max(0, Math.min(i, this.slides.length - 1));
+        if (target === this.current && this.slides[target].classList.contains('visible')) return;
+        const apply = () => {
+            this.current = target;
+            this.slides.forEach((s, k) => { const on = k === this.current; s.classList.toggle('active', on); s.classList.toggle('visible', on); });
+            history.replaceState(null, '', `#${this.current + 1}`);
+            document.getElementById('progress').style.width = ((this.current + 1) / this.slides.length * 1920) + 'px';
+            if (this.onChange) this.onChange(this.current);
+        };
+        apply();
+    }
+}
+
+/* ===========================================
+   INLINE EDITOR — hover top-left corner or press E; Ctrl+S saves
+   =========================================== */
+const BUILD = '1789031378'; // bump on every file change: stale browser edits are dropped
+class InlineEditor {
+    constructor() {
+        this.isActive = false;
+        this.toggle = document.getElementById('editToggle');
+        this.hotzone = document.querySelector('.edit-hotzone');
+        this.editable = 'h1, h2, h3, p, li > span, .hero, .kicker, .chrome-head span, .chrome-foot span, .authors div, .tag, .band span, .giant';
+        this.restore(); this.bind();
+    }
+    bind() {
+        let t = null;
+        const hideLater = () => { t = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); };
+        this.hotzone.addEventListener('mouseenter', () => { clearTimeout(t); this.toggle.classList.add('show'); });
+        this.hotzone.addEventListener('mouseleave', hideLater);
+        this.toggle.addEventListener('mouseenter', () => clearTimeout(t));
+        this.toggle.addEventListener('mouseleave', hideLater);
+        this.hotzone.addEventListener('click', () => this.toggleEditMode());
+        this.toggle.addEventListener('click', () => this.toggleEditMode());
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'e' || e.key === 'E') && e.target.getAttribute('contenteditable') !== 'true') this.toggleEditMode();
+            if ((e.ctrlKey || e.metaKey) && e.key === 's' && this.isActive) { e.preventDefault(); this.save(); this.download(); }
+        });
+        document.addEventListener('input', () => { if (this.isActive) this.save(); });
+    }
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        document.body.classList.toggle('editing', this.isActive);
+        this.toggle.classList.toggle('active', this.isActive);
+        document.querySelectorAll(this.editable).forEach((el) => el.setAttribute('contenteditable', this.isActive ? 'true' : 'false'));
+        if (!this.isActive) this.save();
+    }
+    save() { try { localStorage.setItem('aparat-deck', JSON.stringify({ build: BUILD, html: Array.from(document.querySelectorAll('.slide')).map(el => el.outerHTML).join('') })); } catch (_) {} }
+    restore() { try { const raw = localStorage.getItem('aparat-deck'); if (!raw) return; let d = null; try { d = JSON.parse(raw); } catch (_) {} if (!d || d.build !== BUILD) { localStorage.removeItem('aparat-deck'); return; } document.querySelectorAll('.slide').forEach(el => el.remove()); document.getElementById('deckStage').insertAdjacentHTML('afterbegin', d.html); } catch (_) {} }
+    download() {
+        const c = document.documentElement.cloneNode(true);
+        c.querySelectorAll('[contenteditable]').forEach((el) => el.removeAttribute('contenteditable'));
+        c.querySelector('body').classList.remove('editing');
+        const blob = new Blob(['<!DOCTYPE html>\n' + c.outerHTML], { type: 'text/html' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'burokratiya-aparat.html'; a.click();
+    }
+}
+
+/* ===========================================
+   STAMP BUILDER — turns <div class="stamp" data-*> into SVG
+   =========================================== */
+function buildStamps() {
+    document.querySelectorAll('.stamp').forEach((el, i) => {
+        if (el.querySelector('svg')) return;
+        const ring = el.dataset.ring || '';
+        const center = el.dataset.center || '';
+        const sub = el.dataset.sub || '';
+        const id = 'ring' + i;
+        el.innerHTML = `<svg viewBox="0 0 300 300">
+  <defs><path id="${id}" d="M150,150 m-116,0 a116,116 0 1,1 232,0 a116,116 0 1,1 -232,0"/></defs>
+  <circle cx="150" cy="150" r="142" stroke-width="5"/>
+  <circle cx="150" cy="150" r="131" stroke-width="2"/>
+  <circle cx="150" cy="150" r="96" stroke-width="2"/>
+  <g class="ring"><text><textPath href="#${id}">${ring}${ring}</textPath></text></g>
+  <text class="center" x="150" y="${sub ? 150 : 164}">${center}</text>
+  ${sub ? `<text class="sub" x="150" y="186">${sub}</text>` : ''}
+</svg>`;
+    });
+}
+buildStamps();
+
+/* ===========================================
+   TILT — cards lean toward the cursor
+   =========================================== */
+document.querySelectorAll('.card').forEach((card) => {
+    card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = `translate(-4px,-4px) perspective(1200px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
+    });
+    card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+});
+
+
+/* ===========================================
+   SIDE NAV BUILDER — one tick per slide, labels from data-title
+   =========================================== */
+function buildSideNav(deck) {
+    const nav = document.getElementById('sideNav');
+    nav.innerHTML = '';
+    deck.slides.forEach((sl, k) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', `Слайд ${k + 1}: ${sl.dataset.title || ''}`);
+        b.innerHTML = `<span class="tick"></span><span class="lbl"><b>${String(k + 1).padStart(2, '0')}</b>${sl.dataset.title || ''}</span>`;
+        b.addEventListener('click', () => deck.showSlide(k));
+        nav.appendChild(b);
+    });
+    deck.onChange = (idx) => {
+        nav.querySelectorAll('button').forEach((b, k) => b.classList.toggle('active', k === idx));
+        const sl = deck.slides[idx];
+        nav.classList.toggle('on-dark', sl.classList.contains('dark'));
+        nav.classList.toggle('on-red', sl.classList.contains('red'));
+    };
+    deck.onChange(deck.current);
+}
+
+const editor = new InlineEditor();
+const deck = new SlidePresentation();
+buildSideNav(deck);
+</script>
+</body>
+</html>

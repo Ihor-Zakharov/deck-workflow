@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<title>Апарат — Brand Book</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;700;900&family=Manrope:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #E4391B; --secondary: #121110; --tertiary: #F1EADB;
+    --bg: #F1EADB; --surface: #FFFDF8; --border: #121110; --text: #121110; --muted: #8B8780;
+    --display: 'Unbounded', sans-serif; --body: 'Manrope', sans-serif; --mono: 'JetBrains Mono', monospace;
+  }
+  @page { size: A4; margin: 0; }
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 210mm; height: 297mm; background: var(--bg); color: var(--text); font-family: var(--body); padding: 14mm 14mm 12mm; display: flex; flex-direction: column; gap: 6mm; position: relative; overflow: hidden; }
+  .page::before { content: ""; position: absolute; left: -30mm; top: 96mm; width: 280mm; height: 7mm; background: var(--secondary); transform: rotate(-8deg); opacity: 0.08; }
+
+  .head { display: flex; align-items: flex-end; justify-content: space-between; border-bottom: 1mm solid var(--secondary); padding-bottom: 4mm; }
+  .brand { display: flex; align-items: center; gap: 5mm; }
+  .brand h1 { margin: 0; font-family: var(--display); font-weight: 900; font-size: 34px; letter-spacing: -0.03em; line-height: 0.95; }
+  .brand h1 span { color: var(--primary); }
+  .brand .sub { margin: 2mm 0 0; font-size: 8.5px; color: var(--muted); font-family: var(--mono); letter-spacing: 1.5px; text-transform: uppercase; }
+  .meta { text-align: right; font-family: var(--mono); font-size: 8.5px; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; line-height: 1.8; }
+  .meta .tag { color: var(--primary); }
+
+  .label { font-family: var(--mono); font-size: 8.5px; letter-spacing: 2px; color: var(--primary); text-transform: uppercase; margin-bottom: 2.5mm; display: flex; align-items: center; gap: 3mm; }
+  .label::before { content: ""; width: 7mm; height: 0.8mm; background: var(--primary); }
+
+  .colors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+  .sw { border: 0.6mm solid var(--border); overflow: hidden; background: var(--surface); }
+  .sw .fill { height: 20mm; border-bottom: 0.6mm solid var(--border); }
+  .sw .m { padding: 2.5mm 3mm; }
+  .sw .tier { font-family: var(--display); font-size: 9.5px; font-weight: 700; display: block; }
+  .sw .hex { font-family: var(--mono); font-size: 8.5px; color: var(--muted); display: block; margin-top: 1mm; }
+  .sw .use { font-size: 8px; color: var(--muted); line-height: 1.35; margin-top: 1.5mm; display: block; }
+
+  .twocol { display: grid; grid-template-columns: 1.15fr 1fr; gap: 4mm; }
+  .card { border: 0.6mm solid var(--border); padding: 5mm; background: var(--surface); }
+  .card.dark { background: var(--secondary); color: var(--tertiary); }
+  .t-display { font-family: var(--display); font-weight: 900; font-size: 30px; letter-spacing: -0.03em; line-height: 0.95; margin: 0; }
+  .t-display span { font-weight: 300; display: block; font-size: 20px; margin-top: 1.5mm; }
+  .t-body { font-size: 9.5px; line-height: 1.5; margin: 3mm 0 0; }
+  .t-mono { font-family: var(--mono); font-size: 8px; letter-spacing: 1.2px; text-transform: uppercase; margin-top: 2.5mm; display: block; opacity: .75; }
+  .principles ol { margin: 0; padding: 0; list-style: none; font-size: 8.8px; line-height: 1.4; display: grid; gap: 1.6mm; }
+  .principles li { display: grid; grid-template-columns: 7mm 1fr; gap: 1.5mm; }
+  .principles li b { font-family: var(--display); font-weight: 900; color: var(--primary); font-size: 11px; line-height: 1.1; }
+  .principles li strong { font-weight: 700; }
+
+  .comps { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3mm; }
+  .tile { border: 0.6mm solid var(--border); background: var(--surface); padding: 3mm 2mm; display: flex; flex-direction: column; align-items: center; gap: 1.5mm; text-align: center; }
+  .tile .v { font-family: var(--display); font-weight: 900; font-size: 18px; letter-spacing: -0.03em; color: var(--primary); line-height: 1; }
+  .tile .n { font-size: 7.5px; color: var(--muted); line-height: 1.3; }
+  .tile.dark { background: var(--secondary); color: var(--tertiary); }
+  .tile.dark .n { color: #E7DEC9; }
+
+  .wms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+  .wm { border: 0.6mm solid var(--border); padding: 5mm 4mm; background: var(--surface); display: flex; flex-direction: column; gap: 2mm; min-height: 24mm; justify-content: center; }
+  .wm.dark { background: var(--secondary); color: var(--tertiary); }
+  .wm.red { background: var(--primary); color: var(--tertiary); }
+  .wm .name { font-family: var(--display); font-weight: 900; font-size: 20px; letter-spacing: -0.02em; line-height: 1; }
+  .wm .name .lo { font-weight: 300; }
+  .wm .name .ac { color: var(--primary); }
+  .wm.red .name .ac { color: var(--secondary); }
+  .wm .mono { font-family: var(--mono); font-size: 7.5px; letter-spacing: 1.2px; text-transform: uppercase; opacity: .7; }
+
+
+  .icons { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3mm; }
+  .ic { border: 0.6mm solid var(--border); background: var(--surface); aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5mm; }
+  .ic svg { width: 9mm; height: 9mm; }
+  .ic span { font-family: var(--mono); font-size: 6.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+  .poster { background: var(--secondary); color: var(--tertiary); padding: 5mm 6mm; display: flex; justify-content: space-between; align-items: center; gap: 6mm; }
+  .poster .big { font-family: var(--display); font-weight: 900; font-size: 26px; letter-spacing: -0.03em; line-height: 0.95; }
+  .poster .big span { color: var(--primary); }
+  .poster .m { font-family: var(--mono); font-size: 7.5px; letter-spacing: 1.5px; text-transform: uppercase; opacity: .7; text-align: right; line-height: 1.7; }
+  .foot { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; padding-top: 3mm; border-top: 1mm solid var(--border); font-family: var(--mono); font-size: 7.5px; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="head">
+    <div class="brand">
+      <svg width="52" height="52" viewBox="0 0 72 72" aria-hidden="true">
+        <circle cx="36" cy="36" r="34" fill="#E4391B"/>
+        <rect x="6" y="31" width="60" height="10" fill="#121110" transform="rotate(-20 36 36)"/>
+        <circle cx="36" cy="36" r="7" fill="#F1EADB"/>
+      </svg>
+      <div>
+        <h1>АПА<span>РАТ</span> Brand Book</h1>
+        <p class="sub">Дизайн-система презентації «Бюрократія як феномен влади та управління»</p>
+      </div>
+    </div>
+    <div class="meta">
+      v1 · 10.09.2026<br/>
+      <span class="tag">Влада — це процедура</span>
+    </div>
+  </div>
+
+  <div>
+    <div class="label">Ієрархія кольорів</div>
+    <div class="colors">
+      <div class="sw"><div class="fill" style="background:var(--primary)"></div><div class="m"><span class="tier" style="color:var(--primary)">Кіновар · Primary</span><span class="hex">#E4391B</span><span class="use">Номери, акценти, секційні слайди, зміщені тіні. Одна пляма на слайд.</span></div></div>
+      <div class="sw"><div class="fill" style="background:var(--secondary)"></div><div class="m"><span class="tier">Туш · Secondary</span><span class="hex">#121110</span><span class="use">Текст, рамки 2px, діагональні стрічки, темні слайди для цитат.</span></div></div>
+      <div class="sw"><div class="fill" style="background:var(--tertiary)"></div><div class="m"><span class="tier">Папір · Tertiary</span><span class="hex">#F1EADB</span><span class="use">Фон контентних слайдів і текст на темному. Ніколи не чисто білий.</span></div></div>
+    </div>
+  </div>
+
+  <div class="twocol">
+    <div class="card">
+      <div class="label">Типографіка</div>
+      <p class="t-display">Бюрократія<span>як феномен влади</span></p>
+      <p class="t-body">Unbounded 900 кричить із плаката; Manrope 400 пояснює; JetBrains Mono нумерує форми, параграфи та роки.</p>
+      <span class="t-mono">Unbounded · Manrope · JetBrains Mono</span>
+    </div>
+    <div class="card dark principles">
+      <div class="label">Принципи</div>
+      <ol>
+        <li><b>01</b><span><strong>Одна плакатна думка.</strong> Заголовок читається з останнього ряду.</span></li>
+        <li><b>02</b><span><strong>Діагональ = енергія.</strong> Одна чорна стрічка під −6…−12° на слайд.</span></li>
+        <li><b>03</b><span><strong>Кіновар як сигнал.</strong> Тільки туди, куди має впасти око.</span></li>
+        <li><b>04</b><span><strong>Рамка 2px, тінь 8px.</strong> Без розмиттів і градієнтів.</span></li>
+        <li><b>05</b><span><strong>Номер — герой.</strong> Найбільший кегль на слайді.</span></li>
+        <li><b>06</b><span><strong>Папір, не екран.</strong> Теплий папір або суцільна туш.</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <div>
+    <div class="label">Компоненти · лічильники</div>
+    <div class="comps">
+      <div class="tile"><div class="v">06</div><div class="n">ознак ідеального типу</div></div>
+      <div class="tile dark"><div class="v">III</div><div class="n">типи панування</div></div>
+      <div class="tile"><div class="v">1922</div><div class="n">Вебер, «Господарство і суспільство»</div></div>
+      <div class="tile dark"><div class="v">§ 4</div><div class="n">бюрократія як влада</div></div>
+      <div class="tile"><div class="v">№ 01</div><div class="n">форма реєстрації</div></div>
+      <div class="tile dark"><div class="v">14</div><div class="n">слайдів у деці</div></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="label">Лого-блоки</div>
+    <div class="wms">
+      <div class="wm"><div class="name">АПА<span class="ac">РАТ</span></div><div class="mono">Акцент · кіновар на папері</div></div>
+      <div class="wm dark"><div class="name">АПА<span class="lo">РАТ</span></div><div class="mono">Розрізна вага · 900 / 300</div></div>
+      <div class="wm red"><div class="name">АПА<span class="ac">РАТ</span></div><div class="mono">Інверсія · туш на кіноварі</div></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="label">Іконки · геометрія 2px</div>
+    <div class="icons">
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><circle cx="20" cy="20" r="16"/><circle cx="20" cy="20" r="6" fill="#E4391B" stroke="none"/></svg><span>печатка</span></div>
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><rect x="6" y="4" width="28" height="32"/><path d="M12 12h16M12 19h16M12 26h10"/></svg><span>документ</span></div>
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><path d="M20 6v28M8 14h24M12 14l-6 10h12zM28 14l-6 10h12z"/></svg><span>право</span></div>
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><rect x="16" y="4" width="8" height="8" fill="#E4391B"/><rect x="4" y="28" width="8" height="8"/><rect x="16" y="28" width="8" height="8"/><rect x="28" y="28" width="8" height="8"/><path d="M20 12v8M8 28v-8h24v8"/></svg><span>ієрархія</span></div>
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><path d="M6 20h28M24 10l10 10-10 10"/></svg><span>процедура</span></div>
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><circle cx="20" cy="20" r="15"/><path d="M20 10v10l7 4"/></svg><span>тяганина</span></div>
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><rect x="5" y="9" width="30" height="22"/><path d="M5 9l15 12 15-12"/></svg><span>вхідний</span></div>
+      <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#121110" stroke-width="2.5"><path d="M8 32L32 8M8 8l24 24" stroke="#E4391B"/></svg><span>відхилено</span></div>
+    </div>
+  </div>
+
+  <div class="poster">
+    <div class="big">Повністю розвинена бюрократія —<br/>структура, яку <span>найважче зруйнувати</span>.</div>
+    <div class="m">Макс Вебер · 1922<br/>слайд 06 · цитата на туші</div>
+  </div>
+
+  <div class="foot">
+    <span>presentations/aparat/design/brand-book-a4.pdf</span>
+    <span>Повна система: design-system.html · Дека: burokratiya-aparat.html</span>
+  </div>
+</div>
+</body>
+</html>

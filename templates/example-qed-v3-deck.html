@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QED — The Jewel of Physics (v3)</title>
+
+<!-- Fonts from the «Lecture Notes» design system: Fraunces (display), IBM Plex Sans (body), IBM Plex Mono (chrome) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<link rel="stylesheet" href="lib/springs.css">
+
+<style>
+/* ===========================================
+   THEME — «Lecture Notes» design system tokens
+   See design/design-system.html for the full reference.
+   =========================================== */
+:root {
+    --gold: #E39B1E;         /* photon gold — shapes, stamps on dark, accent slides */
+    --gold-deep: #B0700A;    /* photon gold for text on paper */
+    --ink: #1B1A17;          /* text on paper */
+    --board: #16221D;        /* blackboard */
+    --board-2: #223229;
+    --chalk: #F1ECDD;        /* text on blackboard */
+    --paper: #F4EFE3;        /* graph paper */
+    --paper-2: #E9E2D0;
+    --white: #FBF8F0;
+    --blue: #3E6FD1;         /* electron blue — diagrams and grid only */
+    --steel: #7C7A72;
+
+    --stage-bg: var(--board);
+    --slide-bg: var(--paper);
+
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'IBM Plex Sans', Arial, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    --size-hero: 190px;
+    --size-h1: 104px;
+    --size-h2: 72px;
+    --size-h3: 32px;
+    --size-lead: 30px;
+    --size-body: 24px;
+    --size-caption: 17px;
+    --size-label: 15px;
+    --size-num: 250px;
+
+    --pad-x: 120px;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-reveal: cubic-bezier(0.77, 0, 0.175, 1);
+    --dur: 1.1s;
+    --ease-snappy: cubic-bezier(0.34, 1.2, 0.64, 1); --dur-snappy: 700ms;
+    --ease-slam: cubic-bezier(.2, 1.6, .4, 1); --dur-slam: 750ms;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===========================================
+   FIXED 16:9 STAGE: MANDATORY BASE STYLES (viewport-base.css)
+   =========================================== */
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-viewport { position: fixed; inset: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: var(--slide-bg, #fff); }
+.slide { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; display: block; visibility: hidden; opacity: 0; pointer-events: none; background: var(--slide-bg, #fff); }
+.slide.active, .slide.visible { visibility: visible; opacity: 1; pointer-events: auto; z-index: 1; }
+img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+.deck-controls { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 1000; }
+@media print {
+    html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+    .deck-viewport { position: static; overflow: visible; background: #fff; }
+    .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+    .slide { position: relative; display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; width: 1920px; height: 1080px; break-after: page; page-break-after: always; }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .deck-controls { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+}
+/* === END viewport-base.css === */
+
+/* ===========================================
+   SLIDE BASE — graph paper / blackboard / gold
+   =========================================== */
+.slide {
+    transition: opacity 1.2s ease-in-out, visibility 1.2s;
+    font-family: var(--font-body);
+    color: var(--ink);
+    font-weight: 400;
+    background-image:
+        linear-gradient(rgba(62,111,209,.11) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(62,111,209,.11) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: 0 0;
+}
+.slide.dark { background-color: var(--board); color: var(--chalk); background-image: linear-gradient(rgba(241,236,221,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(241,236,221,.045) 1px, transparent 1px); }
+.slide.gold { background-color: var(--gold); color: var(--ink); background-image: linear-gradient(rgba(27,26,23,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(27,26,23,.07) 1px, transparent 1px); }
+
+/* ===========================================
+   CHROME — mono journal labels, hairlines that draw in
+   =========================================== */
+.chrome-head, .chrome-foot {
+    position: absolute; left: var(--pad-x); right: var(--pad-x);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-mono); font-size: var(--size-label); letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink); z-index: 3;
+}
+.chrome-head { top: 44px; height: 48px; }
+.chrome-foot { bottom: 44px; height: 48px; }
+.chrome-head::after, .chrome-foot::after { content: ""; position: absolute; left: 0; right: 0; height: 2px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 1.5s var(--ease) .25s; }
+.chrome-head::after { bottom: -2px; }
+.chrome-foot::after { top: -2px; }
+.slide.visible .chrome-head::after, .slide.visible .chrome-foot::after { transform: scaleX(1); }
+.chrome-head .acc, .chrome-foot .acc { color: var(--gold-deep); }
+.dark .chrome-head, .dark .chrome-foot { color: var(--chalk); }
+.dark .chrome-head .acc, .dark .chrome-foot .acc { color: var(--gold); }
+.gold .chrome-head .acc, .gold .chrome-foot .acc { color: var(--ink); font-weight: 500; }
+
+.slide-content { position: absolute; left: var(--pad-x); right: var(--pad-x); top: 150px; bottom: 150px; display: flex; flex-direction: column; justify-content: center; z-index: 2; }
+
+/* ===========================================
+   TYPOGRAPHY
+   =========================================== */
+.kicker { font-family: var(--font-mono); font-size: var(--size-label); letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-deep); display: flex; align-items: center; gap: 16px; margin-bottom: 26px; }
+.kicker::before { content: ""; width: 44px; height: 3px; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform 1.1s var(--ease) .3s; }
+.slide.visible .kicker::before { transform: scaleX(1); }
+.dark .kicker { color: var(--gold); }
+.gold .kicker { color: var(--ink); }
+.gold .kicker::before { background: var(--ink); }
+
+.hero { font-family: var(--font-display); font-weight: 900; font-size: var(--size-hero); line-height: 0.9; letter-spacing: -0.035em; font-variation-settings: "opsz" 144; text-wrap: balance; hyphens: none; }
+h1 { font-family: var(--font-display); font-weight: 800; font-size: var(--size-h1); line-height: 0.96; letter-spacing: -0.03em; font-variation-settings: "opsz" 144; hyphens: none; }
+h2 { font-family: var(--font-display); font-weight: 800; font-size: var(--size-h2); line-height: 1.0; letter-spacing: -0.025em; font-variation-settings: "opsz" 144; hyphens: none; }
+h3 { font-family: var(--font-display); font-weight: 600; font-size: var(--size-h3); line-height: 1.15; letter-spacing: -0.015em; font-variation-settings: "opsz" 72; }
+.light { font-weight: 300; }
+em, .it { font-style: italic; }
+.acc { color: var(--gold-deep); }
+.dark .acc { color: var(--gold); }
+.gold .acc { color: var(--white); }
+.lead { font-size: var(--size-lead); line-height: 1.45; font-weight: 300; max-width: 1100px; }
+.lead strong { font-weight: 600; }
+p, li { font-size: var(--size-body); line-height: 1.5; }
+.caption { font-size: var(--size-caption); color: var(--steel); line-height: 1.45; }
+.dark .caption { color: var(--chalk); opacity: .65; }
+.mono { font-family: var(--font-mono); }
+.num { font-variant-numeric: tabular-nums; }
+
+/* KaTeX sizing */
+.tex { display: inline-block; }
+.tex.disp { display: block; }
+.tex .katex { font-size: 1em; }
+.tex.big .katex { font-size: 64px; }
+.tex.mid .katex { font-size: 40px; }
+.tex.small .katex { font-size: 26px; }
+.dark .katex { color: var(--chalk); }
+
+/* Numbered register */
+ol.reg { list-style: none; }
+ol.reg li { display: grid; grid-template-columns: 84px 1fr; gap: 16px; padding: 13px 0; border-bottom: 1.5px solid currentColor; align-items: baseline; }
+ol.reg li:first-child { border-top: 1.5px solid currentColor; }
+ol.reg li b { font-family: var(--font-mono); font-weight: 500; font-size: 17px; color: var(--gold-deep); letter-spacing: .06em; }
+.dark ol.reg li b { color: var(--gold); }
+ol.reg li span { font-size: 23px; }
+ol.reg li strong { font-weight: 600; }
+
+/* Tag */
+.tag { display: inline-block; border: 2px solid currentColor; padding: 8px 14px; font-family: var(--font-mono); font-size: var(--size-label); letter-spacing: 0.16em; text-transform: uppercase; }
+.tag.fill { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+.tag.ink { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+/* ===========================================
+   DECORATIVE DEVICES
+   =========================================== */
+/* Marquee band — blackboard strip with chalk formulas */
+.band { position: absolute; left: -200px; width: 2400px; padding: 16px 0; background: var(--board); color: var(--chalk); font-family: var(--font-mono); font-size: 19px; letter-spacing: 0.22em; white-space: nowrap; overflow: hidden; z-index: 1; }
+.band.gold { background: var(--gold); color: var(--ink); }
+.band.paper { background: var(--paper); color: var(--ink); }
+.band span { display: inline-block; animation: marquee 64s linear infinite; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.band.reveal { transform: translateX(-120px); transition: transform 1.3s var(--ease) .4s, opacity .6s .4s; }
+.slide.visible .band.reveal { transform: none; }
+
+/* Gold disc (the photon) */
+.disc { position: absolute; border-radius: 50%; background: var(--gold); z-index: 0; }
+.disc.board { background: var(--board); }
+.disc.paper { background: var(--paper); }
+.disc.reveal { transform: scale(0.2); transition: transform 1.5s var(--ease-snappy), opacity .6s; }
+.slide.visible .disc.reveal { transform: scale(1); }
+@keyframes drift { from { translate: 0 0; } to { translate: 0 -30px; } }
+.slide.visible .disc { animation: drift 11s ease-in-out 1.6s infinite alternate; }
+
+/* Giant numeral / word */
+.giant { font-family: var(--font-display); font-weight: 900; font-size: var(--size-num); line-height: 0.85; letter-spacing: -0.05em; font-variation-settings: "opsz" 144; }
+.giant.reveal { transform: translateY(120px); transition: transform 1.4s var(--ease), opacity .8s; }
+.slide.visible .giant.reveal { transform: none; }
+
+/* Index card — white, ink border, gold top rule */
+.card { position: relative; border: 2px solid var(--ink); background: var(--white); padding: 34px 34px 30px; color: var(--ink); transition: transform .3s var(--ease), box-shadow .3s var(--ease); }
+.card::before { content: ""; position: absolute; left: -2px; right: -2px; top: -2px; height: 8px; background: var(--gold); }
+.card:hover { transform: translate(0, -5px); box-shadow: 10px 10px 0 var(--gold); }
+.card.board { background: var(--board); color: var(--chalk); border-color: var(--board); }
+.card.board::before { background: var(--gold); }
+.card.gold { background: var(--gold); color: var(--ink); border-color: var(--ink); }
+.card.gold::before { background: var(--ink); }
+.dark .card { border-color: var(--chalk); background: var(--board-2); color: var(--chalk); }
+.dark .card:hover { box-shadow: 10px 10px 0 var(--gold); }
+.card .tab { position: absolute; right: 22px; top: -2px; background: var(--ink); color: var(--paper); font-family: var(--font-mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; padding: 6px 10px; }
+.dark .card .tab { background: var(--chalk); color: var(--board); }
+.card h3 { margin-bottom: 10px; }
+.card p { font-size: 20px; line-height: 1.45; }
+.card .kicker { margin-bottom: 12px; }
+
+/* ===========================================
+   LAYOUT HELPERS
+   =========================================== */
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+
+/* Trait — top rule that draws in */
+.trait { position: relative; padding-top: 18px; }
+.trait::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 1.3s var(--ease) .6s; }
+.slide.visible .trait::before { transform: scaleX(1); }
+.trait .n { font-family: var(--font-display); font-weight: 900; font-size: 60px; letter-spacing: -0.04em; color: var(--gold-deep); line-height: 1; margin-bottom: 12px; font-variation-settings: "opsz" 144; }
+.dark .trait .n { color: var(--gold); }
+.trait h3 { margin-bottom: 8px; font-size: 27px; }
+.trait p { font-size: 19.5px; line-height: 1.45; opacity: .9; }
+
+/* Timeline — six steps */
+.timeline { position: relative; }
+.timeline .track { position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--chalk); transform: scaleX(0); transform-origin: left; transition: transform 2.2s var(--ease) .5s; }
+.slide.visible .timeline .track { transform: scaleX(1); }
+.timeline .steps { display: grid; grid-template-columns: repeat(6, 1fr); gap: 28px; padding-top: 44px; }
+.timeline .step { position: relative; }
+.timeline .step::before { content: ""; position: absolute; left: 0; top: -54px; width: 22px; height: 22px; border-radius: 50%; background: var(--gold); border: 3px solid var(--board); box-shadow: 0 0 0 3px var(--chalk); transform: scale(0); transition: transform .7s cubic-bezier(.34,1.5,.64,1); }
+.slide.visible .timeline .step::before { transform: scale(1); }
+.slide.visible .timeline .step:nth-child(1)::before { transition-delay: 0.70s; }
+.slide.visible .timeline .step:nth-child(2)::before { transition-delay: 0.95s; }
+.slide.visible .timeline .step:nth-child(3)::before { transition-delay: 1.20s; }
+.slide.visible .timeline .step:nth-child(4)::before { transition-delay: 1.45s; }
+.slide.visible .timeline .step:nth-child(5)::before { transition-delay: 1.70s; }
+.slide.visible .timeline .step:nth-child(6)::before { transition-delay: 1.95s; }
+.timeline .year { font-family: var(--font-mono); font-size: var(--size-label); letter-spacing: 0.14em; color: var(--gold); margin-bottom: 12px; }
+.timeline h3 { margin-bottom: 10px; font-size: 27px; }
+.timeline p { font-size: 18.5px; line-height: 1.42; opacity: .82; }
+
+/* Authors */
+.authors { display: grid; grid-template-columns: repeat(3, auto); gap: 56px; justify-content: start; }
+.authors div { font-family: var(--font-display); font-weight: 600; font-size: 26px; letter-spacing: -0.01em; font-variation-settings: "opsz" 48; }
+.authors .role { display: block; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--steel); margin-top: 8px; font-weight: 400; }
+.dark .authors .role { color: var(--chalk); opacity: .6; }
+
+/* Scoreboard counters */
+.score { border-top: 3px solid currentColor; padding-top: 16px; }
+.score .v { font-family: var(--font-display); font-weight: 700; font-size: 54px; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; font-variation-settings: "opsz" 144; }
+.score .v small { font-size: 26px; font-weight: 400; color: var(--steel); letter-spacing: 0; }
+.score .l { font-size: 18px; line-height: 1.4; margin-top: 12px; }
+.score .src { font-family: var(--font-mono); font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-deep); margin-top: 8px; }
+
+/* Glossary table */
+.gloss { width: 100%; border-collapse: collapse; }
+.gloss th { text-align: left; font-family: var(--font-mono); font-weight: 500; font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-deep); padding: 0 16px 10px 0; border-bottom: 2px solid var(--ink); }
+.gloss td { padding: 9px 18px 9px 0; border-bottom: 1px solid rgba(27,26,23,.25); vertical-align: top; }
+.gloss td.t { font-family: var(--font-display); font-weight: 600; font-size: 24px; letter-spacing: -0.01em; white-space: nowrap; font-variation-settings: "opsz" 48; }
+.gloss td.s { font-family: var(--font-mono); font-size: 15px; color: var(--gold-deep); white-space: nowrap; padding-top: 13px; }
+.gloss td.u { font-size: 19px; }
+.gloss td.n { font-size: 18px; color: #4a4841; line-height: 1.4; }
+.gloss td.n i { color: var(--ink); }
+.gloss tr:hover td { background: rgba(227,155,30,.12); }
+.gloss.stagger > tbody { opacity: 1; transform: none; transition: none; }
+.gloss.stagger tr { opacity: 0; transform: translateY(18px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+.slide.visible .gloss.stagger tr { opacity: 1; transform: none; transition-delay: calc(.31s + var(--r, 1) * .13s); }
+.gloss.stagger tr:nth-child(1) { --r: 1; } .gloss.stagger tr:nth-child(2) { --r: 2; } .gloss.stagger tr:nth-child(3) { --r: 3; } .gloss.stagger tr:nth-child(4) { --r: 4; } .gloss.stagger tr:nth-child(5) { --r: 5; } .gloss.stagger tr:nth-child(6) { --r: 6; } .gloss.stagger tr:nth-child(7) { --r: 7; } .gloss.stagger tr:nth-child(8) { --r: 8; } .gloss.stagger tr:nth-child(9) { --r: 9; } .gloss.stagger tr:nth-child(10) { --r: 10; } .gloss.stagger tr:nth-child(11) { --r: 11; } .gloss.stagger tr:nth-child(12) { --r: 12; }
+
+/* ===========================================
+   FEYNMAN DIAGRAMS — SVG that draws itself in
+   =========================================== */
+.fd { display: block; }
+.fd .f { fill: none; stroke: currentColor; stroke-width: 3.2; stroke-linecap: round; }
+.fd .p { fill: none; stroke: var(--gold); stroke-width: 3.2; stroke-linecap: round; }
+.fd .e { fill: none; stroke: var(--blue); stroke-width: 3.2; stroke-linecap: round; }
+.fd .h { fill: none; stroke: currentColor; stroke-width: 7; stroke-linecap: round; opacity: .55; }
+.fd .v { fill: var(--gold); stroke: none; }
+.fd .a { fill: currentColor; stroke: none; }
+.fd .e + .a, .fd .a.blue { fill: var(--blue); }
+.fd .lbl { font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: 22px; fill: currentColor; }
+.fd .lbl.g { fill: var(--gold); }
+.fd .lbl.mono { font-family: var(--font-mono); font-style: normal; font-size: 14px; letter-spacing: .08em; }
+.fd .f, .fd .p, .fd .e, .fd .h { stroke-dasharray: var(--len, 1000); stroke-dashoffset: var(--len, 1000); transition: stroke-dashoffset 2s var(--ease); }
+.fd .v, .fd .a, .fd .lbl { opacity: 0; transform: scale(.4); transform-box: fill-box; transform-origin: center; transition: opacity .6s ease, transform .8s cubic-bezier(.34,1.4,.64,1); }
+.fd .lbl { transform: none; }
+.slide.visible .fd .f, .slide.visible .fd .p, .slide.visible .fd .e, .slide.visible .fd .h { stroke-dashoffset: 0; }
+.slide.visible .fd .v, .slide.visible .fd .a, .slide.visible .fd .lbl { opacity: 1; transform: none; }
+.slide.visible .fd .v { transition-delay: 1.6s; }
+.slide.visible .fd .a { transition-delay: 1.4s; }
+.slide.visible .fd .lbl { transition-delay: 1.9s; }
+.fd.big .f, .fd.big .p, .fd.big .e { stroke-width: 5; }
+.fd.big .lbl { font-size: 40px; }
+.fd.on-gold .p { stroke: var(--board); }
+.fd.chalk-lbl .lbl.g { fill: var(--chalk); }
+.fd.on-gold .v { fill: var(--board); }
+.slide.visible .fd.big.on-gold .p { animation: none; }
+/* ambient: the photon line shimmers once drawn */
+@keyframes shimmer { 0%, 100% { filter: drop-shadow(0 0 0 rgba(227,155,30,0)); } 50% { filter: drop-shadow(0 0 6px rgba(227,155,30,.55)); } }
+.slide.visible .fd.big .p { animation: shimmer 8s ease-in-out 2.6s infinite; }
+
+/* diagram card */
+.dcard { border: 2px solid var(--ink); background: var(--white); padding: 20px 22px 18px; position: relative; transition: transform .3s var(--ease), box-shadow .3s var(--ease); }
+.dcard:hover { transform: translateY(-5px); box-shadow: 10px 10px 0 var(--gold); }
+.dcard .fd { width: 100%; height: 250px; }
+.dcard h3 { font-size: 24px; margin-top: 8px; }
+.dcard p { font-size: 17.5px; line-height: 1.4; color: #4a4841; }
+.dcard .fig { position: absolute; right: 16px; top: 12px; font-family: var(--font-mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--gold-deep); }
+
+/* ===========================================
+   ANIMATIONS — reveal cascade
+   =========================================== */
+.reveal { opacity: 0; transform: translateY(36px); transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease); }
+.slide.visible .reveal { opacity: 1; transform: none; }
+.slide.visible .reveal:nth-child(1) { transition-delay: 0.08s; }
+.slide.visible .reveal:nth-child(2) { transition-delay: 0.24s; }
+.slide.visible .reveal:nth-child(3) { transition-delay: 0.40s; }
+.slide.visible .reveal:nth-child(4) { transition-delay: 0.56s; }
+.slide.visible .reveal:nth-child(5) { transition-delay: 0.72s; }
+.slide.visible .reveal:nth-child(6) { transition-delay: 0.88s; }
+.slide.visible .reveal:nth-child(7) { transition-delay: 1.04s; }
+.slide.visible .reveal:nth-child(8) { transition-delay: 1.20s; }
+.stagger > * { opacity: 0; transform: translateY(28px); transition: opacity .85s var(--ease), transform .85s var(--ease); }
+.slide.visible .stagger > * { opacity: 1; transform: none; }
+.slide.visible .stagger > *:nth-child(1) { transition-delay: 0.45s; }
+.slide.visible .stagger > *:nth-child(2) { transition-delay: 0.59s; }
+.slide.visible .stagger > *:nth-child(3) { transition-delay: 0.73s; }
+.slide.visible .stagger > *:nth-child(4) { transition-delay: 0.87s; }
+.slide.visible .stagger > *:nth-child(5) { transition-delay: 1.01s; }
+.slide.visible .stagger > *:nth-child(6) { transition-delay: 1.15s; }
+.slide.visible .stagger > *:nth-child(7) { transition-delay: 1.29s; }
+.slide.visible .stagger > *:nth-child(8) { transition-delay: 1.43s; }
+.slide.visible .stagger > *:nth-child(9) { transition-delay: 1.57s; }
+.slide.visible .stagger > *:nth-child(10) { transition-delay: 1.71s; }
+.slide.visible .stagger > *:nth-child(11) { transition-delay: 1.85s; }
+.slide.visible .stagger > *:nth-child(12) { transition-delay: 1.99s; }
+.hero, h1 { transform-origin: left bottom; }
+.hero.reveal { transform: translateY(40px) skewY(1.5deg); }
+.slide.visible .hero.reveal { transform: none; }
+
+/* ===========================================
+   STAMP — circular ink stamp, slams in and slowly turns
+   =========================================== */
+.stamp { position: absolute; z-index: 3; color: var(--gold-deep); mix-blend-mode: multiply; pointer-events: none; }
+.stamp.ink { color: var(--ink); }
+.stamp.chalk { color: var(--chalk); mix-blend-mode: normal; }
+.stamp.goldy { color: var(--gold); mix-blend-mode: normal; }
+.dark .stamp { mix-blend-mode: normal; }
+.stamp svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.stamp circle { fill: none; stroke: currentColor; }
+.stamp .ring text { font-family: var(--font-mono); font-size: 21px; letter-spacing: 0.22em; text-transform: uppercase; fill: currentColor; font-weight: 500; }
+.stamp .center { font-family: var(--font-display); font-weight: 800; font-size: 44px; letter-spacing: -0.02em; fill: currentColor; text-anchor: middle; font-variation-settings: "opsz" 144; }
+.stamp .sub { font-family: var(--font-mono); font-size: 18px; letter-spacing: 0.16em; text-transform: uppercase; fill: currentColor; text-anchor: middle; }
+.stamp .ring { transform-origin: 150px 150px; animation: ring-turn 55s linear infinite; }
+@keyframes ring-turn { to { transform: rotate(360deg); } }
+.stamp.reveal { opacity: 0; transform: scale(2.4); filter: blur(6px); transition: opacity .45s ease, transform .7s cubic-bezier(.2,1.6,.4,1), filter .6s ease; }
+.slide.visible .stamp.reveal { opacity: .9; transform: scale(1); filter: blur(0); transition-delay: 1.4s; }
+.stamp::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: repeating-radial-gradient(circle at 40% 30%, transparent 0 3px, rgba(255,255,255,.35) 3px 4px); mix-blend-mode: screen; opacity: .35; }
+.stamp.mini .ring text { font-size: 30px; letter-spacing: .3em; }
+.stamp.mini .center { font-size: 84px; }
+
+/* progress bar */
+.progress { position: absolute; left: 0; bottom: 0; height: 6px; background: var(--gold); z-index: 50; transition: width .6s var(--ease); }
+
+/* ===========================================
+   SIDE NAV — left middle, hover labels
+   =========================================== */
+.side-nav { position: absolute; left: 34px; top: 50%; transform: translateY(-50%); z-index: 60; display: flex; flex-direction: column; gap: 11px; }
+.side-nav button { all: unset; cursor: pointer; display: flex; align-items: center; gap: 14px; height: 18px; position: relative; }
+.side-nav .tick { width: 22px; height: 3px; background: currentColor; opacity: .35; transition: width .35s var(--ease), opacity .3s, background .3s, transform .35s var(--ease); transform-origin: left; }
+.side-nav .lbl { display: flex; align-items: center; gap: 10px; background: var(--ink); color: var(--paper); font-family: var(--font-mono); font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 8px 14px 8px 12px; white-space: nowrap; opacity: 0; transform: translateX(-14px) skewX(-6deg); transition: opacity .3s var(--ease), transform .4s var(--ease); pointer-events: none; box-shadow: 5px 5px 0 var(--gold); }
+.side-nav .lbl b { font-family: var(--font-display); font-weight: 800; color: var(--gold); font-size: 13px; letter-spacing: 0; }
+.side-nav button:hover .tick { width: 44px; opacity: 1; }
+.side-nav button:hover .lbl { opacity: 1; transform: translateX(0) skewX(0); }
+.side-nav button.active .tick { width: 44px; opacity: 1; background: var(--gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 25%, transparent); animation: tick-pop .5s var(--ease); }
+@keyframes tick-pop { 0% { transform: scaleX(.4); } 60% { transform: scaleX(1.15); } 100% { transform: scaleX(1); } }
+.deck-stage > .side-nav { color: var(--ink); }
+.deck-stage > .side-nav.on-dark { color: var(--chalk); }
+.deck-stage > .side-nav.on-gold { color: var(--ink); }
+.deck-stage > .side-nav.on-gold .lbl { box-shadow: 5px 5px 0 var(--paper); }
+.deck-stage > .side-nav.on-gold button.active .tick { background: var(--ink); box-shadow: 0 0 0 3px rgba(27,26,23,.25); }
+
+/* ===========================================
+   FIGURES — chalk frame with hatched placeholder
+   =========================================== */
+.fig { position: relative; border: 3px solid var(--ink); background: var(--board); margin: 0; overflow: hidden; }
+.fig img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s var(--ease); }
+.fig:hover img { transform: scale(1.03); }
+.fig figcaption { position: absolute; left: -3px; bottom: -3px; background: var(--paper); color: var(--ink); font-family: var(--font-mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; padding: 9px 14px; z-index: 2; }
+.fig.missing img { display: none; }
+.fig.missing { background: repeating-linear-gradient(45deg, var(--board) 0 10px, var(--board-2) 10px 20px); }
+.fig.missing::after { content: attr(data-file); position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-mono); font-size: 14px; letter-spacing: .16em; text-transform: uppercase; color: var(--chalk); text-align: center; padding: 30px; }
+/* full-bleed scene behind a dark slide */
+.scene { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.scene img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .8; transform: scale(1.02); transition: transform 12s ease-out; }
+.slide.visible .scene img { transform: scale(1.06); }
+.scene.missing img { display: none; }
+.scene::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(22,34,29,.94) 0%, rgba(22,34,29,.86) 48%, rgba(22,34,29,.25) 100%); }
+.scene.board::after { background: linear-gradient(90deg, rgba(22,34,29,.86) 0%, rgba(22,34,29,.78) 50%, rgba(22,34,29,.55) 100%); }
+.scene.board img { opacity: .75; object-position: center 40%; }
+.scene.antenna img { opacity: .9; }
+/* chalk portrait in a chalk frame with a gold hard shadow */
+.fig.portrait { aspect-ratio: 4 / 5; border-color: var(--chalk); box-shadow: 16px 16px 0 var(--gold); }
+.fig.portrait img { object-position: center 30%; }
+.fig.portrait figcaption { left: auto; right: -3px; bottom: -3px; background: var(--gold); color: var(--ink); }
+/* the title plate: a square chalk figure in the chalk frame, gold hard shadow */
+.fig.plate { aspect-ratio: 1 / 1; border-color: var(--chalk); box-shadow: 18px 18px 0 var(--gold); background: var(--board-2); }
+.fig.plate img { object-position: center; }
+.fig.plate figcaption { left: -3px; bottom: -3px; background: var(--gold); color: var(--ink); }
+.fig.plate.missing::after { font-size: 13px; }
+/* number rows (slide 13) */
+.rows .row { display: grid; grid-template-columns: 250px 1fr; gap: 26px; padding: 16px 0; border-top: 1.5px solid rgba(241,236,221,.35); align-items: start; }
+.rows .row:last-child { border-bottom: 1.5px solid rgba(241,236,221,.35); }
+.rows .v { font-family: var(--font-display); font-weight: 700; font-size: 40px; color: var(--gold); line-height: 1.05; letter-spacing: -0.02em; font-variation-settings: "opsz" 144; padding-top: 4px; }
+.rows .v small { font-size: 18px; opacity: .75; font-weight: 400; letter-spacing: 0; }
+.rows h3 { font-size: 24px; margin-bottom: 6px; }
+.rows p { font-size: 18.5px; line-height: 1.42; opacity: .9; }
+.scene.missing::before { content: attr(data-file); position: absolute; right: 60px; bottom: 120px; z-index: 1; font-family: var(--font-mono); font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--chalk); opacity: .55; }
+
+/* filed note (dossier) on the contents slide */
+.dossier { position: relative; display: grid; grid-template-columns: 170px 1fr; gap: 28px; align-items: center; margin-top: 44px; max-width: 740px; background: var(--white); border: 2px solid var(--ink); padding: 24px 28px 24px 24px; rotate: -1.5deg; transform-origin: left center; transition: rotate .5s var(--ease), box-shadow .3s; }
+.dossier:hover { rotate: 0deg; box-shadow: 12px 12px 0 var(--gold); }
+.dossier .clip { position: absolute; width: 36px; height: 82px; left: 40px; top: -40px; rotate: 8deg; }
+.dossier .fig { width: 170px; aspect-ratio: 4 / 5; border-width: 2px; }
+.dossier .fig img { object-position: center 25%; }
+.dossier .fig.missing::after { font-size: 11px; padding: 10px; }
+.dossier .q { font-family: var(--font-display); font-weight: 500; font-style: italic; font-size: 23px; line-height: 1.3; letter-spacing: -0.01em; font-variation-settings: "opsz" 48; }
+.dossier .who { font-family: var(--font-mono); font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--steel); margin-top: 12px; line-height: 1.6; }
+.dossier .who b { color: var(--gold-deep); font-weight: 500; }
+.dossier .stamp.mini { z-index: 3; }
+.slide.visible .dossier .stamp.reveal { transition-delay: 1.9s; opacity: .85; }
+
+
+/* ===========================================
+   v3 ADDITIONS — title scene, text builds, hero stamps, the 3D wall (non-interactive)
+   =========================================== */
+.scene.title img { opacity: .72; object-position: center 40%; }
+.scene.title::after { background: linear-gradient(90deg, rgba(22,34,29,.97) 0%, rgba(22,34,29,.9) 42%, rgba(22,34,29,.45) 100%), linear-gradient(0deg, rgba(22,34,29,.9) 0%, rgba(22,34,29,0) 40%); }
+
+/* word-by-word keynote build (2–3 headings per deck) */
+.words .w { display: inline-block; white-space: pre; }
+.words .w > * { display: inline-block; opacity: 0; transform: translateY(.35em); filter: blur(8px); transition: opacity .7s var(--ease), transform 1s var(--ease), filter 1s var(--ease); transition-delay: calc(var(--w0, .25s) + var(--i, 0) * .09s); }
+.slide.visible .words .w > * { opacity: 1; transform: none; filter: blur(0); }
+/* letter-by-letter blur-in (1–2 slides per deck: title and closing) */
+.letters .l { display: inline-block; opacity: 0; filter: blur(12px); transform: translateY(.12em); transition: opacity .9s var(--ease), filter .9s var(--ease), transform .9s var(--ease); transition-delay: calc(var(--l0, .3s) + var(--i, 0) * .05s); }
+.slide.visible .letters .l { opacity: 1; filter: blur(0); transform: none; }
+/* hero stamp entrance — blur + spring, once or twice per deck */
+.stamp.hero.reveal { transform: scale(1.8) rotate(9deg); filter: blur(14px); transition: opacity .6s ease, transform var(--dur-slam) var(--ease-slam), filter .9s ease; }
+.slide.visible .stamp.hero.reveal { opacity: .92; transform: scale(1) rotate(0deg); filter: blur(0); transition-delay: 1.7s; }
+
+/* the wall: a tilted 3D canvas of twelve diagrams — ripple in, automatic focus sequence, no clicking */
+.wall-viewport { position: absolute; inset: 0; z-index: 1; perspective: 2400px; perspective-origin: 50% 45%; overflow: hidden; pointer-events: none; }
+.wall-viewport::before, .wall-viewport::after { content: ""; position: absolute; left: 0; right: 0; height: 260px; z-index: 4; pointer-events: none; }
+.wall-viewport::before { top: 0; background: linear-gradient(180deg, rgba(22,34,29,.97) 0%, rgba(22,34,29,.8) 55%, rgba(22,34,29,0) 100%); }
+.wall-viewport::after { bottom: 0; background: linear-gradient(0deg, rgba(22,34,29,.97) 0%, rgba(22,34,29,.8) 55%, rgba(22,34,29,0) 100%); }
+.wall { position: absolute; left: 50%; top: 50%; width: 2500px; height: 1560px; margin-left: -1250px; margin-top: -720px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 34px; padding: 40px; transform: rotateX(12deg) rotateY(-9deg) rotateZ(-2deg) scale(1.22); transition: transform 2.4s var(--ease); }
+.slide.visible .wall { transform: rotateX(12deg) rotateY(-9deg) rotateZ(-2deg) scale(.82); animation: wall-pan 46s ease-in-out 2.6s infinite alternate; }
+@keyframes wall-pan { from { translate: 0 0; } to { translate: -90px -40px; } }
+.tile { position: relative; background: rgba(241,236,221,.05); border: 1px solid rgba(241,236,221,.14); border-radius: 8px; padding: 22px 22px 14px; opacity: 0; transform: scale(.82) translateY(30px); transition: opacity .8s var(--ease), transform .9s var(--ease), filter .7s var(--ease); transition-delay: var(--d, 0s); }
+.tile:nth-child(3n) { box-shadow: 0 32px 80px -22px rgba(0,0,0,.7); } .tile:nth-child(3n+1) { box-shadow: 0 14px 40px -16px rgba(0,0,0,.5); }
+.slide.visible .tile { opacity: 1; transform: none; }
+.tile .fd { width: 100%; height: 250px; color: var(--chalk); }
+.tile .fd .f, .tile .fd .p, .tile .fd .h { transition-delay: calc(var(--d, 0s) + .35s); }
+.tile figcaption { font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--chalk); opacity: .6; margin-top: 6px; }
+.wall.static { transform: rotateX(12deg) rotateY(-9deg) rotateZ(-2deg) scale(.82); }
+.wall.static .tile { opacity: .16; transform: none; transition-delay: 0s; }
+.slide.visible .wall.static { animation: wall-pan 60s ease-in-out 1s infinite alternate; transform: rotateX(12deg) rotateY(-9deg) rotateZ(-2deg) scale(.82); }
+
+/* ===========================================
+   INLINE EDITING — hover top-left or press E
+   =========================================== */
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle { position: fixed; top: 16px; left: 16px; z-index: 10001; width: 44px; height: 44px; border: 2px solid var(--chalk); background: var(--gold); color: var(--ink); font-size: 18px; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s; }
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { background: var(--chalk); color: var(--ink); }
+body.editing [contenteditable="true"] { outline: 2px dashed var(--gold); outline-offset: 4px; }
+.edit-hint { position: fixed; top: 26px; left: 72px; z-index: 10001; font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--chalk); opacity: 0; transition: opacity .3s; pointer-events: none; }
+body.editing .edit-hint { opacity: .85; }
+</style>
+</head>
+<body>
+
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✎</button>
+<div class="edit-hint">Edit mode · click any text · Ctrl+S to save</div>
+
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage" aria-label="Presentation">
+<div class="progress" id="progress"></div>
+<nav class="side-nav" id="sideNav" aria-label="Slide navigation"></nav>
+
+<!-- =========================================================
+     01 — TITLE: custom generated background, hero builds letter by letter, hero stamp, band
+     ========================================================= -->
+<section class="slide dark" data-title="Title">
+    <div class="scene title" data-file="assets/blackboard.jpg"><img src="assets/blackboard.jpg" alt="" onerror="this.parentNode.classList.add('missing')"></div>
+    <div class="band reveal" style="top: 790px; rotate: -2deg;"><span>e⁻ → e⁻ + γ · α = e²/4πε₀ħc ≈ 1/137.036 · ℒ = ψ̄(iγ^μD_μ − m)ψ − ¼F_μνF^μν · Dirac 1928 · Tomonaga 1946 · Schwinger 1948 · Feynman 1949 · Dyson 1949 · Nobel 1965 · e⁻ → e⁻ + γ · α = e²/4πε₀ħc ≈ 1/137.036 · ℒ = ψ̄(iγ^μD_μ − m)ψ − ¼F_μνF^μν · Dirac 1928 · Tomonaga 1946 · Schwinger 1948 · Feynman 1949 · Dyson 1949 · Nobel 1965 · </span></div>
+    <div class="disc reveal" style="width: 620px; height: 620px; right: 60px; top: -300px; opacity: .92; z-index: 1;"></div>
+    <svg class="fd big chalk-lbl" viewBox="0 0 400 300" style="position: absolute; right: 330px; top: 250px; width: 540px; height: 405px; color: var(--chalk); z-index: 2;" data-feyn='[{"t":"f","x1":40,"y1":250,"x2":190,"y2":160,"lbl":"e⁻","lx":30,"ly":290},{"t":"f","x1":190,"y1":160,"x2":360,"y2":250,"lbl":"e⁻","lx":345,"ly":290},{"t":"p","x1":190,"y1":160,"x2":290,"y2":50,"n":6,"a":9,"lbl":"γ","lx":312,"ly":48},{"t":"v","x":190,"y":160}]'></svg>
+    <div class="stamp reveal goldy hero" data-ring="Peer reviewed · Phys. Rev. · Verified to 12 digits · " data-center="QED ∎" data-sub="est. 1949" style="right: 90px; top: 560px; width: 250px; height: 250px; rotate: 12deg; z-index: 4;"></div>
+    <div class="chrome-head"><span>Lecture notes · Vol. I · Title page</span><span class="acc" style="color: var(--ink);">Department of Radiophysics · 2026</span></div>
+    <div class="slide-content" style="justify-content: flex-start; padding-top: 30px;">
+        <div class="kicker reveal">A lecture in twenty figures</div>
+        <div class="hero letters" style="font-size: 160px; --l0: .35s;">Quantum<br>Electro-<br>dynamics</div>
+        <h2 class="light reveal" style="margin-top: 22px; font-size: 42px; font-style: italic; max-width: 900px;">How light and matter talk, to <span class="acc" style="font-weight: 800; font-style: normal;">twelve</span> decimal places</h2>
+    </div>
+    <div class="authors reveal" style="position: absolute; left: var(--pad-x); bottom: 118px; z-index: 2;">
+        <div>Ihor Zakharov<span class="role">speaker</span></div>
+        <div>Ivan Tsyvinskiy<span class="role">speaker</span></div>
+        <div>Vita Bilokin<span class="role">speaker</span></div>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>01 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     02 — CONTENTS + filed note (Pocono 1948)
+     ========================================================= -->
+<section class="slide" data-title="Contents">
+    <div class="chrome-head"><span>Lecture notes · Vol. I · Contents</span><span class="acc">Register of figures</span></div>
+    <div class="slide-content" style="justify-content: flex-start; top: 170px;">
+        <div class="kicker reveal">Structure of the talk</div>
+        <h1 class="reveal" style="font-size: 100px; white-space: nowrap; margin-bottom: 40px;">What we <span class="acc it">will compute</span></h1>
+        <div class="two" style="grid-template-columns: 740px 1fr; gap: 90px; align-items: start;">
+            <div>
+                <p class="caption reveal" style="max-width: 600px; font-size: 19px;">Eight sections from the Lagrangian to the laboratory, one quotation, and a three-page glossary for radiophysicists who present in English.</p>
+                <div class="dossier reveal">
+                    <svg class="clip" viewBox="0 0 40 90" aria-hidden="true"><path d="M12 22v52a8 8 0 0 0 16 0V16a6 6 0 0 0-12 0v50a3 3 0 0 0 6 0V24" fill="none" stroke="#1B1A17" stroke-width="3" stroke-linecap="round"/></svg>
+                    <figure class="fig" data-file="assets/feynman.jpg"><img src="assets/feynman.jpg" alt="Richard Feynman, 1948" onerror="this.parentNode.classList.add('missing')"></figure>
+                    <div class="stamp mini reveal" data-ring="Pocono Manor · 30 Mar 1948 · Not accepted · " data-center="✗" style="left: 134px; top: 128px; width: 112px; height: 112px; rotate: -16deg;"></div>
+                    <div>
+                        <p class="q">"Has Mr Feynman forgotten the uncertainty principle?" Trajectories of electrons are not allowed. Diagrams filed, not approved.</p>
+                        <p class="who"><b>N. Bohr, Pocono Conference, 1948</b> · verdict overturned by F. Dyson, Phys. Rev. 75 (1949)</p>
+                    </div>
+                </div>
+            </div>
+            <ol class="reg stagger">
+                <li><b>§ 1</b><span>What QED is: two fields, one vertex</span></li>
+                <li><b>§ 2</b><span>1927–1965: from Dirac to the Nobel lecture</span></li>
+                <li><b>§ 3</b><span>The Lagrangian and why gauge symmetry dictates light</span></li>
+                <li><b>§ 4</b><span>α ≈ 1/137: the number on every theorist's wall</span></li>
+                <li><b>§ 5</b><span>Feynman rules and the diagram gallery</span></li>
+                <li><b>§ 6</b><span>Infinities, renormalization, running charge</span></li>
+                <li><b>§ 7</b><span>Precision scoreboard: g−2, Lamb shift, muons</span></li>
+                <li><b>§ 8</b><span>QED for radiophysicists: photons in your antenna</span></li>
+                <li><b>App.</b><span>Glossary: objects · methods · how physicists say it</span></li>
+            </ol>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>02 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     03 — WHAT QED IS
+     ========================================================= -->
+<section class="slide" data-title="What QED is">
+    <div class="stamp reveal" data-ring="Definition · Section 1 · Filed under theory · " data-center="U(1)" data-sub="gauge" style="left: 600px; top: 760px; width: 200px; height: 200px; rotate: 10deg;"></div>
+    <div class="chrome-head"><span>§ 1 · What QED is</span><span class="acc">Fig. 1 · Two fields, one vertex</span></div>
+    <div class="slide-content">
+        <div class="two" style="grid-template-columns: 1fr 1.2fr; align-items: start; gap: 80px;">
+            <div>
+                <div class="kicker reveal">Definition</div>
+                <h1 class="words" style="font-size: 96px;">Light, matter,<br><span class="acc it">nothing else</span></h1>
+                <p class="lead reveal" style="margin-top: 30px; font-size: 26px;">QED is the relativistic quantum field theory of <strong>charged particles</strong> and <strong>photons</strong>. It has one interaction and one free number, α. From it follow all of chemistry, optics, lasers, antennas, and the colour of gold.</p>
+                <p class="caption reveal" style="margin-top: 26px; font-size: 18px;">It is the first theory that was both quantum and Lorentz-invariant and gave finite answers. Every later quantum field theory is built on its template.</p>
+            </div>
+            <div class="stagger" style="display: grid; gap: 26px; padding-top: 16px;">
+                <div class="card"><span class="tab">Matter</span><h3><span class="acc">ψ</span> · the Dirac field</h3><p>Spin-½ electrons and positrons as excitations of one field. Antimatter appears automatically from relativity: the equation has negative-energy solutions.</p></div>
+                <div class="card"><span class="tab">Light</span><h3><span class="acc">A<sub>μ</sub></span> · the Maxwell field</h3><p>Photons as quanta of the electromagnetic potential. Classical waves are coherent states of very many of them; your antenna emits 10²⁴ per second.</p></div>
+                <div class="card board"><span class="tab">Interaction</span><h3><span class="acc">−e ψ̄γ<sup>μ</sup>ψ A<sub>μ</sub></span> · the vertex</h3><p>One electron absorbs or emits one photon. Every process in QED is a chain of these elementary events, each weighted by √α.</p></div>
+            </div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>03 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     04 — TIMELINE (dark)
+     ========================================================= -->
+<section class="slide dark" data-title="Timeline">
+    <div class="stamp reveal goldy" data-ring="Royal Swedish Academy · Stockholm · 1965 · " data-center="Nobel" data-sub="Physics" style="right: 130px; top: 96px; width: 210px; height: 210px; rotate: -9deg; z-index: 4;"></div>
+    <div class="chrome-head"><span>§ 2 · Chronology</span><span class="acc">1927–1965</span></div>
+    <div class="slide-content">
+        <div class="kicker reveal">Thirty-eight years from the first quantized field to the prize</div>
+        <h2 class="reveal" style="margin-bottom: 70px;">Four people, three formalisms,<br><span class="acc it">one theory</span></h2>
+        <div class="timeline reveal">
+            <div class="track"></div>
+            <div class="steps stagger">
+                <div class="step"><div class="year">1927 · 1928</div><h3>Dirac</h3><p>Quantizes the radiation field, then writes the relativistic electron equation. Spin and antimatter fall out; so do infinities.</p></div>
+                <div class="step"><div class="year">1930s</div><h3>The infinities</h3><p>Oppenheimer, Weisskopf: the electron's self-energy diverges. The theory works at first order and breaks at second.</p></div>
+                <div class="step"><div class="year">1947</div><h3>Lamb shift</h3><p>Lamb and Retherford measure a 1058 MHz split Dirac forbids. Shelter Island; Bethe computes it on the train home.</p></div>
+                <div class="step"><div class="year">1946 · 1948</div><h3>Tomonaga · Schwinger</h3><p>Covariant renormalization. Schwinger's α/2π correction to the electron's magnetic moment matches Kusch and Foley.</p></div>
+                <div class="step"><div class="year">1948 · 1949</div><h3>Feynman · Dyson</h3><p>Diagrams booed at Pocono; Dyson proves all three approaches are the same theory and that it is renormalizable to all orders.</p></div>
+                <div class="step"><div class="year">1965</div><h3>Nobel Prize</h3><p>Tomonaga, Schwinger, Feynman "for their fundamental work in quantum electrodynamics". Dyson is not on the list.</p></div>
+            </div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Dirac 1927 · Lamb 1947 · Schwinger 1948 · Feynman 1949 · Dyson 1949 · Nobel 1965</span><span>04 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     05 — THE LAGRANGIAN
+     ========================================================= -->
+<section class="slide" data-title="The Lagrangian">
+    <div class="chrome-head"><span>§ 3 · The Lagrangian</span><span class="acc">Eq. (1) · Eq. (2)</span></div>
+    <div class="slide-content" style="justify-content: flex-start; top: 160px;">
+        <div class="kicker reveal">One line of physics</div>
+        <h2 class="reveal" style="margin-bottom: 30px;">The whole theory <span class="acc it">fits on a T-shirt</span></h2>
+        <div class="card reveal" style="padding: 40px 48px 34px; margin-bottom: 34px;">
+            <span class="tab">Eq. (1)</span>
+            <div class="tex disp big" data-tex="\mathcal{L}_{\text{QED}} \;=\; \underbrace{\bar\psi\,(i\gamma^{\mu}\partial_{\mu} - m)\,\psi}_{\text{free electron}} \;\;\underbrace{-\;e\,\bar\psi\,\gamma^{\mu}\psi\,A_{\mu}}_{\text{the vertex}} \;\;\underbrace{-\;\tfrac{1}{4}F_{\mu\nu}F^{\mu\nu}}_{\text{free photon}}"></div>
+        </div>
+        <div class="grid-3 stagger" style="gap: 40px;">
+            <div class="trait"><div class="n">01</div><h3>Symmetry first</h3><p>Demand that the phase of ψ may be chosen independently at every point: ψ → e<sup>iα(x)</sup>ψ. The free Dirac term alone is not invariant.</p></div>
+            <div class="trait"><div class="n">02</div><h3>A field is forced</h3><p>Invariance is restored only if a vector field A<sub>μ</sub> exists and transforms as A<sub>μ</sub> → A<sub>μ</sub> + ∂<sub>μ</sub>α/e. Light is the price of a local phase.</p></div>
+            <div class="trait"><div class="n">03</div><h3>Eq. (2) · the covariant derivative</h3><p><span class="tex small" data-tex="D_\mu = \partial_\mu + ieA_\mu"></span> — replace ∂ by D and the interaction appears with no freedom at all. Gauge symmetry dictates how light couples to matter.</p></div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span class="acc">Units: ħ = c = 1 · metric (+,−,−,−) · e < 0 for the electron</span><span>05 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     06 — ALPHA
+     ========================================================= -->
+<section class="slide" data-title="α = 1/137">
+    <div class="disc reveal" style="width: 700px; height: 700px; right: -180px; bottom: -260px; opacity: .9;"></div>
+    <div class="stamp reveal ink" data-ring="CODATA 2022 · Dimensionless · Do not adjust · " data-center="137.036" data-sub="α⁻¹" style="right: 200px; top: 120px; width: 240px; height: 240px; rotate: -8deg; z-index: 4;"></div>
+    <div class="chrome-head"><span>§ 4 · The coupling constant</span><span class="acc">Eq. (3)</span></div>
+    <div class="slide-content" style="justify-content: flex-start; top: 160px;">
+        <div class="kicker reveal">The number on every theorist's wall</div>
+        <div class="giant reveal num" style="font-size: 150px; letter-spacing: -0.04em;">α<span class="light" style="font-size: 110px;"> = </span>1<span class="light" style="font-size: 110px;">/</span>137.035 999 177<span style="font-size: 60px; color: var(--steel); font-weight: 400;">(21)</span></div>
+        <div class="two reveal" style="grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 44px; align-items: start; max-width: 1350px;">
+            <div>
+                <div class="tex mid" data-tex="\alpha = \frac{e^{2}}{4\pi\varepsilon_{0}\hbar c} \approx 0.0072974"></div>
+                <p style="margin-top: 22px; font-size: 22px; line-height: 1.45;">The strength of the vertex, with every unit cancelled out. It is the same on Earth, in quasars, and in every system of units. Nobody knows why it has this value.</p>
+            </div>
+            <div>
+                <p class="lead" style="font-size: 24px; font-style: italic; font-family: var(--font-display); font-weight: 400;">"It has been a mystery ever since it was discovered more than fifty years ago, and all good theoretical physicists put this number up on their wall and worry about it."</p>
+                <p class="caption" style="margin-top: 14px;">Richard Feynman, <em>QED: The Strange Theory of Light and Matter</em>, 1985</p>
+            </div>
+        </div>
+        <p class="caption reveal" style="margin-top: 30px; font-size: 18px; max-width: 1000px;">Because α is small, each extra photon exchanged costs a factor of ~1/137 in amplitude. That is what makes perturbation theory work, and QED computable.</p>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>06 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     07 — FEYNMAN RULES (dark)
+     ========================================================= -->
+<section class="slide dark" data-title="Feynman rules">
+    <div class="chrome-head"><span>§ 5 · Feynman rules</span><span class="acc">Fig. 2 · Momentum space</span></div>
+    <div class="slide-content">
+        <div class="kicker reveal">A grammar with three symbols</div>
+        <h2 class="reveal" style="margin-bottom: 44px;">Draw the picture, <span class="acc it">read off the integral</span></h2>
+        <div class="grid-3 stagger" style="gap: 44px;">
+            <div class="card">
+                <span class="tab">Line</span>
+                <svg class="fd" viewBox="0 0 400 200" style="width: 100%; height: 180px;" data-feyn='[{"t":"f","x1":40,"y1":100,"x2":360,"y2":100,"lbl":"p","lx":190,"ly":80}]'></svg>
+                <h3>Electron propagator</h3>
+                <div class="tex small" data-tex="\frac{i(\gamma^{\mu}p_{\mu} + m)}{p^{2} - m^{2} + i\epsilon}"></div>
+                <p style="margin-top: 12px;">A straight line with an arrow. Backward in time it is a positron.</p>
+            </div>
+            <div class="card">
+                <span class="tab">Wave</span>
+                <svg class="fd" viewBox="0 0 400 200" style="width: 100%; height: 180px;" data-feyn='[{"t":"p","x1":40,"y1":100,"x2":360,"y2":100,"n":10,"a":12,"lbl":"q","lx":190,"ly":66}]'></svg>
+                <h3>Photon propagator</h3>
+                <div class="tex small" data-tex="\frac{-i\,g_{\mu\nu}}{q^{2} + i\epsilon}"></div>
+                <p style="margin-top: 12px;">A wavy line. The 1/q² is Coulomb's law in disguise.</p>
+            </div>
+            <div class="card">
+                <span class="tab">Vertex</span>
+                <svg class="fd" viewBox="0 0 400 200" style="width: 100%; height: 180px;" data-feyn='[{"t":"f","x1":40,"y1":170,"x2":200,"y2":100},{"t":"f","x1":200,"y1":100,"x2":360,"y2":170},{"t":"p","x1":200,"y1":100,"x2":200,"y2":14,"n":5,"a":9},{"t":"v","x":200,"y":100}]'></svg>
+                <h3>Vertex</h3>
+                <div class="tex small" data-tex="-\,i e\,\gamma^{\mu}"></div>
+                <p style="margin-top: 12px;">Charge, energy and momentum conserved at every dot. Each vertex brings a factor of e, i.e. √α in the amplitude.</p>
+            </div>
+        </div>
+        <p class="caption reveal" style="margin-top: 32px; font-size: 18px;">Then: integrate over every internal momentum ∫d⁴k/(2π)⁴, multiply by −1 for each closed fermion loop, sum all diagrams, square the total. That is the whole of QED calculus.</p>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>07 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     08 — DIAGRAM GALLERY
+     ========================================================= -->
+<section class="slide" data-title="Diagram gallery">
+    <div class="chrome-head"><span>§ 5 · Gallery</span><span class="acc">Fig. 3–6 · Time runs upward</span></div>
+    <div class="slide-content" style="justify-content: flex-start; top: 160px;">
+        <div class="kicker reveal">Four pictures that cover most of electrodynamics</div>
+        <h2 class="reveal" style="margin-bottom: 36px;">Forces are <span class="acc it">exchanged photons</span></h2>
+        <div class="grid-4 stagger" style="gap: 28px;">
+            <div class="dcard"><span class="fig">Fig. 3</span>
+                <svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"f","x1":60,"y1":280,"x2":140,"y2":170,"lbl":"e⁻","lx":30,"ly":290},{"t":"f","x1":140,"y1":170,"x2":60,"y2":40,"lbl":"e⁻","lx":30,"ly":40},{"t":"f","x1":340,"y1":280,"x2":260,"y2":170,"lbl":"e⁻","lx":350,"ly":290},{"t":"f","x1":260,"y1":170,"x2":340,"y2":40,"lbl":"e⁻","lx":350,"ly":40},{"t":"p","x1":140,"y1":170,"x2":260,"y2":170,"n":7,"a":10,"lbl":"γ","lx":193,"ly":150},{"t":"v","x":140,"y":170},{"t":"v","x":260,"y":170}]'></svg>
+                <h3>Møller scattering</h3><p>Two electrons repel by trading one virtual photon. In the static limit the amplitude is exactly the Coulomb potential.</p></div>
+            <div class="dcard"><span class="fig">Fig. 4</span>
+                <svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"f","x1":60,"y1":280,"x2":150,"y2":200,"lbl":"e⁻","lx":30,"ly":290},{"t":"p","x1":40,"y1":110,"x2":150,"y2":200,"n":6,"a":9,"lbl":"γ","lx":22,"ly":100},{"t":"f","x1":150,"y1":200,"x2":250,"y2":110},{"t":"f","x1":250,"y1":110,"x2":350,"y2":200,"lbl":"e⁻","lx":355,"ly":225},{"t":"p","x1":250,"y1":110,"x2":340,"y2":30,"n":6,"a":9,"lbl":"γ","lx":352,"ly":30},{"t":"v","x":150,"y":200},{"t":"v","x":250,"y":110}]'></svg>
+                <h3>Compton scattering</h3><p>A photon is absorbed, the electron propagates off-shell, a new photon is emitted. Klein–Nishina, 1929: the first QED cross section.</p></div>
+            <div class="dcard"><span class="fig">Fig. 5</span>
+                <svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"f","x1":60,"y1":280,"x2":150,"y2":200,"lbl":"e⁻","lx":30,"ly":290},{"t":"f","x1":150,"y1":200,"x2":150,"y2":100},{"t":"f","x1":150,"y1":100,"x2":60,"y2":20,"lbl":"e⁺","lx":30,"ly":30},{"t":"p","x1":150,"y1":200,"x2":340,"y2":250,"n":8,"a":9,"lbl":"γ","lx":352,"ly":262},{"t":"p","x1":150,"y1":100,"x2":340,"y2":50,"n":8,"a":9,"lbl":"γ","lx":352,"ly":50},{"t":"v","x":150,"y":200},{"t":"v","x":150,"y":100}]'></svg>
+                <h3>Pair annihilation</h3><p>Electron meets positron, two photons leave. Read sideways it is pair creation; read across, Bhabha scattering. One drawing, three processes.</p></div>
+            <div class="dcard"><span class="fig">Fig. 6</span>
+                <svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"p","x1":30,"y1":150,"x2":130,"y2":150,"n":5,"a":9,"lbl":"γ","lx":20,"ly":128},{"t":"loop","cx":200,"cy":150,"r":70},{"t":"p","x1":270,"y1":150,"x2":370,"y2":150,"n":5,"a":9,"lbl":"γ","lx":362,"ly":128},{"t":"v","x":130,"y":150},{"t":"v","x":270,"y":150},{"t":"lbl","x":200,"y":60,"s":"e⁻"},{"t":"lbl","x":200,"y":252,"s":"e⁺"}]'></svg>
+                <h3>Vacuum polarization</h3><p>A photon briefly becomes an electron–positron pair. The vacuum screens charge: this loop makes α grow with energy.</p></div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>08 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     09 — SUM OVER HISTORIES / ORDERS
+     ========================================================= -->
+<section class="slide" data-title="Sum over histories">
+    <div class="band reveal" style="top: 126px; rotate: -2.5deg;"><span>A = Σ diagrams · P = |A|² · one loop 1 diagram · two loops 7 · three loops 72 · four loops 891 · five loops 12 672 · a_e = α/2π − 0.328 (α/π)² + 1.181 (α/π)³ − … · A = Σ diagrams · P = |A|² · one loop 1 diagram · two loops 7 · three loops 72 · four loops 891 · five loops 12 672 · </span></div>
+    <div class="chrome-head"><span>§ 5 · Sum over histories</span><span class="acc">Eq. (4) · Table 1</span></div>
+    <div class="slide-content" style="top: 220px;">
+        <div class="two" style="grid-template-columns: 1fr 1.05fr; gap: 80px; align-items: start;">
+            <div>
+                <div class="kicker reveal">Feynman's rule of the game</div>
+                <h2 class="reveal" style="margin-bottom: 26px; font-size: 66px;">Every way it <span class="acc it">could</span> happen, added up</h2>
+                <div class="tex mid reveal" data-tex="\mathcal{A} = \sum_{\text{diagrams}} \;\propto\; \sum_{n} c_n\, \alpha^{n/2}, \qquad P = |\mathcal{A}|^{2}"></div>
+                <p class="reveal" style="margin-top: 26px; font-size: 22px; line-height: 1.45; max-width: 760px;">Amplitudes, not probabilities, are what add. Interference between histories is the whole content of quantum mechanics; the diagrams are just a bookkeeping of which histories exist and what each one weighs.</p>
+                <p class="caption reveal" style="margin-top: 18px; font-size: 18px;">Each extra loop brings a factor of α/π ≈ 0.0023, and roughly ten times more diagrams to compute.</p>
+            </div>
+            <div class="card reveal" style="padding: 30px 36px 26px;">
+                <span class="tab">Table 1 · electron g−2</span>
+                <table class="gloss" style="margin-top: 8px;">
+                    <tr><th>Order</th><th>Diagrams</th><th>Contribution to a<sub>e</sub></th><th>Who</th></tr>
+                    <tr><td class="t">α</td><td class="u num">1</td><td class="u num">+0.001 161 41</td><td class="n">Schwinger 1948</td></tr>
+                    <tr><td class="t">α²</td><td class="u num">7</td><td class="u num">−0.000 001 772</td><td class="n">Petermann, Sommerfield 1957</td></tr>
+                    <tr><td class="t">α³</td><td class="u num">72</td><td class="u num">+0.000 000 014 8</td><td class="n">Laporta, Remiddi 1996</td></tr>
+                    <tr><td class="t">α⁴</td><td class="u num">891</td><td class="u num">−0.000 000 000 055</td><td class="n">Aoyama, Kinoshita, Nio 2012–17</td></tr>
+                    <tr><td class="t">α⁵</td><td class="u num">12 672</td><td class="u num">+0.000 000 000 000 06</td><td class="n">Aoyama, Kinoshita, Nio 2012–19</td></tr>
+                </table>
+                <p class="caption" style="margin-top: 16px; font-size: 15px;">a<sub>e</sub> = (g−2)/2. Values rounded; the α⁵ term needed a decade of supercomputer time and sits below the experimental error bar.</p>
+            </div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>09 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     10 — INFINITIES & RENORMALIZATION (dark)
+     ========================================================= -->
+<section class="slide dark" data-title="Renormalization">
+    <div class="stamp reveal goldy" data-ring="Divergence removed · Counterterm applied · Finite · " data-center="Renorm." data-sub="to all orders" style="right: 130px; top: 96px; width: 240px; height: 240px; rotate: 8deg; z-index: 4;"></div>
+    <div class="chrome-head"><span>§ 6 · Infinities and renormalization</span><span class="acc">Eq. (5) · Fig. 7</span></div>
+    <div class="slide-content">
+        <div class="kicker reveal">The trick that turned nonsense into twelve digits</div>
+        <h2 class="reveal" style="margin-bottom: 40px;">The bare electron is <span class="acc it">never observed</span></h2>
+        <div class="grid-3 stagger" style="gap: 40px; align-items: start;">
+            <div class="card">
+                <span class="tab">Problem</span>
+                <svg class="fd" viewBox="0 0 400 200" style="width: 100%; height: 170px;" data-feyn='[{"t":"f","x1":30,"y1":150,"x2":130,"y2":150},{"t":"f","x1":130,"y1":150,"x2":270,"y2":150},{"t":"f","x1":270,"y1":150,"x2":370,"y2":150},{"t":"arc","x1":130,"y1":150,"x2":270,"y2":150,"n":8,"a":10},{"t":"v","x":130,"y":150},{"t":"v","x":270,"y":150}]'></svg>
+                <h3>Self-energy diverges</h3>
+                <div class="tex small" data-tex="\delta m \;\sim\; \frac{3\alpha}{2\pi}\, m \,\ln\frac{\Lambda}{m} \;\to\; \infty"></div>
+                <p style="margin-top: 12px;">An electron keeps emitting and reabsorbing its own photons. Integrated to infinite momentum, the loop is logarithmically infinite.</p>
+            </div>
+            <div class="card">
+                <span class="tab">Insight</span>
+                <h3>Mass and charge are measured, not predicted</h3>
+                <p>Cut off at Λ. Write the bare mass as m₀ = m − δm(Λ). Express every prediction through the <em>physical</em> m and e that experiments see. All Λ-dependence cancels — Dyson 1949, to every order.</p>
+                <p style="margin-top: 12px;">Only two counterterms are ever needed. That is what "renormalizable" means, and why QED predicts anything at all.</p>
+            </div>
+            <div class="card">
+                <span class="tab">Consequence</span>
+                <h3>Charge runs</h3>
+                <div class="tex small" data-tex="\alpha(Q^{2}) \simeq \frac{\alpha}{1 - \frac{\alpha}{3\pi}\ln\frac{Q^{2}}{m^{2}}}"></div>
+                <p style="margin-top: 12px;">Vacuum polarization screens the charge. Look closer and it grows: 1/137 at atomic scales, <strong>1/128.9</strong> at the Z boson mass. Measured at LEP, exactly as predicted.</p>
+            </div>
+        </div>
+        <div class="reveal" style="margin-top: 32px; display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; max-width: 1500px;">
+            <span class="tag" style="border-color: var(--gold); color: var(--gold);">Dissent · Dirac 1975</span>
+            <p class="caption" style="font-size: 19px; opacity: .85;">"Sensible mathematics involves neglecting a quantity when it is small — not neglecting it just because it is infinitely great and you do not want it!" Wilson's answer (1971): renormalization is not a trick but the physics of scale.</p>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>10 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     11 — PRECISION SCOREBOARD
+     ========================================================= -->
+<section class="slide" data-title="Precision">
+    <div class="stamp reveal" data-ring="Phys. Rev. Lett. 130, 071801 · Harvard–Northwestern · " data-center="0.13 ppt" data-sub="2023" style="right: 130px; top: 96px; width: 230px; height: 230px; rotate: -10deg; z-index: 4;"></div>
+    <div class="chrome-head"><span>§ 7 · Precision scoreboard</span><span class="acc">Table 2 · Experiment vs theory</span></div>
+    <div class="slide-content">
+        <div class="kicker reveal">The most accurately tested theory in science</div>
+        <h2 class="reveal" style="margin-bottom: 52px;">Twelve digits, <span class="acc it">and counting</span></h2>
+        <div class="grid-4 stagger" style="gap: 44px;">
+            <div class="score"><div class="v num">1.001 159 652 180 59 <small>(13)</small></div><div class="l">Electron g/2, measured in a Penning trap at 0.13 parts per trillion. Theory agrees to about one part in 10¹².</div><div class="src">Fan, Myers, Sukra, Gabrielse · PRL 2023</div></div>
+            <div class="score"><div class="v num">137.035 999 177 <small>(21)</small></div><div class="l">α⁻¹, CODATA 2022. Atom-recoil measurements with Rb and Cs disagree at 5.5σ — the current weak spot of the test.</div><div class="src">CODATA 2022 · Morel 2020 · Parker 2018</div></div>
+            <div class="score"><div class="v num">1 057.8 <small>MHz</small></div><div class="l">Lamb shift 2S₁/₂–2P₁/₂ in hydrogen. Pure vacuum fluctuation: the electron is "jiggled" by virtual photons and feels the Coulomb well less.</div><div class="src">Lamb & Retherford 1947 · Bethe 1947</div></div>
+            <div class="score"><div class="v num">127 <small>ppb</small></div><div class="l">Muon g−2, final Fermilab result (2025). With lattice-QCD hadronic terms, the Standard Model now agrees: Δ = 38(63)×10⁻¹¹.</div><div class="src">Muon g−2 collaboration · Theory Initiative 2025</div></div>
+        </div>
+        <p class="caption reveal" style="margin-top: 52px; font-size: 18px; max-width: 1300px;">For comparison: measuring the distance from Kyiv to Lisbon to the width of a human hair is one part in 10¹⁰. QED beats that by a hundred.</p>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>11 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     12 — QUOTE: blackboard scene, chalk portrait, the jewel
+     ========================================================= -->
+<section class="slide dark" data-title="The jewel">
+    <div class="scene board" data-file="assets/blackboard.jpg"><img src="assets/blackboard.jpg" alt="" onerror="this.parentNode.classList.add('missing')"></div>
+    <div class="giant reveal" style="position: absolute; left: 108px; top: 150px; font-size: 300px; color: var(--gold); line-height: 1; opacity: 1; z-index: 1;">“</div>
+    <figure class="fig portrait reveal" data-file="assets/feynman.jpg" style="position: absolute; right: 130px; top: 200px; width: 440px; z-index: 2;">
+        <img src="assets/feynman.jpg" alt="Richard Feynman" onerror="this.parentNode.classList.add('missing')">
+        <figcaption>R. P. Feynman · 1918–1988</figcaption>
+    </figure>
+    <div class="stamp reveal goldy" data-ring="Nobel Prize in Physics · Tomonaga · Schwinger · Feynman · " data-center="1965" data-sub="Stockholm" style="right: 500px; top: 140px; width: 170px; height: 170px; rotate: -12deg; z-index: 4;"></div>
+    <div class="chrome-head"><span>§ 7 · Primary source</span><span class="acc">Richard Feynman · 1985</span></div>
+    <div class="slide-content" style="right: 700px; top: 330px; z-index: 2; justify-content: flex-start;">
+        <p class="words" style="--w0: .5s; font-family: var(--font-display); font-weight: 500; font-size: 46px; line-height: 1.2; letter-spacing: -0.015em; max-width: 1080px; font-variation-settings: 'opsz' 144;">So far, we have found nothing wrong with the theory of quantum electrodynamics. It is, therefore, I would say, <span class="acc it" style="font-weight: 800;">the jewel of physics</span> — our proudest possession.</p>
+        <div class="reveal" style="margin-top: 40px; display: flex; gap: 16px;"><span class="tag fill">QED: The Strange Theory of Light and Matter</span><span class="tag" style="border-color: var(--chalk);">Chapter 1 · 1985</span></div>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>12 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     13 — FOR RADIOPHYSICISTS: antenna scene on the right, numbers on the left
+     ========================================================= -->
+<section class="slide dark" data-title="For radiophysicists">
+    <div class="scene antenna" data-file="assets/antenna.jpg"><img src="assets/antenna.jpg" alt="" onerror="this.parentNode.classList.add('missing')"></div>
+    <div class="chrome-head"><span>§ 8 · QED for radiophysicists</span><span class="acc">Table 3 · Where the photon hides</span></div>
+    <div class="slide-content" style="right: 900px; z-index: 2;">
+        <div class="kicker reveal">Your transmitter is a QED experiment</div>
+        <h2 class="reveal" style="margin-bottom: 30px; font-size: 66px;">Where is the photon<br><span class="acc it">in your antenna?</span></h2>
+        <div class="rows stagger">
+            <div class="row"><div class="v num">1.5 × 10²⁴ <small>/ s</small></div><div><h3>Photons from 1 W at 1 GHz</h3><p>A coherent state with that many quanta is indistinguishable from a Maxwell wave. Radio is classical because hν is tiny, not because QED switches off.</p></div></div>
+            <div class="row"><div class="v num">hν = kT</div><div><h3>6.2 THz at 300 K · 0.42 GHz at 20 mK</h3><p>Above this line photons are countable and shot noise wins; below it, thermal noise. This is why a 5 GHz transmon lives in a dilution refrigerator.</p></div></div>
+            <div class="row"><div class="v num">−206 <small>dBm/Hz</small></div><div><h3>Vacuum noise hν/2 at 10 GHz</h3><p>Thirty decibels under Johnson noise at room temperature (−174 dBm/Hz). A phase-preserving amplifier must add at least this: the quantum limit of every receiver.</p></div></div>
+        </div>
+        <p class="caption reveal" style="margin-top: 26px; font-size: 18px; max-width: 860px; opacity: .85;">Spontaneous emission is stimulated emission driven by vacuum fluctuations. Every LNA, mixer and radiometer sits on top of that zero-point field.</p>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>13 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     14 — QED IN THE LAB TODAY
+     ========================================================= -->
+<section class="slide" data-title="QED today">
+    <div class="chrome-head"><span>§ 8 · QED in the laboratory today</span><span class="acc">Fig. 8–13</span></div>
+    <div class="slide-content">
+        <div class="kicker reveal">Six places where the vacuum does work</div>
+        <h2 class="reveal" style="margin-bottom: 44px;">Not history: <span class="acc it">instrumentation</span></h2>
+        <div class="grid-3 stagger" style="gap: 32px 40px;">
+            <div class="trait"><div class="n">01</div><h3>Circuit QED</h3><p>Transmon qubits are artificial atoms coupled to microwave resonators; readout uses Josephson parametric amplifiers at the quantum limit. QED at 5 GHz.</p></div>
+            <div class="trait"><div class="n">02</div><h3>Cavity QED</h3><p>Single atoms and single photons in superconducting cavities; Haroche and Wineland, Nobel 2012. Rabi oscillations of one quantum, watched live.</p></div>
+            <div class="trait"><div class="n">03</div><h3>Casimir force</h3><p>Two plates attract because they exclude vacuum modes. Lamoreaux 1997, agreement to 5%; now a design constraint in MEMS.</p></div>
+            <div class="trait"><div class="n">04</div><h3>Squeezed light</h3><p>LIGO injects squeezed vacuum to beat shot noise by ~3 dB. Since 2023, frequency-dependent squeezing across the whole band.</p></div>
+            <div class="trait"><div class="n">05</div><h3>Muonic hydrogen</h3><p>A muon orbits 200× closer; the Lamb shift then measures the proton's radius: 0.84 fm (Pohl 2010), the "proton radius puzzle".</p></div>
+            <div class="trait"><div class="n">06</div><h3>Strong-field QED</h3><p>Schwinger limit 1.3×10¹⁸ V/m: the vacuum sparks into pairs. Petawatt lasers (ELI) approach it via boosted electron beams.</p></div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>14 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     15 — OPEN EDGES (dark)
+     ========================================================= -->
+<section class="slide dark" data-title="Open edges">
+    <div class="disc reveal" style="width: 320px; height: 320px; left: 500px; top: 620px; opacity: .95;"></div>
+    <div class="chrome-head"><span>§ 8 · Where the theory ends</span><span class="acc">Open problems</span></div>
+    <div class="slide-content">
+        <div class="two" style="grid-template-columns: 1fr 1.25fr; align-items: start; gap: 90px;">
+            <div>
+                <div class="kicker reveal">Honest accounting</div>
+                <h1 class="reveal" style="font-size: 92px;">Perfect, <span class="acc it">and incomplete</span></h1>
+                <p class="lead reveal" style="margin-top: 30px; font-size: 24px; opacity: .9;">QED's precision is not evidence that it is final. It is the low-energy corner of a larger theory, and its own mathematics tells us so.</p>
+            </div>
+            <ol class="reg stagger" style="margin-top: 12px;">
+                <li><b>1952</b><span><strong>Dyson's argument.</strong> The perturbation series has zero radius of convergence: it is asymptotic. Twelve digits come from an expansion that ultimately diverges.</span></li>
+                <li><b>1955</b><span><strong>Landau pole.</strong> The running coupling blows up near 10²⁸⁶ eV. Harmless in practice, fatal in principle: pure QED cannot be complete.</span></li>
+                <li><b>1967</b><span><strong>Electroweak unification.</strong> Glashow–Weinberg–Salam absorb QED into SU(2)×U(1); the photon is a mixture of W³ and B. QED is a broken-symmetry remnant.</span></li>
+                <li><b>2020</b><span><strong>α from Cs vs Rb.</strong> Two atom-interferometer measurements disagree by 5.5σ. Until resolved, the electron g−2 test is limited by α, not by QED.</span></li>
+                <li><b>2025</b><span><strong>Hadrons in the loop.</strong> Muon g−2 agrees with lattice QCD but not with e⁺e⁻ data-driven estimates. The tension moved from QED to the data.</span></li>
+            </ol>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>15 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     16 — CONCLUSIONS (gold)
+     ========================================================= -->
+<section class="slide gold" data-title="Conclusions">
+    <div class="disc reveal board" style="width: 600px; height: 600px; right: -160px; top: -220px;"></div>
+    <div class="stamp reveal chalk" data-ring="Resolved · Section 9 · Filed with the register · " data-center="Q.E.D." data-sub="four theses" style="right: 140px; top: 90px; width: 230px; height: 230px; rotate: -10deg; z-index: 4;"></div>
+    <div class="chrome-head"><span>Conclusions</span><span class="acc" style="color: var(--chalk);">Quod erat demonstrandum</span></div>
+    <div class="slide-content">
+        <div class="kicker reveal">Summary</div>
+        <h1 class="reveal" style="margin-bottom: 44px; font-size: 92px;">Four things <span class="it" style="font-weight: 400;">to take home</span></h1>
+        <div class="grid-4 stagger" style="gap: 32px;">
+            <div class="card" style="border-color: var(--ink);"><div class="giant" style="font-size: 68px; margin-bottom: 12px; color: var(--gold-deep);">01</div><p>Symmetry writes the theory. Ask for a local phase freedom and the photon, its coupling, and Maxwell's equations are forced.</p></div>
+            <div class="card" style="border-color: var(--ink);"><div class="giant" style="font-size: 68px; margin-bottom: 12px; color: var(--gold-deep);">02</div><p>Diagrams are integrals. Feynman's pictures are a grammar for perturbation theory, and α ≈ 1/137 is why the grammar converges in practice.</p></div>
+            <div class="card" style="border-color: var(--ink);"><div class="giant" style="font-size: 68px; margin-bottom: 12px; color: var(--gold-deep);">03</div><p>Renormalization is physics, not surgery. The bare electron is unobservable; charge and mass depend on the scale you look at.</p></div>
+            <div class="card board"><div class="giant" style="font-size: 68px; margin-bottom: 12px; color: var(--gold);">04</div><p>Radio is QED with 10²⁴ photons. The vacuum sets your noise floor, your amplifier's limit, and the temperature of your quantum computer.</p></div>
+        </div>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>16 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     17 — GLOSSARY I: OBJECTS
+     ========================================================= -->
+<section class="slide" data-title="Glossary · objects">
+    <div class="chrome-head"><span>Appendix A · Glossary I</span><span class="acc">Objects · what the nouns mean</span></div>
+    <div class="slide-content" style="justify-content: flex-start; top: 150px;">
+        <div class="kicker reveal">For radiophysicists who present in English</div>
+        <h2 class="reveal" style="margin-bottom: 26px; font-size: 62px;">Glossary I · <span class="acc it">the objects</span></h2>
+        <table class="gloss stagger">
+            <tr><th>Term</th><th>Say it</th><th>Українською</th><th>How it is used</th></tr>
+            <tr><td class="t">photon</td><td class="s">/ˈfəʊ-tɒn/</td><td class="u">фотон</td><td class="n">A photon is <i>emitted</i>, <i>absorbed</i>, <i>exchanged</i>. "A virtual photon mediates the force."</td></tr>
+            <tr><td class="t">positron</td><td class="s">/ˈpɒz-ɪ-trɒn/</td><td class="u">позитрон</td><td class="n">The antiparticle of the electron. "Pair production", "pair annihilation", never "pair birth".</td></tr>
+            <tr><td class="t">field · field quantum</td><td class="s">/fiːld/</td><td class="u">поле · квант поля</td><td class="n">"The Dirac field", "a quantized field". Particles are <i>excitations</i> of fields.</td></tr>
+            <tr><td class="t">vertex · vertices</td><td class="s">/ˈvɜː-tɪks/ · /ˈvɜː-tɪ-siːz/</td><td class="u">вершина</td><td class="n">Irregular plural. "At each vertex momentum is conserved."</td></tr>
+            <tr><td class="t">propagator</td><td class="s">/ˈprɒ-pə-ɡeɪ-tə/</td><td class="u">пропагатор</td><td class="n">An internal line. "The photon propagator goes as one over q squared."</td></tr>
+            <tr><td class="t">amplitude</td><td class="s">/ˈæm-plɪ-tjuːd/</td><td class="u">амплітуда (ймовірності)</td><td class="n">A complex number. Probability is "the modulus squared" or "the amplitude squared".</td></tr>
+            <tr><td class="t">coupling constant</td><td class="s">/ˈkʌp-lɪŋ/</td><td class="u">константа зв'язку</td><td class="n">"Weak coupling", "strong coupling"; verb: "the electron <i>couples to</i> the photon".</td></tr>
+            <tr><td class="t">fine-structure constant</td><td class="s">/ˌfaɪn ˈstrʌk-tʃə/</td><td class="u">стала тонкої структури</td><td class="n">Hyphenated before a noun. Spoken simply as "alpha" /ˈæl-fə/.</td></tr>
+            <tr><td class="t">vacuum polarization</td><td class="s">/ˈvæ-kjuːm ˌpəʊ-lə-raɪ-ˈzeɪ-ʃn/</td><td class="u">поляризація вакууму</td><td class="n">"The vacuum <i>screens</i> the charge." UK spelling: polarisation.</td></tr>
+            <tr><td class="t">Lamb shift</td><td class="s">/læm ʃɪft/</td><td class="u">лембівський зсув</td><td class="n">The <i>b</i> is silent. "The Lamb shift <i>lifts</i> the degeneracy of 2S and 2P."</td></tr>
+            <tr><td class="t">anomalous magnetic moment</td><td class="s">/ə-ˈnɒ-mə-ləs/</td><td class="u">аномальний магнітний момент</td><td class="n">Written g−2, said "gee minus two". "a<sub>e</sub>" is "a-sub-e".</td></tr>
+        </table>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>17 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     18 — GLOSSARY II: METHODS
+     ========================================================= -->
+<section class="slide" data-title="Glossary · methods">
+    <div class="chrome-head"><span>Appendix A · Glossary II</span><span class="acc">Methods · what physicists do</span></div>
+    <div class="slide-content" style="justify-content: flex-start; top: 150px;">
+        <div class="kicker reveal">Words for methods, not things</div>
+        <h2 class="reveal" style="margin-bottom: 26px; font-size: 62px;">Glossary II · <span class="acc it">the methods</span></h2>
+        <table class="gloss stagger" style="--row: 1;">
+            <tr><th>Term</th><th>Say it</th><th>Українською</th><th>How it is used</th></tr>
+            <tr><td class="t">perturbation theory</td><td class="s">/ˌpɜː-tə-ˈbeɪ-ʃn/</td><td class="u">теорія збурень</td><td class="n">"To first order in α", "a perturbative expansion", "non-perturbative effects".</td></tr>
+            <tr><td class="t">gauge invariance</td><td class="s">/ɡeɪdʒ/ · rhymes with "page"</td><td class="u">калібрувальна інваріантність</td><td class="n">"Gauge symmetry", "to fix a gauge", "in the Lorenz gauge" (Lorenz, not Lorentz).</td></tr>
+            <tr><td class="t">Lagrangian</td><td class="s">/lə-ˈɡræn-dʒi-ən/</td><td class="u">лагранжіан</td><td class="n">Capital L. "Write down the Lagrangian", "a Lagrangian density".</td></tr>
+            <tr><td class="t">renormalization</td><td class="s">/riː-ˌnɔː-mə-laɪ-ˈzeɪ-ʃn/</td><td class="u">перенормування</td><td class="n">"A renormalizable theory"; "the renormalization group"; "to renormalize the charge".</td></tr>
+            <tr><td class="t">regularization · cutoff</td><td class="s">/ˈkʌt-ɒf/</td><td class="u">регуляризація · обрізання</td><td class="n">"Impose a cutoff Λ", "dimensional regularization", "take the cutoff to infinity".</td></tr>
+            <tr><td class="t">counterterm</td><td class="s">/ˈkaʊn-tə-tɜːm/</td><td class="u">контрчлен</td><td class="n">"Add a counterterm to cancel the divergence." One word, no hyphen.</td></tr>
+            <tr><td class="t">divergence · to diverge</td><td class="s">/daɪ-ˈvɜːdʒ/</td><td class="u">розбіжність · розбігатися</td><td class="n">"Logarithmically divergent", "the integral diverges", "an ultraviolet divergence".</td></tr>
+            <tr><td class="t">cross section</td><td class="s">/ˈkrɒs ˌsek-ʃn/</td><td class="u">переріз розсіяння</td><td class="n">Two words. "The differential cross section", measured in barns; "a total cross section".</td></tr>
+            <tr><td class="t">path integral</td><td class="s">/pɑːθ ˈɪn-tɪ-ɡrəl/</td><td class="u">інтеграл за траєкторіями</td><td class="n">"Sum over histories". Stress on <i>in</i>-te-gral, not in-<i>te</i>-gral.</td></tr>
+            <tr><td class="t">loop correction</td><td class="s">/luːp/</td><td class="u">петлева поправка</td><td class="n">"At one loop", "a two-loop calculation", "higher-order corrections", "tree level".</td></tr>
+            <tr><td class="t">running coupling</td><td class="s">/ˈrʌn-ɪŋ/</td><td class="u">біжуча константа зв'язку</td><td class="n">"Alpha <i>runs</i> with energy", "evaluated at the Z mass".</td></tr>
+            <tr><td class="t">ansatz · ansätze</td><td class="s">/ˈæn-zæts/</td><td class="u">анзац · пробний вигляд розв'язку</td><td class="n">German loanword. "We make the ansatz that…", "a trial wavefunction".</td></tr>
+        </table>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>18 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     19 — GLOSSARY III: PHRASES
+     ========================================================= -->
+<section class="slide" data-title="Glossary · phrases">
+    <div class="stamp reveal" data-ring="Mermin, Physics Today 1989 · Misattributed to Feynman · " data-center="Shut up" data-sub="and calculate" style="right: 124px; top: 104px; width: 180px; height: 180px; rotate: 9deg; z-index: 4;"></div>
+    <div class="chrome-head"><span>Appendix A · Glossary III</span><span class="acc">Phrases · how physicists say it</span></div>
+    <div class="slide-content" style="justify-content: flex-start; top: 150px;">
+        <div class="kicker reveal">Ready-made sentences for talks and papers</div>
+        <h2 class="reveal" style="margin-bottom: 26px; font-size: 62px;">Glossary III · <span class="acc it">the phrases</span></h2>
+        <table class="gloss stagger">
+            <tr><th>Phrase</th><th>Meaning</th><th>Українською</th><th>Example</th></tr>
+            <tr><td class="t">to first order in α</td><td class="u">keeping only one power of α</td><td class="u">у першому порядку за α</td><td class="n">"To leading order, the amplitude is just one photon exchange."</td></tr>
+            <tr><td class="t">to within · to N significant figures</td><td class="u">with an accuracy of</td><td class="u">з точністю до</td><td class="n">"Theory agrees with experiment to within 0.13 parts per trillion."</td></tr>
+            <tr><td class="t">the divergences cancel (out)</td><td class="u">infinities remove each other</td><td class="u">розбіжності скорочуються</td><td class="n">"The infinities cancel between the vertex and self-energy diagrams."</td></tr>
+            <tr><td class="t">an order of magnitude</td><td class="u">a factor of ten</td><td class="u">порядок величини</td><td class="n">"An order-of-magnitude estimate"; "off by two orders of magnitude".</td></tr>
+            <tr><td class="t">a back-of-the-envelope estimate</td><td class="u">a quick rough calculation</td><td class="u">оцінка «на серветці»</td><td class="n">"On the back of an envelope, 1 W at 1 GHz is 10²⁴ photons per second."</td></tr>
+            <tr><td class="t">vanishes identically</td><td class="u">is exactly zero everywhere</td><td class="u">тотожно дорівнює нулю</td><td class="n">"The odd-loop contribution vanishes identically by Furry's theorem."</td></tr>
+            <tr><td class="t">up to a constant · up to a phase</td><td class="u">apart from an irrelevant factor</td><td class="u">з точністю до сталої</td><td class="n">"The wavefunction is defined up to a phase."</td></tr>
+            <tr><td class="t">in the limit of … · as Λ → ∞</td><td class="u">when a parameter goes to an extreme</td><td class="u">у границі</td><td class="n">"In the non-relativistic limit the propagator reduces to Coulomb's law."</td></tr>
+            <tr><td class="t">a factor of two</td><td class="u">twice as large or small</td><td class="u">удвічі</td><td class="n">"We are off by a factor of two." Never "in two times".</td></tr>
+            <tr><td class="t">it turns out that …</td><td class="u">the result is, surprisingly</td><td class="u">виявляється, що</td><td class="n">The most frequent phrase in any lecture. "It turns out that only two counterterms are needed."</td></tr>
+            <tr><td class="t">a sanity check</td><td class="u">a simple test that a result is plausible</td><td class="u">перевірка на здоровий глузд</td><td class="n">"As a sanity check, set α = 0 and recover the free theory."</td></tr>
+        </table>
+    </div>
+    <div class="chrome-foot"><span>Quantum electrodynamics · the jewel of physics</span><span>19 / 20</span></div>
+</section>
+
+<!-- =========================================================
+     20 — CLOSING: the wall, dim and still, behind the last line; hero letters; band; hero stamp
+     ========================================================= -->
+<section class="slide dark" data-title="Questions">
+    <div class="wall-viewport"><div class="wall static" id="wallStatic">
+            <figure class="tile" data-title="Møller scattering" data-cap="Two electrons repel by trading one virtual photon. In the static limit the amplitude is exactly the Coulomb potential: forces are exchanged photons."><svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"f","x1":60,"y1":280,"x2":140,"y2":170,"lbl":"e⁻","lx":30,"ly":290},{"t":"f","x1":140,"y1":170,"x2":60,"y2":40,"lbl":"e⁻","lx":30,"ly":40},{"t":"f","x1":340,"y1":280,"x2":260,"y2":170,"lbl":"e⁻","lx":350,"ly":290},{"t":"f","x1":260,"y1":170,"x2":340,"y2":40,"lbl":"e⁻","lx":350,"ly":40},{"t":"p","x1":140,"y1":170,"x2":260,"y2":170,"n":7,"a":10,"lbl":"γ","lx":193,"ly":150},{"t":"v","x":140,"y":170},{"t":"v","x":260,"y":170}]'></svg><figcaption>Fig. 3 · Møller</figcaption></figure>
+            <figure class="tile" data-title="Bhabha scattering" data-cap="Electron meets positron and they scatter; the same drawing read across is annihilation into a photon that becomes a new pair."><svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"f","x1":60,"y1":280,"x2":200,"y2":205,"lbl":"e⁻","lx":30,"ly":290},{"t":"f","x1":200,"y1":205,"x2":340,"y2":280,"lbl":"e⁺","lx":352,"ly":290},{"t":"p","x1":200,"y1":205,"x2":200,"y2":95,"n":6,"a":10,"lbl":"γ","lx":230,"ly":150},{"t":"f","x1":200,"y1":95,"x2":60,"y2":20,"lbl":"e⁻","lx":30,"ly":22},{"t":"f","x1":340,"y1":20,"x2":200,"y2":95,"lbl":"e⁺","lx":352,"ly":22},{"t":"v","x":200,"y":205},{"t":"v","x":200,"y":95}]'></svg><figcaption>Fig. 4 · Bhabha</figcaption></figure>
+            <figure class="tile" data-title="Compton scattering" data-cap="A photon is absorbed, the electron propagates off-shell, a new photon is emitted. Klein–Nishina 1929: the first QED cross section."><svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"f","x1":60,"y1":280,"x2":150,"y2":200,"lbl":"e⁻","lx":30,"ly":290},{"t":"p","x1":40,"y1":110,"x2":150,"y2":200,"n":6,"a":9,"lbl":"γ","lx":22,"ly":100},{"t":"f","x1":150,"y1":200,"x2":250,"y2":110},{"t":"f","x1":250,"y1":110,"x2":350,"y2":200,"lbl":"e⁻","lx":355,"ly":225},{"t":"p","x1":250,"y1":110,"x2":340,"y2":30,"n":6,"a":9,"lbl":"γ","lx":352,"ly":30},{"t":"v","x":150,"y":200},{"t":"v","x":250,"y":110}]'></svg><figcaption>Fig. 5 · Compton</figcaption></figure>
+            <figure class="tile" data-title="Pair annihilation" data-cap="Electron and positron vanish into two photons. Read sideways it is pair creation: one drawing, three processes."><svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"f","x1":60,"y1":280,"x2":150,"y2":200,"lbl":"e⁻","lx":30,"ly":290},{"t":"f","x1":150,"y1":200,"x2":150,"y2":100},{"t":"f","x1":150,"y1":100,"x2":60,"y2":20,"lbl":"e⁺","lx":30,"ly":30},{"t":"p","x1":150,"y1":200,"x2":340,"y2":250,"n":8,"a":9,"lbl":"γ","lx":352,"ly":262},{"t":"p","x1":150,"y1":100,"x2":340,"y2":50,"n":8,"a":9,"lbl":"γ","lx":352,"ly":50},{"t":"v","x":150,"y":200},{"t":"v","x":150,"y":100}]'></svg><figcaption>Fig. 6 · Annihilation</figcaption></figure>
+            <figure class="tile" data-title="Vacuum polarization" data-cap="A photon briefly becomes an electron–positron pair. The vacuum screens charge: this loop makes α grow from 1/137 to 1/129 at the Z mass."><svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"p","x1":30,"y1":150,"x2":130,"y2":150,"n":5,"a":9,"lbl":"γ","lx":20,"ly":128},{"t":"loop","cx":200,"cy":150,"r":70},{"t":"p","x1":270,"y1":150,"x2":370,"y2":150,"n":5,"a":9,"lbl":"γ","lx":362,"ly":128},{"t":"v","x":130,"y":150},{"t":"v","x":270,"y":150},{"t":"lbl","x":200,"y":60,"s":"e⁻"},{"t":"lbl","x":200,"y":252,"s":"e⁺"}]'></svg><figcaption>Fig. 7 · Vacuum polarization</figcaption></figure>
+            <figure class="tile" data-title="Vertex correction" data-cap="An electron emits and reabsorbs a photon while interacting. Schwinger 1948: the electron's magnetic moment gains α/2π — the first radiative correction ever computed."><svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"f","x1":40,"y1":270,"x2":130,"y2":200},{"t":"f","x1":130,"y1":200,"x2":200,"y2":130},{"t":"f","x1":200,"y1":130,"x2":270,"y2":200},{"t":"f","x1":270,"y1":200,"x2":360,"y2":270},{"t":"p","x1":200,"y1":130,"x2":200,"y2":30,"n":6,"a":9,"lbl":"γ","lx":228,"ly":40},{"t":"arc","x1":130,"y1":200,"x2":270,"y2":200,"n":8,"a":10,"down":true},{"t":"v","x":130,"y":200},{"t":"v","x":200,"y":130},{"t":"v","x":270,"y":200}]'></svg><figcaption>Fig. 8 · Vertex correction</figcaption></figure>
+            <figure class="tile" data-title="Electron self-energy" data-cap="An electron keeps emitting and reabsorbing its own photons. Integrated to infinite momentum the loop is logarithmically infinite — the problem renormalization solved."><svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"f","x1":30,"y1":190,"x2":130,"y2":190},{"t":"f","x1":130,"y1":190,"x2":270,"y2":190},{"t":"f","x1":270,"y1":190,"x2":370,"y2":190},{"t":"arc","x1":130,"y1":190,"x2":270,"y2":190,"n":8,"a":10},{"t":"v","x":130,"y":190},{"t":"v","x":270,"y":190},{"t":"lbl","x":200,"y":80,"s":"γ","g":true}]'></svg><figcaption>Fig. 9 · Self-energy</figcaption></figure>
+            <figure class="tile" data-title="Light-by-light scattering" data-cap="Two photons scatter off each other through a box of virtual electrons — impossible in Maxwell's theory, measured at the LHC in 2017."><svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"f","x1":130,"y1":90,"x2":270,"y2":90},{"t":"f","x1":270,"y1":90,"x2":270,"y2":210},{"t":"f","x1":270,"y1":210,"x2":130,"y2":210},{"t":"f","x1":130,"y1":210,"x2":130,"y2":90},{"t":"p","x1":130,"y1":90,"x2":40,"y2":30,"n":5,"a":8,"lbl":"γ","lx":30,"ly":20},{"t":"p","x1":270,"y1":90,"x2":360,"y2":30,"n":5,"a":8,"lbl":"γ","lx":372,"ly":20},{"t":"p","x1":270,"y1":210,"x2":360,"y2":270,"n":5,"a":8,"lbl":"γ","lx":372,"ly":290},{"t":"p","x1":130,"y1":210,"x2":40,"y2":270,"n":5,"a":8,"lbl":"γ","lx":30,"ly":290},{"t":"v","x":130,"y":90},{"t":"v","x":270,"y":90},{"t":"v","x":270,"y":210},{"t":"v","x":130,"y":210}]'></svg><figcaption>Fig. 10 · Light by light</figcaption></figure>
+            <figure class="tile" data-title="Bremsstrahlung" data-cap="An electron deflected by a nucleus radiates a photon. Every X-ray tube and every synchrotron runs on this diagram."><svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"f","x1":40,"y1":240,"x2":150,"y2":180,"lbl":"e⁻","lx":30,"ly":270},{"t":"f","x1":150,"y1":180,"x2":250,"y2":130},{"t":"f","x1":250,"y1":130,"x2":360,"y2":70,"lbl":"e⁻","lx":372,"ly":60},{"t":"p","x1":150,"y1":180,"x2":150,"y2":278,"n":5,"a":8},{"t":"h","x1":90,"y1":282,"x2":210,"y2":282},{"t":"lbl","x":150,"y":296,"s":"Ze"},{"t":"p","x1":250,"y1":130,"x2":360,"y2":210,"n":6,"a":8,"lbl":"γ","lx":372,"ly":230},{"t":"v","x":150,"y":180},{"t":"v","x":250,"y":130}]'></svg><figcaption>Fig. 11 · Bremsstrahlung</figcaption></figure>
+            <figure class="tile" data-title="Pair production in a field" data-cap="A photon above 1.022 MeV becomes an electron–positron pair next to a nucleus. Bethe–Heitler 1934: how gamma rays are stopped."><svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"p","x1":30,"y1":150,"x2":160,"y2":150,"n":6,"a":9,"lbl":"γ","lx":22,"ly":128},{"t":"f","x1":160,"y1":150,"x2":340,"y2":50,"lbl":"e⁻","lx":352,"ly":42},{"t":"f","x1":340,"y1":250,"x2":160,"y2":150,"lbl":"e⁺","lx":352,"ly":270},{"t":"p","x1":160,"y1":150,"x2":160,"y2":278,"n":5,"a":8},{"t":"h","x1":100,"y1":282,"x2":220,"y2":282},{"t":"lbl","x":160,"y":296,"s":"Ze"},{"t":"v","x":160,"y":150}]'></svg><figcaption>Fig. 12 · Pair production</figcaption></figure>
+            <figure class="tile" data-title="Delbrück scattering" data-cap="Light bends in a Coulomb field through a virtual pair — the vacuum acting as a lens. Predicted 1933, seen cleanly only in the 1970s."><svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"p","x1":30,"y1":130,"x2":130,"y2":130,"n":5,"a":8,"lbl":"γ","lx":22,"ly":108},{"t":"loop","cx":200,"cy":130,"r":66},{"t":"p","x1":270,"y1":130,"x2":370,"y2":130,"n":5,"a":8,"lbl":"γ","lx":372,"ly":108},{"t":"p","x1":170,"y1":190,"x2":150,"y2":276,"n":4,"a":7},{"t":"p","x1":230,"y1":190,"x2":250,"y2":276,"n":4,"a":7},{"t":"h","x1":100,"y1":282,"x2":300,"y2":282},{"t":"lbl","x":200,"y":296,"s":"Ze"},{"t":"v","x":130,"y":130},{"t":"v","x":270,"y":130}]'></svg><figcaption>Fig. 13 · Delbrück</figcaption></figure>
+            <figure class="tile" data-title="Two-loop vacuum polarization" data-cap="A photon inside the loop: order α². 891 such four-loop pictures and 12 672 five-loop pictures were needed for the electron's g−2."><svg class="fd" viewBox="0 0 400 300" data-feyn='[{"t":"p","x1":30,"y1":150,"x2":130,"y2":150,"n":5,"a":9,"lbl":"γ","lx":20,"ly":128},{"t":"loop","cx":200,"cy":150,"r":70},{"t":"p","x1":200,"y1":82,"x2":200,"y2":218,"n":6,"a":8},{"t":"p","x1":270,"y1":150,"x2":370,"y2":150,"n":5,"a":9,"lbl":"γ","lx":362,"ly":128},{"t":"v","x":130,"y":150},{"t":"v","x":270,"y":150},{"t":"v","x":200,"y":82},{"t":"v","x":200,"y":218}]'></svg><figcaption>Fig. 14 · Two loops</figcaption></figure>
+        </div></div>
+    <div class="band reveal gold" style="top: 770px; rotate: 3deg;"><span>Questions accepted to all orders · Thank you · Дякуємо · a_e = α/2π − 0.328 478 965 (α/π)² + … · Q.E.D. · Questions accepted to all orders · Thank you · Дякуємо · a_e = α/2π − 0.328 478 965 (α/π)² + … · Q.E.D. · </span></div>
+    <div class="stamp reveal chalk hero" data-ring="Lecture concluded · Register closed · Vol. I · " data-center="∎" data-sub="20 / 20" style="right: 260px; top: 130px; width: 250px; height: 250px; rotate: 14deg; z-index: 4;"></div>
+    <div class="chrome-head"><span>Lecture notes · Vol. I · Last page</span><span class="acc">Register closed</span></div>
+    <div class="slide-content" style="justify-content: flex-start; padding-top: 30px; z-index: 2;">
+        <div class="kicker reveal">Thank you</div>
+        <div class="hero letters" style="font-size: 150px; --l0: .35s;">Questions<br><span class="light it">accepted</span><br><span class="acc">to all orders</span></div>
+    </div>
+    <div class="authors reveal" style="position: absolute; left: var(--pad-x); bottom: 118px; z-index: 2;">
+        <div style="color: var(--chalk);">Ihor Zakharov</div>
+        <div style="color: var(--chalk);">Ivan Tsyvinskiy</div>
+        <div style="color: var(--chalk);">Vita Bilokin</div>
+    </div>
+    <div class="chrome-foot"><span>Dirac 1928 · Lamb 1947 · Schwinger 1948 · Feynman 1949 · Dyson 1949 · Gabrielse 2023</span><span>20 / 20</span></div>
+</section>
+
+</main>
+</div>
+
+<div class="deck-controls" id="deckControls" aria-hidden="true" hidden></div>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   =========================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = Array.from(document.querySelectorAll('.slide'));
+        this.stage = document.getElementById('deckStage');
+        this.current = 0;
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupWheelNav();
+        const fromHash = parseInt(location.hash.replace('#', ''), 10);
+        this.showSlide(Number.isFinite(fromHash) ? fromHash - 1 : 0, true);
+    }
+    setupStageScale() {
+        const scale = () => {
+            const f = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            const x = (window.innerWidth - 1920 * f) / 2;
+            const y = (window.innerHeight - 1080 * f) / 2;
+            this.stage.style.transform = `translate(${x}px, ${y}px) scale(${f})`;
+        };
+        scale();
+        window.addEventListener('resize', scale);
+    }
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true') return;
+            switch (e.key) {
+                case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown': e.preventDefault(); this.next(); break;
+                case 'ArrowLeft': case 'ArrowUp': case 'PageUp': e.preventDefault(); this.prev(); break;
+                case 'Home': e.preventDefault(); this.showSlide(0); break;
+                case 'End': e.preventDefault(); this.showSlide(this.slides.length - 1); break;
+            }
+        });
+    }
+    setupTouchNav() {
+        let sx = 0, sy = 0;
+        document.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+            if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) dx < 0 ? this.next() : this.prev();
+        }, { passive: true });
+    }
+    setupWheelNav() {
+        let locked = false;
+        document.addEventListener('wheel', (e) => {
+            if (document.body.classList.contains('editing') || locked || Math.abs(e.deltaY) < 20) return;
+            locked = true; e.deltaY > 0 ? this.next() : this.prev();
+            setTimeout(() => { locked = false; }, 700);
+        }, { passive: true });
+    }
+    next() { this.showSlide(this.current + 1); }
+    prev() { this.showSlide(this.current - 1); }
+    showSlide(i) {
+        const target = Math.max(0, Math.min(i, this.slides.length - 1));
+        if (target === this.current && this.slides[target].classList.contains('visible')) return;
+        this.current = target;
+        this.slides.forEach((s, k) => { const on = k === this.current; s.classList.toggle('active', on); s.classList.toggle('visible', on); });
+        history.replaceState(null, '', `#${this.current + 1}`);
+        document.getElementById('progress').style.width = ((this.current + 1) / this.slides.length * 1920) + 'px';
+        if (this.onChange) this.onChange(this.current);
+    }
+}
+
+/* ===========================================
+   INLINE EDITOR — hover top-left corner or press E; Ctrl+S saves
+   =========================================== */
+const BUILD = '1789120009'; // bump on every file change: stale browser edits are dropped
+class InlineEditor {
+    constructor() {
+        this.isActive = false;
+        this.toggle = document.getElementById('editToggle');
+        this.hotzone = document.querySelector('.edit-hotzone');
+        this.editable = 'h1, h2, h3, p, li > span, .hero, .kicker, .chrome-head span, .chrome-foot span, .authors div, .tag, .band span, .giant, .gloss td, .score .l, .score .src';
+        this.restore(); this.bind();
+    }
+    bind() {
+        let t = null;
+        const hideLater = () => { t = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); };
+        this.hotzone.addEventListener('mouseenter', () => { clearTimeout(t); this.toggle.classList.add('show'); });
+        this.hotzone.addEventListener('mouseleave', hideLater);
+        this.toggle.addEventListener('mouseenter', () => clearTimeout(t));
+        this.toggle.addEventListener('mouseleave', hideLater);
+        this.hotzone.addEventListener('click', () => this.toggleEditMode());
+        this.toggle.addEventListener('click', () => this.toggleEditMode());
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'e' || e.key === 'E') && e.target.getAttribute('contenteditable') !== 'true') this.toggleEditMode();
+            if ((e.ctrlKey || e.metaKey) && e.key === 's' && this.isActive) { e.preventDefault(); this.save(); this.download(); }
+        });
+        document.addEventListener('input', () => { if (this.isActive) this.save(); });
+    }
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        document.body.classList.toggle('editing', this.isActive);
+        this.toggle.classList.toggle('active', this.isActive);
+        document.querySelectorAll(this.editable).forEach((el) => el.setAttribute('contenteditable', this.isActive ? 'true' : 'false'));
+        if (!this.isActive) this.save();
+    }
+    save() { try { localStorage.setItem('qed-v3-deck', JSON.stringify({ build: BUILD, html: Array.from(document.querySelectorAll('.slide')).map(el => el.outerHTML).join('') })); } catch (_) {} }
+    restore() { try { const raw = localStorage.getItem('qed-v3-deck'); if (!raw) return; let d = null; try { d = JSON.parse(raw); } catch (_) {} if (!d || d.build !== BUILD) { localStorage.removeItem('qed-v3-deck'); return; } document.querySelectorAll('.slide').forEach(el => el.remove()); document.getElementById('deckStage').insertAdjacentHTML('afterbegin', d.html); } catch (_) {} }
+    download() {
+        const c = document.documentElement.cloneNode(true);
+        c.querySelectorAll('[contenteditable]').forEach((el) => el.removeAttribute('contenteditable'));
+        c.querySelector('body').classList.remove('editing');
+        const blob = new Blob(['<!DOCTYPE html>\n' + c.outerHTML], { type: 'text/html' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'qed-v3.html'; a.click();
+    }
+}
+
+/* ===========================================
+   STAMP BUILDER — turns <div class="stamp" data-*> into SVG
+   =========================================== */
+function buildStamps() {
+    document.querySelectorAll('.stamp').forEach((el, i) => {
+        if (el.querySelector('svg')) return;
+        const ring = el.dataset.ring || '', center = el.dataset.center || '', sub = el.dataset.sub || '';
+        const id = 'ring' + i;
+        el.innerHTML = `<svg viewBox="0 0 300 300">
+  <defs><path id="${id}" d="M150,150 m-116,0 a116,116 0 1,1 232,0 a116,116 0 1,1 -232,0"/></defs>
+  <circle cx="150" cy="150" r="142" stroke-width="5"/>
+  <circle cx="150" cy="150" r="131" stroke-width="2"/>
+  <circle cx="150" cy="150" r="96" stroke-width="2"/>
+  <g class="ring"><text><textPath href="#${id}">${ring}${ring}</textPath></text></g>
+  <text class="center" x="150" y="${sub ? 152 : 166}">${center}</text>
+  ${sub ? `<text class="sub" x="150" y="186">${sub}</text>` : ''}
+</svg>`;
+    });
+}
+
+/* ===========================================
+   FEYNMAN DIAGRAM BUILDER — data-feyn JSON → SVG that draws itself
+   primitives: f (fermion), p (photon), arc (photon arc), loop, v (vertex), lbl
+   =========================================== */
+const NS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; }
+function wavePath(x1, y1, x2, y2, n, a) {
+    const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, nx = -uy, ny = ux;
+    let d = `M${x1} ${y1}`;
+    for (let i = 0; i < n; i++) {
+        const s = (i % 2 ? -1 : 1) * 2 * a, tm = (i + .5) / n, te = (i + 1) / n;
+        d += ` Q${(x1 + dx * tm + nx * s).toFixed(1)} ${(y1 + dy * tm + ny * s).toFixed(1)} ${(x1 + dx * te).toFixed(1)} ${(y1 + dy * te).toFixed(1)}`;
+    }
+    return d;
+}
+function arcWavePath(x1, y1, x2, y2, n, a, down) {
+    // photon along a semicircle from (x1,y1) to (x2,y2)
+    const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2, r = Math.hypot(x2 - x1, y2 - y1) / 2, sgn = down ? 1 : -1;
+    const pts = [], N = n * 2;
+    for (let i = 0; i <= N; i++) {
+        const th = Math.PI * i / N, off = (i % 2 ? 2 * a : 0) * (i === 0 || i === N ? 0 : 1);
+        const rr = r + off;
+        pts.push([cx - rr * Math.cos(th), cy + sgn * rr * Math.sin(th)]);
+    }
+    let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+    for (let i = 1; i < pts.length; i += 2) {
+        const c = pts[i], e = pts[i + 1] || pts[i];
+        d += ` Q${c[0].toFixed(1)} ${c[1].toFixed(1)} ${e[0].toFixed(1)} ${e[1].toFixed(1)}`;
+    }
+    return d;
+}
+function arrow(x, y, ang, cls) {
+    const s = 9, c = Math.cos(ang), sn = Math.sin(ang);
+    const p = (px, py) => `${(x + px * c - py * sn).toFixed(1)},${(y + px * sn + py * c).toFixed(1)}`;
+    return svgEl('polygon', { points: `${p(s, 0)} ${p(-s, s * .7)} ${p(-s, -s * .7)}`, class: 'a' + (cls ? ' ' + cls : '') });
+}
+function buildFeyn() {
+    document.querySelectorAll('svg.fd[data-feyn]').forEach((svg) => {
+        if (svg.childNodes.length) return;
+        let spec = []; try { spec = JSON.parse(svg.dataset.feyn); } catch (_) { return; }
+        const labels = [];
+        spec.forEach((o) => {
+            if (o.t === 'f') {
+                svg.appendChild(svgEl('path', { d: `M${o.x1} ${o.y1} L${o.x2} ${o.y2}`, class: 'f' }));
+                svg.appendChild(arrow((o.x1 + o.x2) / 2, (o.y1 + o.y2) / 2, Math.atan2(o.y2 - o.y1, o.x2 - o.x1)));
+            } else if (o.t === 'h') {
+                svg.appendChild(svgEl('path', { d: `M${o.x1} ${o.y1} L${o.x2} ${o.y2}`, class: 'h' }));
+            } else if (o.t === 'p') {
+                svg.appendChild(svgEl('path', { d: wavePath(o.x1, o.y1, o.x2, o.y2, o.n || 6, o.a || 9), class: 'p' }));
+            } else if (o.t === 'arc') {
+                svg.appendChild(svgEl('path', { d: arcWavePath(o.x1, o.y1, o.x2, o.y2, o.n || 6, o.a || 8, o.down), class: 'p' }));
+            } else if (o.t === 'loop') {
+                svg.appendChild(svgEl('path', { d: `M${o.cx - o.r} ${o.cy} A${o.r} ${o.r} 0 0 1 ${o.cx + o.r} ${o.cy}`, class: 'f' }));
+                svg.appendChild(svgEl('path', { d: `M${o.cx + o.r} ${o.cy} A${o.r} ${o.r} 0 0 1 ${o.cx - o.r} ${o.cy}`, class: 'f' }));
+                svg.appendChild(arrow(o.cx, o.cy - o.r, 0));
+                svg.appendChild(arrow(o.cx, o.cy + o.r, Math.PI));
+            } else if (o.t === 'flow') {
+                svg.appendChild(svgEl('path', { d: wavePath(o.x1, o.y1, o.x2, o.y2, o.n || 6, o.a || 9), class: 'p flow' }));
+            } else if (o.t === 'pulse') {
+                svg.appendChild(svgEl('circle', { cx: o.x, cy: o.y, r: 14, class: 'pulse' }));
+            } else if (o.t === 'v') {
+                svg.appendChild(svgEl('circle', { cx: o.x, cy: o.y, r: 7, class: 'v' }));
+            } else if (o.t === 'lbl') {
+                labels.push({ x: o.x, y: o.y, s: o.s, g: o.g });
+            }
+            if (o.lbl) labels.push({ x: o.lx, y: o.ly, s: o.lbl, g: o.t === 'p' });
+        });
+        labels.forEach((l) => { const t = svgEl('text', { x: l.x, y: l.y, class: 'lbl' + (l.g ? ' g' : ''), 'text-anchor': 'middle' }); t.textContent = l.s; svg.appendChild(t); });
+        svg.querySelectorAll('path').forEach((p) => { const L = p.getTotalLength(); p.style.setProperty('--len', L.toFixed(1)); });
+    });
+}
+
+/* ===========================================
+   KaTeX — render every .tex[data-tex]
+   =========================================== */
+function renderTex() {
+    document.querySelectorAll('.tex[data-tex]').forEach((el) => {
+        if (window.katex) { try { katex.render(el.dataset.tex, el, { throwOnError: false, displayMode: el.classList.contains('disp') }); return; } catch (_) {} }
+        el.textContent = el.dataset.tex; el.style.fontFamily = 'var(--font-mono)';
+    });
+}
+
+
+/* ===========================================
+   TEXT BUILDS — .words (word by word) and .letters (letter by letter), elements stay whole
+   =========================================== */
+function buildWords() {
+    document.querySelectorAll('.words').forEach((el) => {
+        if (el.dataset.split) return; el.dataset.split = '1'; let i = 0;
+        const wrap = (node) => { const w = document.createElement('span'); w.className = 'w'; const inner = node.nodeType === 3 ? Object.assign(document.createElement('span'), { textContent: node.textContent }) : node; inner.style.setProperty('--i', i++); w.appendChild(inner); return w; };
+        const out = document.createDocumentFragment();
+        Array.from(el.childNodes).forEach((node) => {
+            if (node.nodeType === 3) { node.textContent.split(/(\s+)/).forEach((part) => { if (!part) return; if (/^\s+$/.test(part)) out.appendChild(document.createTextNode(' ')); else out.appendChild(wrap(document.createTextNode(part))); }); }
+            else if (node.nodeName === 'BR') { out.appendChild(node); }
+            else { out.appendChild(wrap(node)); }
+        });
+        el.innerHTML = ''; el.appendChild(out);
+    });
+}
+function buildLetters() {
+    document.querySelectorAll('.letters').forEach((el) => {
+        if (el.dataset.split) return; el.dataset.split = '1'; let i = 0;
+        const walk = (node) => {
+            Array.from(node.childNodes).forEach((child) => {
+                if (child.nodeType === 3) { const frag = document.createDocumentFragment(); Array.from(child.textContent).forEach((ch) => { if (/\s/.test(ch)) { frag.appendChild(document.createTextNode(ch)); return; } const l = document.createElement('span'); l.className = 'l'; l.textContent = ch; l.style.setProperty('--i', i++); frag.appendChild(l); }); node.replaceChild(frag, child); }
+                else if (child.nodeName !== 'BR') walk(child);
+            });
+        };
+        walk(el);
+    });
+}
+
+/* ===========================================
+   THE WALL — ripple by distance from centre, then an automatic focus sequence; no clicking, hover only
+   =========================================== */
+const gallery = {
+    init() {
+        document.querySelectorAll('.wall').forEach((wall) => { const tiles = Array.from(wall.children); const cols = 4, rows = Math.ceil(tiles.length / cols); const maxD = Math.hypot((cols - 1) / 2, (rows - 1) / 2);
+            tiles.forEach((t, i) => { const c = i % cols, r = Math.floor(i / cols); const d = Math.hypot(c - (cols - 1) / 2, r - (rows - 1) / 2) / maxD; t.style.setProperty('--d', (0.35 + d * 0.9).toFixed(2) + 's'); }); });
+    },
+    onSlide() {}
+};
+
+/* ===========================================
+   SIDE NAV BUILDER — one tick per slide, labels from data-title
+   =========================================== */
+function buildSideNav(deck) {
+    const nav = document.getElementById('sideNav');
+    nav.innerHTML = '';
+    deck.slides.forEach((sl, k) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', `Slide ${k + 1}: ${sl.dataset.title || ''}`);
+        b.innerHTML = `<span class="tick"></span><span class="lbl"><b>${String(k + 1).padStart(2, '0')}</b>${sl.dataset.title || ''}</span>`;
+        b.addEventListener('click', () => deck.showSlide(k));
+        nav.appendChild(b);
+    });
+    deck.onChange = (idx) => {
+        nav.querySelectorAll('button').forEach((b, k) => b.classList.toggle('active', k === idx));
+        const sl = deck.slides[idx];
+        nav.classList.toggle('on-dark', sl.classList.contains('dark'));
+        nav.classList.toggle('on-gold', sl.classList.contains('gold'));
+        gallery.onSlide(sl);
+    };
+    deck.onChange(deck.current);
+}
+
+const editor = new InlineEditor();
+buildWords();
+buildLetters();
+buildStamps();
+buildFeyn();
+gallery.init();
+renderTex();
+const deck = new SlidePresentation();
+buildSideNav(deck);
+document.fonts.ready.then(() => buildFeyn());
+</script>
+</body>
+</html>

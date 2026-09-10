@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Креслення апарату — Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Extra+Condensed:wght@600;800&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --blue: #0F3B6E; --blue-2: #0A2C55; --blue-3: #1D4F8A; --line: #DCE9F7; --line-soft: rgba(220,233,247,.38); --paper: #F3F6FA; --paper-2: #E4EBF3; --ink: #0E2F57; --ink-2: #244A78; --yellow: #F4C542; --muted: #8FA9C6; --steel: #6C7F95;
+    --display: 'Fira Sans Extra Condensed', Impact, sans-serif; --serif: 'Cormorant Garamond', Georgia, serif; --body: 'IBM Plex Sans', sans-serif; --mono: 'JetBrains Mono', monospace; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--blue); color: var(--line); font-family: var(--body); font-size: 16px; line-height: 1.55;
+    background-image: linear-gradient(rgba(220,233,247,.14) 1px, transparent 1px), linear-gradient(90deg, rgba(220,233,247,.14) 1px, transparent 1px), linear-gradient(rgba(220,233,247,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(220,233,247,.06) 1px, transparent 1px); background-size: 160px 160px, 160px 160px, 32px 32px, 32px 32px; }
+  body { padding: 0 0 80px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+  header { border-bottom: 2px solid var(--line-soft); }
+  header .wrap { display: grid; grid-template-columns: 1fr auto; align-items: end; padding-top: 56px; padding-bottom: 40px; gap: 40px; }
+  .lockup { display: flex; align-items: center; gap: 22px; }
+  .lockup h1 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 72px; line-height: .9; text-transform: uppercase; }
+  .lockup h1 span { font-family: var(--serif); font-style: italic; font-weight: 500; text-transform: none; color: var(--yellow); }
+  .lockup .sub { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-top: 10px; }
+  .meta { text-align: right; font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); line-height: 1.9; }
+  .meta b { color: var(--yellow); font-weight: 500; }
+  section { padding: 56px 0 8px; }
+  .label { font-family: var(--mono); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--yellow); display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .label::before { content: ""; width: 12px; height: 12px; border: 2px solid var(--yellow); }
+  h2 { font-family: var(--display); font-weight: 800; font-size: 40px; text-transform: uppercase; letter-spacing: .01em; margin: 0 0 12px; }
+  .lead { color: var(--muted); max-width: 760px; margin: 0 0 28px; }
+  .colors { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .sw { border: 1.5px solid var(--line-soft); background: rgba(10,44,85,.5); }
+  .sw .fill { height: 120px; border-bottom: 1.5px solid var(--line-soft); }
+  .sw .m { padding: 14px 16px; }
+  .sw .tier { font-weight: 600; font-size: 15px; display: block; }
+  .sw .hex { font-family: var(--mono); font-size: 12px; color: var(--muted); display: block; margin-top: 3px; }
+  .sw .use { font-size: 13px; color: var(--muted); margin-top: 8px; display: block; }
+  .type { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .card { border: 1.5px solid var(--line-soft); background: rgba(10,44,85,.5); padding: 28px; }
+  .card.paper { background: var(--paper); color: var(--ink); border: 2px solid var(--ink); box-shadow: 10px 10px 0 var(--yellow); }
+  .card.yellow { background: var(--yellow); color: var(--ink); border: 2px solid var(--ink); }
+  .t-display { font-family: var(--display); font-weight: 800; font-size: 96px; line-height: .86; text-transform: uppercase; margin: 0; }
+  .t-display-it { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 44px; line-height: 1.05; margin: 12px 0 0; color: var(--yellow); }
+  .t-body { font-size: 17px; line-height: 1.6; margin: 18px 0 0; }
+  .t-mono { font-family: var(--mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); display: block; margin-top: 18px; }
+  .ladder { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 20px; }
+  .ladder div { border: 1.5px solid var(--line-soft); padding: 14px; background: rgba(10,44,85,.5); }
+  .ladder .w { font-size: 40px; line-height: 1; }
+  .ladder .n { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+  .principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .p { border-top: 2px solid var(--line-soft); padding: 18px 0 0; position: relative; }
+  .p::after { content: ""; position: absolute; left: 0; top: -2px; width: 40px; height: 4px; background: var(--yellow); }
+  .p .num { font-family: var(--display); font-weight: 800; font-size: 56px; color: var(--yellow); line-height: 1; }
+  .p h3 { font-weight: 600; font-size: 18px; margin: 12px 0 8px; }
+  .p p { margin: 0; font-size: 14px; color: var(--muted); }
+  .comps { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .band { background: var(--yellow); color: var(--ink); font-family: var(--mono); font-size: 12px; letter-spacing: .26em; text-transform: uppercase; padding: 10px 16px; transform: rotate(-2deg); display: inline-block; margin: 14px 0; }
+  .tblock { border-collapse: collapse; font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; margin-top: 14px; }
+  .tblock th, .tblock td { border: 1px solid var(--line-soft); padding: 7px 14px; text-align: left; font-weight: 400; }
+  .tblock th { color: var(--muted); } .tblock td.y { color: var(--yellow); }
+  .spec { border-top: 2px solid var(--line-soft); padding-top: 12px; position: relative; margin-top: 14px; }
+  .spec::after { content: ""; position: absolute; left: 0; top: -2px; width: 40px; height: 4px; background: var(--yellow); }
+  .spec .n { font-family: var(--display); font-weight: 800; font-size: 48px; color: var(--yellow); line-height: 1; }
+  .spec .l { font-size: 14px; color: var(--muted); margin-top: 6px; }
+  .stampx { width: 150px; height: 150px; border-radius: 50%; border: 4px solid var(--yellow); box-shadow: inset 0 0 0 5px var(--blue), inset 0 0 0 7px var(--yellow); display: grid; place-items: center; font-family: var(--display); font-weight: 800; color: var(--yellow); font-size: 30px; text-transform: uppercase; rotate: -8deg; opacity: .92; }
+  .motion { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .motion div { border: 1.5px solid var(--line-soft); padding: 16px; background: rgba(10,44,85,.5); }
+  .motion b { display: block; font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+  .motion span { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; color: var(--muted); }
+  .icons { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; }
+  .ic { border: 1.5px solid var(--line-soft); background: rgba(10,44,85,.5); aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+  .ic svg { width: 44px; height: 44px; }
+  .ic span { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .sheetdemo { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .sd { position: relative; height: 230px; padding: 34px 40px; overflow: hidden; }
+  .sd.blue { background: var(--blue); color: var(--line); box-shadow: inset 0 0 0 1px var(--blue), inset 0 0 120px rgba(3,16,34,.5); }
+  .sd.paper { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 120px rgba(14,47,87,.08); }
+  .sd::before { content: ""; position: absolute; inset: 14px; border: 1px solid rgba(220,233,247,.42); }
+  .sd.paper::before { border-color: rgba(14,47,87,.5); }
+  .sd .rm { position: absolute; width: 16px; height: 16px; border-radius: 50%; border: 1px solid currentColor; opacity: .55; }
+  .sd .rm::before, .sd .rm::after { content: ""; position: absolute; background: currentColor; }
+  .sd .rm::before { left: -8px; right: -8px; top: 7px; height: 1px; } .sd .rm::after { top: -8px; bottom: -8px; left: 7px; width: 1px; }
+  .sd .tl { left: 6px; top: 6px; } .sd .tr { right: 6px; top: 6px; } .sd .bl { left: 6px; bottom: 6px; } .sd .br { right: 6px; bottom: 6px; }
+  .sd .tab { position: absolute; right: 14px; top: 30px; writing-mode: vertical-rl; background: var(--yellow); color: var(--ink); font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; padding: 12px 6px; }
+  .sd b { display: block; font-family: var(--display); font-weight: 800; font-size: 120px; line-height: .86; color: transparent; -webkit-text-stroke: 2px currentColor; opacity: .5; }
+  .sd em { position: absolute; left: 40px; bottom: 26px; font-style: normal; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; opacity: .7; }
+  .wms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .wm { border: 1.5px solid var(--line-soft); padding: 32px 24px; min-height: 170px; display: flex; flex-direction: column; justify-content: center; gap: 10px; background: rgba(10,44,85,.5); }
+  .wm.paper { background: var(--paper); color: var(--ink); border: 2px solid var(--ink); }
+  .wm.yellow { background: var(--yellow); color: var(--ink); border: 2px solid var(--ink); }
+  .wm .name { font-family: var(--display); font-weight: 800; font-size: 44px; text-transform: uppercase; line-height: 1; }
+  .wm .name .ac { color: var(--yellow); } .wm.yellow .name .ac { color: var(--blue); } .wm.paper .name .ac { color: var(--blue-3); }
+  .wm .mono { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; opacity: .7; }
+  footer { margin-top: 64px; border-top: 2px solid var(--line-soft); padding-top: 18px; font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
+  @media (max-width: 800px) { header .wrap { grid-template-columns: 1fr; } .meta { text-align: left; } .colors, .type, .principles, .comps, .wms, .motion { grid-template-columns: 1fr; } .icons { grid-template-columns: repeat(4, 1fr); } .ladder { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="lockup">
+    <svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><rect width="72" height="72" fill="#0A2C55" stroke="#DCE9F7" stroke-width="2"/><rect x="14" y="14" width="44" height="44" fill="none" stroke="#DCE9F7" stroke-width="2"/><path d="M14 26h44M14 38h30M14 50h36" stroke="#DCE9F7" stroke-width="2"/><circle cx="50" cy="46" r="9" fill="none" stroke="#F4C542" stroke-width="3"/></svg>
+    <div><h1>Креслення <span>апарату</span></h1><div class="sub">Design system · Презентація «Бюрократія як феномен влади та управління» · v2</div></div>
+  </div>
+  <div class="meta">v2 · 10.09.2026<br/><b>Апарат — це машина на синьці</b></div>
+</div></header>
+<div class="wrap">
+
+<section>
+  <div class="label">01 · Колір</div>
+  <h2>Прусська синь, білі лінії, жовта інспекція</h2>
+  <p class="lead">Основна поверхня — синька (цианотип) із кресленою сіткою. Щільний матеріал переходить на інвертований папір (білий папір, сині чорнила). Один слайд — жовтий, як інспекційна бирка. Акцент на папері — жовтий маркер під словом.</p>
+  <div class="colors">
+    <div class="sw"><div class="fill" style="background:var(--blue)"></div><div class="m"><span class="tier">Синька · Surface</span><span class="hex">#0F3B6E · глибша #0A2C55</span><span class="use">Основні слайди, стіна форм, плашки над стіною (rgba(10,44,85,.86)).</span></div></div>
+    <div class="sw"><div class="fill" style="background:var(--line)"></div><div class="m"><span class="tier">Лінія · Text</span><span class="hex">#DCE9F7 · 38 % / 16 % для сітки</span><span class="use">Текст і лінії на синьці; штамп «line» на синьому диску.</span></div></div>
+    <div class="sw"><div class="fill" style="background:var(--yellow)"></div><div class="m"><span class="tier" style="color:var(--yellow)">Інспекційний жовтий · Accent</span><span class="hex">#F4C542</span><span class="use">Штампи, стрічка-скотч, кікери, числа, один жовтий слайд, маркер на папері.</span></div></div>
+    <div class="sw"><div class="fill" style="background:var(--paper)"></div><div class="m"><span class="tier">Папір · Inverted</span><span class="hex">#F3F6FA · чорнило #0E2F57</span><span class="use">Слайди з формами й таблицями; сітка синім 13 % / 5 %.</span></div></div>
+  </div>
+</section>
+
+<section>
+  <div class="label">02 · Типографіка</div>
+  <h2>Стиснуті капітелі кричать, Cormorant підписує, Plex пояснює</h2>
+  <div class="type">
+    <div class="card">
+      <p class="t-display">Бюро-<br>кратія</p>
+      <p class="t-display-it">як феномен влади та управління</p>
+      <span class="t-mono">Fira Sans Extra Condensed 800 · Cormorant Garamond italic · JetBrains Mono</span>
+    </div>
+    <div class="card paper">
+      <p class="t-body" style="margin-top:0">Повністю розвинена бюрократія належить до тих соціальних структур, які найважче зруйнувати. Той, хто складає протокол, визначає, що «сталося».</p>
+      <span class="t-mono" style="color:var(--steel)">IBM Plex Sans 300/400 · 17–29 px · 1.45–1.6 · повна кирилиця (і ї є ґ)</span>
+      <span class="t-mono" style="color:var(--blue-3)">§ 4 · Арк. 07 / 15 · Розроб. · Перевір. · Затв. · JetBrains Mono 0.18em</span>
+    </div>
+  </div>
+  <div class="ladder">
+    <div><div class="w" style="font-family:var(--display);font-weight:600;text-transform:uppercase">Аа Її</div><div class="n">Fira Extra Condensed 600</div></div>
+    <div><div class="w" style="font-family:var(--display);font-weight:800;text-transform:uppercase">Аа Її</div><div class="n">Fira Extra Condensed 800</div></div>
+    <div><div class="w" style="font-family:var(--serif);font-style:italic">Аа Її</div><div class="n">Cormorant Garamond italic</div></div>
+    <div><div class="w" style="font-family:var(--body);font-weight:600">Аа Її</div><div class="n">IBM Plex Sans 600</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="label">03 · Принципи</div>
+  <h2>Шість правил креслення</h2>
+  <div class="principles">
+    <div class="p"><div class="num">01</div><h3>Апарат — машина</h3><p>Кожен слайд — аркуш креслення: рамка, штамп, підпис, розмірні лінії. Тематичність легка, але всюди.</p></div>
+    <div class="p"><div class="num">02</div><h3>Одна палітра, три гами</h3><p>Синька за замовчуванням, папір для щільного, жовтий для одного удару. Акцент не міняється: жовтий.</p></div>
+    <div class="p"><div class="num">03</div><h3>Без рамок-карток</h3><p>Специфікаційні блоки з лінійкою і жовтою засічкою; на папері — форми з чорнильною рамкою; над стіною — суцільна плашка.</p></div>
+    <div class="p"><div class="num">04</div><h3>Штамп — вердикт</h3><p>Шість штампів на деку, два з «геройським» входом (розмиття + пружина). Не на кожному слайді.</p></div>
+    <div class="p"><div class="num">05</div><h3>Стіна форм — фон</h3><p>Нахилена 3D-стіна з дванадцяти форм, що самі креслять себе; лише фон, без кліків (слайди 08 і 15).</p></div>
+    <div class="p"><div class="num">06</div><h3>Небагато всього</h3><p>Один каскад і один амбієнт на слайд; три тихі слайди; літери з розмиття — лише на титулі та фіналі.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="label">04 · Компоненти</div>
+  <h2>Стрічка-скотч, штамп, основний напис, специфікація</h2>
+  <div class="comps">
+    <div class="card">
+      <div class="band">Розроб. · Перевір. · Т. контр. · Н. контр. · Затв. · Арк. 1</div>
+      <table class="tblock"><tr><th>Розроб.</th><td>Захаров І.</td><th>Арк.</th><td class="y">1</td></tr><tr><th>Перевір.</th><td>Богачов А.</td><th>Аркушів</th><td>19</td></tr><tr><th>Н. контр.</th><td>Йозеф К.</td><th>Формат</th><td>А1</td></tr></table>
+      <div class="spec"><div class="n">03</div><div class="l">Дисфункція — специфікаційний блок з лінійкою та жовтою засічкою</div></div>
+    </div>
+    <div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center">
+      <div class="stampx">Затв.</div>
+      <div><div class="spec" style="margin-top:0"><div class="n">1922</div><div class="l">Вебер, «Господарство і суспільство»</div></div><div class="spec"><div class="n">4</div><div class="l">закони патології</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="label">05 · Рух</div>
+  <h2>Неквапливо, з вагою</h2>
+  <div class="motion">
+    <div><b>Вхід</b><span>1.1 s · expo-out · 36 px</span></div>
+    <div><b>Літери</b><span>0.06 s/літера · blur 12 → 0 · титул, фінал</span></div>
+    <div><b>Слова</b><span>0.09 s/слово · 3 заголовки</span></div>
+    <div><b>Штамп-герой</b><span>blur 14 → 0 · пружина slam · 1.7 s</span></div>
+    <div><b>Стрічка</b><span>62 s marquee · вхід 1.3 s</span></div>
+    <div><b>Розмірні лінії</b><span>draw-in 1.6 s · підпис 2.2 s</span></div>
+    <div><b>Стіна форм</b><span>ripple 0.3–1.2 s · пан 60 s</span></div>
+    <div><b>Механізми</b><span>оргсхема, коло Крозьє · draw-in 0.9 s · рівень × 0.18 s</span></div>
+    <div><b>Аркуш</b><span>рамка, муар, віньєтка · перехід 1.2 s зі слайдом</span></div>
+    <div><b>Камера</b><span>scale 1.02 → 1.06 · 12 s</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="label">06 · Іконки · 2 px, креслярські</div>
+  <h2>Рамка, штамп, підпис, розмір</h2>
+  <div class="icons">
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#DCE9F7" stroke-width="2"><rect x="5" y="7" width="30" height="26"/><path d="M5 14h30"/></svg><span>аркуш</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#F4C542" stroke-width="2.5"><circle cx="20" cy="20" r="14"/><circle cx="20" cy="20" r="9"/></svg><span>штамп</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#DCE9F7" stroke-width="2"><path d="M6 28c6-14 10 6 14-6s8 4 14-4"/></svg><span>підпис</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#DCE9F7" stroke-width="2"><path d="M6 20h28M10 16l-4 4 4 4M30 16l4 4-4 4M6 12v16M34 12v16"/></svg><span>розмір</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#DCE9F7" stroke-width="2"><rect x="8" y="6" width="24" height="28"/><path d="M12 14h16M12 20h16M12 26h10"/></svg><span>форма</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#DCE9F7" stroke-width="2"><path d="M20 6v28M8 14h24M12 14l-6 10h12zM28 14l-6 10h12z"/></svg><span>право</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#DCE9F7" stroke-width="2"><rect x="16" y="4" width="8" height="8" fill="#F4C542" stroke="none"/><rect x="4" y="28" width="8" height="8"/><rect x="16" y="28" width="8" height="8"/><rect x="28" y="28" width="8" height="8"/><path d="M20 12v8M8 28v-8h24v8"/></svg><span>ієрархія</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#F4C542" stroke-width="2.5"><path d="M8 32L32 8M8 8l24 24"/></svg><span>відмовлено</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="label">07 · Аркуш</div>
+  <h2>Один креслярський лист поверх кожного слайда</h2>
+  <p class="lead">Рамка з відступом 26 px і реєстраційними хрестами по кутах, ціанотипна нерівномірність (feTurbulence, множення ≤ 26 %), зерно (soft-light 0.28), віньєтка до кутів. На папері й жовтому те саме, але чорнилом і втричі тихіше. Лист не належить слайду — це хром сцени, він змінює колір разом з переходом.</p>
+  <div class="sheetdemo">
+    <div class="sd blue"><i class="rm tl"></i><i class="rm tr"></i><i class="rm bl"></i><i class="rm br"></i><span class="tab">Арк. 04</span><b>§ 1</b><em>синька · лінія 0.42 · віньєтка 0.85</em></div>
+    <div class="sd paper"><i class="rm tl"></i><i class="rm tr"></i><i class="rm bl"></i><i class="rm br"></i><span class="tab">Арк. 08</span><b>§ 5</b><em>папір · чорнило 0.5 · віньєтка 0.18 · вкладка «Арк.»</em></div>
+  </div>
+  <div class="motion" style="margin-top: 20px;">
+    <div><b>Вкладка «Арк. NN»</b><span>паперові слайди · вертикальний напис на рамці · вхід 0.9 s</span></div>
+    <div><b>Водяний §</b><span>тихі слайди · контур 2 px · 240–300 px · blur 8 → 0</span></div>
+    <div><b>Оргсхема</b><span>Рис. 1 · чорнило на папері · малюється згори вниз</span></div>
+    <div><b>Коло Крозьє</b><span>Рис. 2 · три дуги, три станції · жовта точка по колу 16 s</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="label">08 · Лого-блоки</div>
+  <h2>Три написання</h2>
+  <div class="wms">
+    <div class="wm"><div class="name">Апа<span class="ac">рат</span></div><div class="mono">Лінія на синьці · жовтий акцент</div></div>
+    <div class="wm paper"><div class="name">Апа<span class="ac">рат</span></div><div class="mono">Чорнило на папері</div></div>
+    <div class="wm yellow"><div class="name">Апа<span class="ac">рат</span></div><div class="mono">Чорнило на жовтому</div></div>
+  </div>
+</section>
+
+<footer><span>presentations/burokratiya-v2/design/design-system.html</span><span>Див. brand-book-a4.pdf · Дека: ../burokratiya-v2.html</span></footer>
+</div>
+</body>
+</html>

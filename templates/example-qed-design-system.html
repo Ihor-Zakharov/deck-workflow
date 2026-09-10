@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lecture Notes — Design System (QED)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #E39B1E; --gold-deep: #B0700A; --ink: #1B1A17; --board: #16221D; --board-2: #223229;
+    --chalk: #F1ECDD; --paper: #F4EFE3; --paper-2: #E9E2D0; --white: #FBF8F0; --blue: #3E6FD1; --steel: #7C7A72;
+    --bg: var(--paper); --surface: var(--white); --border: var(--ink); --text: var(--ink); --muted: var(--steel);
+    --display: 'Fraunces', Georgia, serif; --body: 'IBM Plex Sans', sans-serif; --mono: 'IBM Plex Mono', monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--body); font-size: 16px; line-height: 1.55;
+    background-image: linear-gradient(rgba(62,111,209,.10) 1px, transparent 1px), linear-gradient(90deg, rgba(62,111,209,.10) 1px, transparent 1px); background-size: 32px 32px; }
+  body { padding: 0 0 80px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+  header { border-bottom: 3px solid var(--ink); }
+  header .wrap { display: grid; grid-template-columns: 1fr auto; align-items: end; padding-top: 56px; padding-bottom: 40px; gap: 40px; }
+  .lockup { display: flex; align-items: center; gap: 22px; }
+  .lockup h1 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 64px; letter-spacing: -0.03em; line-height: 0.95; font-variation-settings: "opsz" 144; }
+  .lockup h1 span { color: var(--gold-deep); font-style: italic; font-weight: 500; }
+  .lockup .sub { font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-top: 10px; }
+  .meta { text-align: right; font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); line-height: 1.9; }
+  .meta b { color: var(--gold-deep); font-weight: 500; }
+  section { padding: 56px 0 8px; }
+  .label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-deep); display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .label::before { content: ""; width: 34px; height: 3px; background: var(--gold); }
+  h2 { font-family: var(--display); font-weight: 700; font-size: 30px; letter-spacing: -0.02em; margin: 0 0 12px; font-variation-settings: "opsz" 72; }
+  .lead { color: var(--muted); max-width: 760px; margin: 0 0 28px; }
+  .colors { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .sw { border: 2px solid var(--ink); background: var(--surface); }
+  .sw .fill { height: 130px; border-bottom: 2px solid var(--ink); }
+  .sw .m { padding: 14px 16px; }
+  .sw .tier { font-family: var(--display); font-weight: 700; font-size: 15px; display: block; }
+  .sw .hex { font-family: var(--mono); font-size: 12px; color: var(--muted); display: block; margin-top: 3px; }
+  .sw .use { font-size: 13px; color: var(--muted); margin-top: 8px; display: block; }
+  .ext { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-top: 20px; }
+  .ext .sw .fill { height: 52px; } .ext .sw .m { padding: 10px 12px; }
+  .type { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .card { border: 2px solid var(--ink); background: var(--surface); padding: 28px; position: relative; }
+  .card::before { content: ""; position: absolute; left: -2px; right: -2px; top: -2px; height: 8px; background: var(--gold); }
+  .card.dark { background: var(--board); color: var(--chalk); border-color: var(--board); }
+  .card.gold { background: var(--gold); color: var(--ink); }
+  .card.gold::before { background: var(--ink); }
+  .t-display { font-family: var(--display); font-weight: 900; font-size: 66px; line-height: 0.92; letter-spacing: -0.035em; margin: 0; font-variation-settings: "opsz" 144; }
+  .t-display-it { font-family: var(--display); font-weight: 400; font-style: italic; font-size: 40px; line-height: 1.05; margin: 12px 0 0; color: var(--gold-deep); font-variation-settings: "opsz" 144; }
+  .t-body { font-size: 17px; line-height: 1.6; margin: 18px 0 0; font-weight: 300; }
+  .t-mono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); display: block; margin-top: 18px; }
+  .ladder { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 20px; }
+  .ladder div { border: 2px solid var(--ink); padding: 14px; background: var(--surface); }
+  .ladder .w { font-family: var(--display); font-size: 32px; line-height: 1; font-variation-settings: "opsz" 144; }
+  .ladder .n { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+  .principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .p { border-top: 3px solid var(--ink); padding: 18px 0 0; }
+  .p .num { font-family: var(--display); font-weight: 900; font-size: 44px; color: var(--gold-deep); line-height: 1; font-variation-settings: "opsz" 144; }
+  .p h3 { font-family: var(--display); font-weight: 600; font-size: 19px; margin: 14px 0 8px; letter-spacing: -0.01em; }
+  .p p { margin: 0; font-size: 14px; color: var(--muted); }
+  .comps { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .btn { display: inline-block; font-family: var(--mono); font-weight: 500; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; padding: 12px 20px; border: 2px solid var(--ink); background: var(--ink); color: var(--paper); margin: 0 10px 10px 0; box-shadow: 6px 6px 0 var(--gold); }
+  .btn.ghost { background: transparent; color: var(--ink); box-shadow: none; }
+  .btn.gold { background: var(--gold); color: var(--ink); box-shadow: 6px 6px 0 var(--ink); }
+  .badge { display: inline-block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; padding: 6px 10px; border: 2px solid var(--ink); margin: 0 8px 8px 0; }
+  .badge.gold { background: var(--gold); border-color: var(--gold); }
+  .badge.ink { background: var(--ink); color: var(--paper); }
+  .band { background: var(--board); color: var(--chalk); font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em; padding: 10px 16px; transform: rotate(-2deg); display: inline-block; margin: 14px 0; }
+  .stat { border-top: 3px solid var(--ink); padding-top: 12px; }
+  .stat .v { font-family: var(--display); font-weight: 700; font-size: 44px; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; font-variation-settings: "opsz" 144; }
+  .stat .v small { font-size: 20px; color: var(--muted); font-weight: 400; }
+  .stat .l { font-size: 14px; color: var(--muted); margin-top: 6px; }
+  .list { list-style: none; padding: 0; margin: 12px 0 0; }
+  .list li { display: grid; grid-template-columns: 44px 1fr; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--ink); font-size: 15px; }
+  .list li b { font-family: var(--mono); font-weight: 500; color: var(--gold-deep); font-size: 12px; letter-spacing: 0.1em; align-self: baseline; }
+  .stamp { width: 150px; height: 150px; border-radius: 50%; border: 4px solid var(--gold-deep); box-shadow: inset 0 0 0 4px var(--white), inset 0 0 0 6px var(--gold-deep); display: grid; place-items: center; font-family: var(--display); font-weight: 800; color: var(--gold-deep); font-size: 26px; rotate: -8deg; opacity: .9; }
+  .icons { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; }
+  .ic { border: 2px solid var(--ink); background: var(--surface); aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+  .ic svg { width: 44px; height: 44px; }
+  .ic span { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .wms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .wm { border: 2px solid var(--ink); padding: 32px 24px; min-height: 170px; display: flex; flex-direction: column; justify-content: center; gap: 10px; background: var(--surface); }
+  .wm.dark { background: var(--board); color: var(--chalk); }
+  .wm.gold { background: var(--gold); color: var(--ink); }
+  .wm .name { font-family: var(--display); font-weight: 900; font-size: 40px; letter-spacing: -0.02em; line-height: 1; font-variation-settings: "opsz" 144; }
+  .wm .name .it { font-style: italic; font-weight: 400; }
+  .wm .name .ac { color: var(--gold-deep); }
+  .wm.dark .name .ac { color: var(--gold); }
+  .wm.gold .name .ac { color: var(--white); }
+  .wm .mono { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.7; }
+  footer { margin-top: 64px; border-top: 3px solid var(--ink); padding-top: 18px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
+  @media (max-width: 800px) { header .wrap { grid-template-columns: 1fr; } .meta { text-align: left; } .colors, .type, .principles, .comps, .wms { grid-template-columns: 1fr; } .ext { grid-template-columns: repeat(3, 1fr); } .icons { grid-template-columns: repeat(4, 1fr); } .ladder { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="lockup">
+      <svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true">
+        <rect width="72" height="72" fill="#16221D"/>
+        <path d="M10 60 L36 36 L62 60" fill="none" stroke="#F1ECDD" stroke-width="3" stroke-linecap="round"/>
+        <path d="M36 36 Q40 28 36 22 Q32 16 36 10" fill="none" stroke="#E39B1E" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="36" cy="36" r="4" fill="#E39B1E"/>
+      </svg>
+      <div>
+        <h1>Lecture <span>Notes</span></h1>
+        <div class="sub">Design system · Deck "Quantum Electrodynamics — the jewel of physics"</div>
+      </div>
+    </div>
+    <div class="meta">v1 · 10.09.2026<br/><b>Draw the picture, read off the integral</b></div>
+  </div>
+</header>
+<div class="wrap">
+
+<section>
+  <div class="label">01 · Colour hierarchy</div>
+  <h2>Graph paper, blackboard, one photon of gold.</h2>
+  <p class="lead">Cream paper with a faint blue grid for content; deep green-black for the "blackboard" slides; photon gold as the single accent. Electron blue exists only inside diagrams and the grid — never for text.</p>
+  <div class="colors">
+    <div class="sw"><div class="fill" style="background:var(--gold)"></div><div class="m"><span class="tier">Photon gold · Primary</span><span class="hex">#E39B1E · text on paper #B0700A</span><span class="use">Discs, stamps on dark, top rules of cards, the accent slide, italic accent words.</span></div></div>
+    <div class="sw"><div class="fill" style="background:var(--board)"></div><div class="m"><span class="tier">Blackboard · Secondary</span><span class="hex">#16221D</span><span class="use">Dark slides, marquee bands, tabs, the "interaction" card. Cards on dark use #223229.</span></div></div>
+    <div class="sw"><div class="fill" style="background:var(--paper)"></div><div class="m"><span class="tier">Graph paper · Tertiary</span><span class="hex">#F4EFE3 · grid rgba(62,111,209,.11)</span><span class="use">Content slides; 40 px grid. Text on paper is ink #1B1A17, chalk #F1ECDD on the board.</span></div></div>
+    <div class="sw"><div class="fill" style="background:var(--blue)"></div><div class="m"><span class="tier">Electron blue · Diagram only</span><span class="hex">#3E6FD1</span><span class="use">Grid lines and electron lines in Feynman diagrams. Never as a text colour.</span></div></div>
+  </div>
+  <div class="ext">
+    <div class="sw"><div class="fill" style="background:var(--white)"></div><div class="m"><span class="hex">#FBF8F0 · card surface</span></div></div>
+    <div class="sw"><div class="fill" style="background:var(--paper-2)"></div><div class="m"><span class="hex">#E9E2D0 · paper-2</span></div></div>
+    <div class="sw"><div class="fill" style="background:var(--chalk)"></div><div class="m"><span class="hex">#F1ECDD · chalk</span></div></div>
+    <div class="sw"><div class="fill" style="background:var(--board-2)"></div><div class="m"><span class="hex">#223229 · board-2</span></div></div>
+    <div class="sw"><div class="fill" style="background:var(--steel)"></div><div class="m"><span class="hex">#7C7A72 · steel (captions)</span></div></div>
+    <div class="sw"><div class="fill" style="background:var(--ink)"></div><div class="m"><span class="hex">#1B1A17 · ink</span></div></div>
+  </div>
+</section>
+
+<section>
+  <div class="label">02 · Typography</div>
+  <h2>Fraunces speaks, Plex Sans explains, Plex Mono numbers the figures.</h2>
+  <div class="type">
+    <div class="card">
+      <p class="t-display">Quantum<br>Electro-<br>dynamics</p>
+      <p class="t-display-it">the jewel of physics</p>
+      <span class="t-mono">Fraunces · 900 upright / 400 italic · opsz 144 · −0.035em</span>
+    </div>
+    <div class="card dark">
+      <p class="t-body" style="margin-top:0">So far, we have found nothing wrong with the theory of quantum electrodynamics. Each vertex brings a factor of e — that is √α in the amplitude — and the divergences cancel to every order.</p>
+      <span class="t-mono" style="color:#E9E2D0;opacity:.7">IBM Plex Sans · 300/400 · 17–30 px · 1.45–1.6</span>
+      <span class="t-mono" style="color:#E39B1E">§ 5 · Fig. 3 · Eq. (2) · IBM Plex Mono · 0.18em</span>
+    </div>
+  </div>
+  <div class="ladder">
+    <div><div class="w" style="font-weight:300">Aa αγ</div><div class="n">Fraunces 300</div></div>
+    <div><div class="w" style="font-weight:500;font-style:italic">Aa αγ</div><div class="n">Fraunces 500 italic</div></div>
+    <div><div class="w" style="font-weight:700">Aa αγ</div><div class="n">Fraunces 700</div></div>
+    <div><div class="w" style="font-weight:900">Aa αγ</div><div class="n">Fraunces 900</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="label">03 · Principles</div>
+  <h2>Six rules of the notebook</h2>
+  <div class="principles">
+    <div class="p"><div class="num">01</div><h3>One poster idea per page</h3><p>The heading reads from the back row; everything else is commentary in Plex Sans 300.</p></div>
+    <div class="p"><div class="num">02</div><h3>Roman states, italic accents</h3><p>The gold accent word is always Fraunces italic. Never gold roman, never a second accent colour.</p></div>
+    <div class="p"><div class="num">03</div><h3>Diagrams draw themselves</h3><p>Every Feynman diagram is SVG with stroke-dashoffset; lines draw in, vertices pop, labels fade last.</p></div>
+    <div class="p"><div class="num">04</div><h3>Journal chrome</h3><p>Head: "§ n · title"; right: "Fig. n · Eq. (n)". Footer: deck title · NN / 20. Mono, uppercase, 0.18em.</p></div>
+    <div class="p"><div class="num">05</div><h3>Stamps as verdicts</h3><p>Circular stamps carry the slide's verdict: QED ∎, Renorm., 137.036, 0.13 ppt, Shut up and calculate.</p></div>
+    <div class="p"><div class="num">06</div><h3>Silence is allowed</h3><p>Grid paper is the ornament. At least three slides carry almost nothing; the loud ones need them.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="label">04 · Components</div>
+  <h2>Cards, tags, bands, counters, stamp</h2>
+  <div class="comps">
+    <div class="card">
+      <a class="btn">Read off the integral</a><a class="btn gold">Renormalize</a><a class="btn ghost">Reject</a>
+      <div style="margin-top:18px"><span class="badge">Fig. 3</span><span class="badge gold">§ 5 · Rules</span><span class="badge ink">Eq. (1)</span></div>
+      <div class="band">e⁻ → e⁻ + γ · α ≈ 1/137.036 · Dirac 1928 · Feynman 1949</div>
+      <ul class="list">
+        <li><b>§ 1</b><span>What QED is: two fields, one vertex.</span></li>
+        <li><b>§ 5</b><span>Feynman rules and the diagram gallery.</span></li>
+        <li><b>App.</b><span>Glossary: objects · methods · phrases.</span></li>
+      </ul>
+    </div>
+    <div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-content:start">
+      <div class="stat"><div class="v">1/137.036</div><div class="l">fine-structure constant</div></div>
+      <div class="stat"><div class="v">0.13 <small>ppt</small></div><div class="l">electron g/2, 2023</div></div>
+      <div class="stat"><div class="v">12 672</div><div class="l">five-loop diagrams</div></div>
+      <div class="stamp">QED ∎</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="label">05 · Icons · 2.5 px strokes, Feynman vocabulary</div>
+  <h2>Line, wave, vertex, loop</h2>
+  <div class="icons">
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#1B1A17" stroke-width="2.5"><path d="M4 20h32"/><path d="M22 15l6 5-6 5" fill="#1B1A17"/></svg><span>fermion</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#E39B1E" stroke-width="2.5"><path d="M4 20q4-8 8 0t8 0 8 0 8 0"/></svg><span>photon</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#1B1A17" stroke-width="2.5"><path d="M6 34L20 20 34 34"/><path d="M20 20q3-5 0-9t0-8" stroke="#E39B1E"/><circle cx="20" cy="20" r="3" fill="#E39B1E" stroke="none"/></svg><span>vertex</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#1B1A17" stroke-width="2.5"><circle cx="20" cy="20" r="9"/><path d="M4 20h7M29 20h7" stroke="#E39B1E"/></svg><span>loop</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#1B1A17" stroke-width="2.5"><circle cx="20" cy="20" r="15"/><circle cx="20" cy="20" r="10"/><path d="M15 20h10" stroke="#E39B1E"/></svg><span>stamp</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#1B1A17" stroke-width="2.5"><rect x="6" y="6" width="28" height="28"/><path d="M6 15h28M6 24h28M15 6v28M24 6v28" stroke="#3E6FD1" opacity=".6"/></svg><span>grid</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#1B1A17" stroke-width="2.5"><path d="M8 30L20 8l12 22"/><path d="M12 24h16"/></svg><span>lambda cutoff</span></div>
+    <div class="ic"><svg viewBox="0 0 40 40" fill="none" stroke="#1B1A17" stroke-width="2.5"><path d="M6 30q14-24 28 0"/><path d="M6 30h28"/><circle cx="20" cy="18" r="3" fill="#E39B1E" stroke="none"/></svg><span>antenna</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="label">06 · Wordmarks</div>
+  <h2>Three settings</h2>
+  <div class="wms">
+    <div class="wm"><div class="name">QED <span class="ac it">∎</span></div><div class="mono">Ink on paper · gold terminal</div></div>
+    <div class="wm dark"><div class="name">QED <span class="ac it">∎</span></div><div class="mono">Chalk on board</div></div>
+    <div class="wm gold"><div class="name">QED <span class="ac it">∎</span></div><div class="mono">Ink on gold · accent slide</div></div>
+  </div>
+</section>
+
+<footer><span>presentations/qed/design/design-system.html</span><span>See brand-book-a4.pdf · Deck: ../qed.html</span></footer>
+</div>
+</body>
+</html>

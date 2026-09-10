@@ -1,0 +1,8 @@
+# machine-specific settings — never share
+LOCAL.md
+# verification and packaging leftovers
+s_*.png
+*.zip
+__pycache__/
+.DS_Store
+Thumbs.db
