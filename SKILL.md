@@ -5,7 +5,7 @@ description: Universal, autonomous, AI-native workflow for maximally beautiful a
 
 # Deck Workflow — from a one-paragraph brief to a reference-quality deck
 
-**Contract.** The user writes what the presentation is about (topic, a description, maybe audience/language/length/authors). You deliver, without questionnaires, a finished deck that is (a) maximally beautiful, (b) fully unique versus every previous deck, (c) made with taste: animations with purpose, bands/stamps/assets used competently, real facts and real quotes, one soul. You talk to the user exactly twice: once early with 3–4 image prompts, two of them full-bleed backgrounds (so they can generate in Gemini while you build), once at delivery. Ask a question only if the language or audience cannot be inferred at all.
+**Contract.** The user writes one plain prompt: what the presentation is about (topic, a description, maybe audience/language/length/authors) — nothing more is required of them, and their only other action in the whole process is generating the 3–4 images from the prompts you send. You deliver, without questionnaires, a finished deck that is (a) maximally beautiful, (b) fully unique versus every previous deck, (c) made with taste: animations with purpose, bands/stamps/assets used competently, real facts and real quotes, one soul. You talk to the user exactly twice: once early with 3–4 image prompts, two of them full-bleed backgrounds (so they can generate in Gemini while you build), once at delivery. Ask a question only if the language or audience cannot be inferred at all.
 
 Everything reusable lives in this folder. Read this file fully first, then the files in the order given in §1. Do not re-derive what is written here.
 
@@ -55,7 +55,8 @@ Build order: title → closing → the STAR slide → the rest. After the first 
 Generator priority is universal (`reference/images.md` §3): Gemini → any other generator the user has → public-domain archives for real subjects → a procedural, designed fallback (SVG scene, grain gradient, one canvas ambient, p5). The deck must look finished on every rung. When the user pastes images (image-cache path or a Downloads path with `source:`), identify by dimensions (same size → look at them), crop the generator's inset border (Gemini draws a frame ≈ 2 % in — measure the bright edge lines, crop to a clean 16:9, keep the empty third), copy to `assets/<planned-name>.<ext>`, drop desaturation if on-palette, lay the slide out around the image (text over its empty third), re-render those slides. Until then the placeholders are presentable.
 
 ### Phase 7 — Verify (mandatory)
-`bash scripts/render.sh <deck.html>` → look at **every** PNG. Fix: overflow, overlaps (bands/discs/stamps vs text/footer), same-colour collisions (gold on gold), headings > 1 line, wrapped card titles, contrast, glyph coverage (і/ї/є/ґ, IPA, math), marquee visibility, empty > 35 % of a content slide without design intent, column imbalance, 3-in-a-row layouts. Then run the three gates: `library/skills-slides/references/anti-slop-checklist.md`, `reference/perception.md` §7, `reference/motion-system.md` §8. Re-render only changed slides; delete `s_*.png`.
+`bash scripts/render.sh <deck.html>` → look at **every** PNG. Fix: overflow, overlaps (bands/discs/stamps vs text/footer), same-colour collisions (gold on gold), headings > 1 line, wrapped card titles, contrast, glyph coverage (і/ї/є/ґ, IPA, math), marquee visibility, empty > 35 % of a content slide without design intent, column imbalance, 3-in-a-row layouts. Then run the three gates: `library/skills-slides/references/anti-slop-checklist.md`, `reference/perception.md` §7, `reference/motion-system.md` §8.
+**Visibility and motion audit (mandatory, every slide):** `bash scripts/audit.sh <deck.html> all` must print OK for every slide — no text without an entrance, no `.stagger` child (table rows included) without its own later delay, contrast ≥ 4.5:1 (3:1 at ≥ 24 px) on flat backgrounds; every line it lists under "text over image/wall" is checked by eye in the PNG at 100 % (small captions over line art are the usual failure). `bash scripts/frames.sh <deck.html> <n>` on every slide that has a cascade, a table, a diagram or a timed sequence — the strip must show the intended order (rows one by one, strokes in sequence, marks after the pen). Fix, re-run, then delete `frames_*.png`. Re-render only changed slides; delete `s_*.png`.
 
 ### Phase 8 — Deliver (message 2)
 Open the deck (`LOCAL.md` open command; default `xdg-open`/`open`/`cmd.exe /c start`). Message: paths (deck, design system, brand book PDF, brief); the style thesis; slide list in one line each; signature moments; image status (placeholders awaiting `assets/...` — repeat the prompts if not yet generated); how to edit (E / top-left hotzone / Ctrl+S; edits versioned by BUILD); offers: PDF (Chrome print), PPTX (`pptx` skill), deploy (frontend-slides `scripts/deploy.sh`).
@@ -72,7 +73,7 @@ Run `bash scripts/verify.sh` (files) and the LLM checksum prompt in `CHECKSUM.md
 | Design system | full page + A4 PDF; icons drawn in the deck's stroke |
 | Build | ≥ 1 component from `components.md`, ≥ 2 recipes from `motion-system.md` §5, ≥ 1 device from the style's world, KaTeX for any formula, SVG diagrams that draw themselves for any mechanism, an appendix when the audience learns |
 | Images | 3–4 prompts sent early (2 backgrounds); inset borders cropped; real archives when history is the subject |
-| Verify | every slide screenshotted; three gates run; PNGs deleted |
+| Verify | every slide screenshotted; `scripts/audit.sh all` OK; `scripts/frames.sh` on every cascade/table/diagram; three gates run; PNGs deleted |
 | Deliver | full message with prompts and edit instructions |
 
 ## 4. Quality gates (summary — details in the referenced files)
@@ -80,7 +81,7 @@ Run `bash scripts/verify.sh` (files) and the LLM checksum prompt in `CHECKSUM.md
 - **G1 Direction**: ≥ 5/8 axes differ from the last two decks; display face is not Inter/Roboto/Arial/system; palette committed; no purple-gradient-on-white; fonts cover the script.
 - **G2 Content**: assertion headings; one idea/slide; real facts with sources; no template headings; glossary/appendix where useful; STAR moment named.
 - **G3 Motion**: crossfade only; settle ≤ 2.2 s; one ambient; 2–4 signatures; springs/expo-out only; reduced-motion honoured; slow-motion test passed.
-- **G4 Render**: every slide screenshot-checked; no overlaps/overflow; one-line headings; contrast (captions ≥ 4.5:1 also over images); glyphs; the surface is not flat (material layer); every table row of a cascade gets its own delay (mid-animation frame checked).
+- **G4 Render**: every slide screenshot-checked; no overlaps/overflow; one-line headings; contrast (captions ≥ 4.5:1 also over images); glyphs; the surface is not flat (material layer); `scripts/audit.sh` OK on every slide (every text element animates in, every stagger child stepped); `scripts/frames.sh` strips checked for every cascade, table, diagram and sequence.
 - **G5 Delivery**: two messages only; prompts given early and repeated; edit instructions; files in place; ledger updated.
 
 ## 5. Checksum and sharing
@@ -101,7 +102,7 @@ Run `bash scripts/verify.sh` (files) and the LLM checksum prompt in `CHECKSUM.md
 - `reference/images.md`, `reference/image-prompts.md` — the Gemini loop and prompt patterns.
 - `reference/pitfalls.md` — everything that broke and the fix.
 - `reference/sources.md` — outward map of fonts, motion, archives, generators, repos.
-- `scripts/render.sh` — screenshots (Windows Chrome from WSL, or Linux/macOS Chrome).
-- `templates/` — complete verified decks + design systems + brand books: the two standards (QED v3 «Lecture Notes», Бюрократія v2 «Креслення апарату» blueprint) plus Апарат, QED v1 and QED v2 «Keynote Noir».
+- `scripts/render.sh` — screenshots (Windows Chrome from WSL, or Linux/macOS Chrome); `scripts/audit.sh` — visibility and motion audit of every slide (instant text, stagger gaps, contrast, text over images); `scripts/frames.sh` — entrance frames of one slide tiled into a strip.
+- `templates/` — complete verified decks + design systems + brand books: the two standards (QED v3 «Lecture Notes», Бюрократія v2 «Креслення апарату» blueprint) plus Апарат, QED v1 and QED v2 «Keynote Noir»; `templates/assets/` holds their images and `templates/lib/springs.css` the springs, so every template opens complete from the repository.
 - `.gitignore`, `LICENSE` — the folder is a publishable GitHub repository as is.
 - `library/` — vendored open-source corpora and libraries; start at `library/INDEX.md`.

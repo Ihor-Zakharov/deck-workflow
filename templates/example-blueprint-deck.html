@@ -21,7 +21,7 @@
     --paper: #F3F6FA; --paper-2: #E4EBF3; --white: #FFFFFF;
     --ink: #0E2F57;   --ink-2: #244A78;   --ink-soft: rgba(14,47,87,.2);
     --yellow: #F4C542; --yellow-2: #D9A81F;
-    --muted: #B4C7DE; --steel: #6C7F95;
+    --muted: #B4C7DE; --steel: #4F6480;
 
     --stage-bg: #06192F;
     --slide-bg: var(--blue);
@@ -540,7 +540,7 @@ body.editing .edit-hint { opacity: .85; }
             </div>
         </div>
     </div>
-    <div class="wm" style="left: 116px; bottom: 112px;">§ 1</div>
+    <div class="wm" aria-hidden="true" style="left: 116px; bottom: 112px;">§ 1</div>
     <div class="chrome-foot"><span>Бюрократія як феномен влади та управління</span><span>03 / 19</span></div>
 </section>
 <!-- 04 — ВЕБЕР: six traits on paper + the hierarchy drawn top-down (mechanism) -->
@@ -719,7 +719,7 @@ body.editing .edit-hint { opacity: .85; }
             </ol>
         </div>
     </div>
-    <div class="wm" style="left: 116px; bottom: 112px; font-size: 240px;">§ 6</div>
+    <div class="wm" aria-hidden="true" style="left: 116px; bottom: 112px; font-size: 240px;">§ 6</div>
     <div class="chrome-foot"><span>Бюрократія як феномен влади та управління</span><span>11 / 19</span></div>
 </section>
 <!-- 12 — БАЛАНС: paper ledger -->
@@ -782,7 +782,7 @@ body.editing .edit-hint { opacity: .85; }
             </div>
         </div>
     </div>
-    <div class="wm" style="right: 116px; bottom: 112px; font-size: 240px;">§ 8</div>
+    <div class="wm" aria-hidden="true" style="right: 116px; bottom: 112px; font-size: 240px;">§ 8</div>
     <div class="chrome-foot"><span>Бюрократія як феномен влади та управління</span><span>14 / 19</span></div>
 </section>
 <!-- 15 — ЦИФРОВА ДЕРЖАВА В ЦИФРАХ: Дія, count-up -->
@@ -934,7 +934,7 @@ class SlidePresentation {
 /* ===========================================
    INLINE EDITOR — hover top-left corner or press E; Ctrl+S saves (BUILD-versioned)
    =========================================== */
-const BUILD = '1789133514';
+const BUILD = '1789133615';
 class InlineEditor {
     constructor() { this.isActive = false; this.toggle = document.getElementById('editToggle'); this.hotzone = document.querySelector('.edit-hotzone'); this.editable = 'h1, h2, h3, p, li > span, .hero, .kicker, .chrome-head span, .chrome-foot span, .authors div, .tag, .band span, .giant, .tblock td'; this.restore(); this.bind(); }
     bind() { let t = null; const hideLater = () => { t = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); }; this.hotzone.addEventListener('mouseenter', () => { clearTimeout(t); this.toggle.classList.add('show'); }); this.hotzone.addEventListener('mouseleave', hideLater); this.toggle.addEventListener('mouseenter', () => clearTimeout(t)); this.toggle.addEventListener('mouseleave', hideLater); this.hotzone.addEventListener('click', () => this.toggleEditMode()); this.toggle.addEventListener('click', () => this.toggleEditMode()); document.addEventListener('keydown', (e) => { if ((e.key === 'e' || e.key === 'E') && e.target.getAttribute('contenteditable') !== 'true') this.toggleEditMode(); if ((e.ctrlKey || e.metaKey) && e.key === 's' && this.isActive) { e.preventDefault(); this.save(); this.download(); } }); document.addEventListener('input', () => { if (this.isActive) this.save(); }); }

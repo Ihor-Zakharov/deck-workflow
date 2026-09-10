@@ -8,7 +8,8 @@ Two checks: a deterministic file manifest (`bash scripts/verify.sh`) and two LLM
 SKILL.md README.md LOCAL.example.md CHECKSUM.md
 reference/taste.md reference/motion-system.md reference/springs.css reference/perception.md reference/deck-ledger.md
 reference/components.md reference/luxury-type-motion.md reference/images.md reference/image-prompts.md reference/pitfalls.md reference/sources.md
-scripts/render.sh scripts/spring.py scripts/verify.sh
+scripts/render.sh scripts/spring.py scripts/verify.sh scripts/audit.sh scripts/frames.sh
+templates/lib/springs.css templates/assets/kafka.jpg templates/assets/archive.jpg templates/assets/desk.jpg templates/assets/feynman.jpg templates/assets/blackboard.jpg templates/assets/antenna.jpg
 templates/example-qed-v3-deck.html templates/example-blueprint-deck.html templates/example-qed-deck.html templates/example-keynote-noir-deck.html templates/example-aparat-deck.html
 templates/example-blueprint-design-system.html templates/example-blueprint-brand-book-a4.html
 templates/example-qed-design-system.html templates/example-qed-brand-book-a4.html templates/example-design-system.html templates/example-brand-book-a4.html
@@ -25,7 +26,7 @@ You are about to use the deck-workflow skill. Before anything else, verify the i
 1. Run `bash ~/.claude/skills/deck-workflow/scripts/verify.sh` and report any MISSING line.
 2. Open SKILL.md and confirm it contains: the Contract paragraph, House rules 1–10 (including 3a "The standards are QED v3 and Бюрократія v2", 4a "A deck is not a website", 4b "No dark rounded hairline cards", 5 "Three or four images, two of them backgrounds"), the Session-start protocol, Phases 0–9, the Maximum-squeeze table, Quality gates G1–G5, and the Checksum-and-sharing section.
 3. Confirm reference/deck-ledger.md has ≥ 6 rows and that rows 5 (QED v3) and 6 (Бюрократія v2, blueprint) are marked as the standards.
-4. Confirm reference/motion-system.md has recipes 5.1–5.15 and that §1 forbids click-driven states.
+4. Confirm reference/motion-system.md has recipes 5.1–5.16 and that §1 forbids click-driven states; confirm scripts/audit.sh and scripts/frames.sh exist and are executable.
 5. Confirm LOCAL.md exists (if not, say so and copy LOCAL.example.md → LOCAL.md with the user's paths).
 Answer with a table: item · OK/MISSING · note. Do not start a deck until every row is OK.
 ```
@@ -43,7 +44,8 @@ Check the deck I am about to deliver against the standard and answer OK/FAIL per
 - Motion: letter blur-in on 1–2 slides; word builds on 2–3 headings; one non-interactive animated 3D wall (mid or closing); springs for objects; crossfade only; everything settles ≤ 2.2 s; one ambient per slide; ≥ 3 quiet slides; no click-driven states anywhere (grep for addEventListener('click' outside nav/editor).
 - Layout: one-line headings (or a composed two-line break), body ≥ 24 px, contrast ≥ 4.5:1, no 3 consecutive same layouts, ≤ 5 items per slide, no template headings.
 - Files: deck.html, brief.md, design/design-system.html, design/brand-book-a4.html + .pdf, assets/, lib/springs.css; BUILD bumped; localStorage key unique; every <section> has data-title; footer NN / total.
-- Verification: every slide screenshotted and looked at; s_*.png deleted; ledger row appended; pitfalls appended if any.
+- Visibility and motion: `scripts/audit.sh <deck> all` printed OK for every slide (no text without an entrance, no stagger child without its own delay, contrast on flat backgrounds); every text it listed over an image or the wall was checked by eye at 100 %; `scripts/frames.sh` strips were looked at for every cascade, table, diagram and timed sequence and show the intended order.
+- Verification: every slide screenshotted and looked at; s_*.png and frames_*.png deleted; ledger row appended; pitfalls appended if any.
 ```
 
 ## D. Regenerating the manifest
