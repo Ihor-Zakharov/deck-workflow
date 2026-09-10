@@ -21,7 +21,9 @@ with sync_playwright() as p:
     if video: ctx_kw.update(record_video_dir=str(out_dir / '.pwvideo'), record_video_size={'width': 1280, 'height': 720})
     ctx = b.new_context(**ctx_kw); pg = ctx.new_page()
     pg.goto(deck.as_uri() + '#1'); pg.evaluate('document.fonts.ready'); pg.wait_for_timeout(2500)
-    pg.evaluate('(i) => { if (window.deck && deck.showSlide) deck.showSlide(i); else location.hash = "#" + (i + 1); }', n - 1)
+    switched = pg.evaluate('(i) => { if (typeof deck !== "undefined" && deck.showSlide) { deck.showSlide(i); return true; } return false; }', n - 1)
+    if not switched:  # decks without the house controller: reload on the hash and time from the load
+        pg.goto(deck.as_uri() + '#' + str(n)); pg.evaluate('document.fonts.ready')
     t0 = time.perf_counter(); k = 1
     while True:
         target = k * step / 1000
