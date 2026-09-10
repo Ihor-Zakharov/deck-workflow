@@ -501,7 +501,7 @@ body.editing .edit-hint { opacity: .85; }
                 <div class="dossier reveal" style="margin-top: 200px;">
                     <svg class="clip" viewBox="0 0 40 90" aria-hidden="true"><path d="M12 22v52a8 8 0 0 0 16 0V16a6 6 0 0 0-12 0v50a3 3 0 0 0 6 0V24" fill="none" stroke="#0E2F57" stroke-width="3" stroke-linecap="round"/></svg>
                     <figure class="fig cyan" data-file="assets/kafka.jpg"><img src="assets/kafka.jpg" alt="Франц Кафка" onerror="this.parentNode.classList.add('missing')"></figure>
-                    <div class="stamp mini ink reveal" data-ring="Справа К. · Процес · Замок · " data-center="К." style="left: 114px; top: 112px; width: 112px; height: 112px; rotate: -16deg;"></div>
+                    <div class="stamp mini ink reveal" data-ring="Справа К. · Процес · Замок · " data-center="К." style="left: 88px; top: 124px; width: 112px; height: 112px; rotate: -16deg;"></div>
                     <div>
                         <p class="q">«Ланцюги змученого людства зроблені з канцелярського паперу».</p>
                         <p class="who"><b>Франц Кафка</b> · службовець страхової компанії, Прага · автор «Процесу» і «Замку»</p>
@@ -596,7 +596,7 @@ body.editing .edit-hint { opacity: .85; }
 </section>
 <!-- 06 — ЦИТАТА ВЕБЕРА: the yellow slide -->
 <section class="slide yellow" data-title="Цитата Вебера">
-    <div class="giant reveal" style="position: absolute; left: 90px; top: 60px; font-size: 560px; color: var(--ink); line-height: 1; font-family: var(--font-serif); font-style: italic;">«</div>
+    <div class="giant reveal" aria-hidden="true" style="position: absolute; left: 90px; top: 60px; font-size: 560px; color: var(--ink); line-height: 1; font-family: var(--font-serif); font-style: italic;">«</div>
     <div class="stamp reveal ink" data-ring="Архів · Першоджерело · Без строку давності · " data-center="1922" data-sub="Weber" style="right: 150px; bottom: 130px; width: 260px; height: 260px; rotate: 9deg;"></div>
     <div class="chrome-head"><span>§ 3 · Першоджерело</span><span class="acc">Макс Вебер · 1922</span></div>
     <div class="slide-content" style="left: 540px;">
@@ -708,7 +708,7 @@ body.editing .edit-hint { opacity: .85; }
         <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 90px; align-items: start;">
             <div>
                 <div class="kicker reveal">Від інструменту до власника</div>
-                <h1 class="reveal" style="font-size: 100px;">Апарат, що <span class="acc">привласнює</span> державу</h1>
+                <h1 class="reveal" style="font-size: 100px;">Апарат, що<br><span class="acc">привласнює</span><br>державу</h1>
                 <p class="lead reveal" style="margin-top: 30px; font-size: 24px;">Вебер бачив у бюрократії неминучу ціну раціональності. Критична традиція побачила нового господаря, який керує від імені суспільства, але у власних інтересах.</p>
             </div>
             <ol class="years stagger" style="margin-top: 10px;">
@@ -934,7 +934,7 @@ class SlidePresentation {
 /* ===========================================
    INLINE EDITOR — hover top-left corner or press E; Ctrl+S saves (BUILD-versioned)
    =========================================== */
-const BUILD = '1789133615';
+const BUILD = '1789133716';
 class InlineEditor {
     constructor() { this.isActive = false; this.toggle = document.getElementById('editToggle'); this.hotzone = document.querySelector('.edit-hotzone'); this.editable = 'h1, h2, h3, p, li > span, .hero, .kicker, .chrome-head span, .chrome-foot span, .authors div, .tag, .band span, .giant, .tblock td'; this.restore(); this.bind(); }
     bind() { let t = null; const hideLater = () => { t = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); }; this.hotzone.addEventListener('mouseenter', () => { clearTimeout(t); this.toggle.classList.add('show'); }); this.hotzone.addEventListener('mouseleave', hideLater); this.toggle.addEventListener('mouseenter', () => clearTimeout(t)); this.toggle.addEventListener('mouseleave', hideLater); this.hotzone.addEventListener('click', () => this.toggleEditMode()); this.toggle.addEventListener('click', () => this.toggleEditMode()); document.addEventListener('keydown', (e) => { if ((e.key === 'e' || e.key === 'E') && e.target.getAttribute('contenteditable') !== 'true') this.toggleEditMode(); if ((e.ctrlKey || e.metaKey) && e.key === 's' && this.isActive) { e.preventDefault(); this.save(); this.download(); } }); document.addEventListener('input', () => { if (this.isActive) this.save(); }); }

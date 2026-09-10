@@ -2,6 +2,7 @@
 # Render every slide of a deck to PNG with headless Chrome (WSL→Windows Chrome, Linux, macOS).
 # Usage: render.sh <deck.html> [first] [last]      → s_N.png next to the deck; delete them when done.
 #        CHROME=/path/to/chrome render.sh …        → override auto-detection.
+#        SCALE=2 render.sh …                      → device scale factor 2 (3840×2160 PNGs) to judge small text and hairlines.
 set -euo pipefail
 DECK="$1"; FIRST="${2:-1}"; LAST="${3:-}"
 DIR="$(cd "$(dirname "$DECK")" && pwd)"; BASE="$(basename "$DECK")"
@@ -28,7 +29,7 @@ fi
 
 if [ -z "$LAST" ]; then LAST=$(grep -c '<section class="slide' "$DECK"); fi
 for i in $(seq "$FIRST" "$LAST"); do
-  "$CH" --headless=new --disable-gpu --hide-scrollbars --window-size=1920,1080 \
+  "$CH" --headless=new --disable-gpu --hide-scrollbars --window-size=1920,1080 --force-device-scale-factor="${SCALE:-1}" \
     --virtual-time-budget=6000 --screenshot="${OUT_PREFIX}${i}.png" "$URL#$i" 2>/dev/null || true
 done
 ls "$DIR"/s_*.png

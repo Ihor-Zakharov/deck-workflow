@@ -78,6 +78,26 @@ Every deck uses one easing family (expo-out for type, springs for objects — Ap
 
 Motion QA is scripted: `scripts/audit.sh <deck> all` fails on any text without an entrance, any cascade child without its own delay and any low-contrast text on a flat background, and lists text over images for a visual check; `scripts/frames.sh <deck> <n>` tiles a slide's entrance at six moments so cascades and sequences can be read.
 
+![The vicious circle draws itself](docs/screenshots/blueprint-09-entrance.gif)
+
+## Tools — required, optional, and for reviewing by hand
+
+Everything runs on three universal things: **Claude Code**, **Google Chrome** (any platform; from WSL2 the Windows binary) and **Python 3 with Pillow**. No Node, no build step, no accounts. What the scripts do:
+
+| Script | Needs | What it gives |
+|---|---|---|
+| `scripts/render.sh <deck> [first] [last]` | Chrome | a PNG of every slide (`SCALE=2` for 4K checks of small text) |
+| `scripts/audit.sh <deck> all` | Chrome | the visibility and motion audit: text without an entrance, cascade children without their own delay, contrast on flat backgrounds, text under stamps/bands/figures, text outside the sheet frame, headings wrapping without a composed break, text under 12 px; stamps and text over images listed for a look |
+| `scripts/frames.sh <deck> <n> [--gif]` | Chrome + Pillow | a slide's entrance at six moments tiled into a strip, or an animated GIF |
+| `scripts/serve.py <deck-dir>` | Python only | a live-reload preview: the open tab reloads on every save and keeps the slide number |
+| `scripts/gen-images.py <deck-dir>` | `pip install google-genai` + `GEMINI_API_KEY` in `LOCAL.md` | generates the 3–4 images from the prompts in `brief.md` — the last manual step disappears; without a key it prints the prompts |
+| `scripts/setup-playwright.sh` | internet, ~150 MB | optional private venv (`.venv`, git-ignored) with Playwright + Chromium; nothing else depends on it |
+| `.venv/bin/python scripts/pw_frames.py <deck> <n> [--gif] [--video]` | the venv above | entrance frames with measured real-time labels (no virtual-time drift), an animated GIF, a WebM video of the entrance |
+| `scripts/verify.sh` | — | checks the install manifest; `--print` gives an md5 of the workflow text so two installs can be compared |
+| `scripts/spring.py` | Python | regenerates `reference/springs.css` (Apple spring curves as CSS `linear()`) |
+
+Reviewing by hand in Chrome DevTools: *Animations* panel at 25 % speed is the slow-motion test from `reference/motion-system.md` §8; *Rendering → Emulate CSS prefers-reduced-motion* checks the reduced-motion path; the colour picker in *Elements* shows the contrast ratio of any text. Useful extensions for a designer's pass: VisBug (measure and nudge spacing live), axe DevTools (accessibility and contrast), PerfectPixel (overlay a reference image). None of them is required — the scripts above cover the checks the workflow relies on.
+
 ## Repository layout
 
 - `SKILL.md` — the contract, house rules, the pipeline (Phases 0–9), quality gates; read by Claude at session start.
@@ -85,7 +105,7 @@ Motion QA is scripted: `scripts/audit.sh <deck> all` fails on any text without a
 - `reference/` — `taste.md` (judgement), `motion-system.md` + `springs.css` (Apple-grade motion, recipes 5.1–5.16), `perception.md` (design psychology), `deck-ledger.md` (uniqueness axes, every deck, unused direction seeds), `components.md` (house components incl. the blueprint additions), `images.md` + `image-prompts.md` (the image loop), `pitfalls.md` (everything that broke and the fix), `sources.md`, `luxury-type-motion.md`.
 - `templates/` — five complete verified decks: the two standards (QED v3, Blueprint) with design systems and brand books, plus Апарат (constructivist), QED v1 and QED v2 «Keynote Noir»; `templates/assets/` (their images) and `templates/lib/springs.css`, so each template opens complete straight from the clone.
 - `library/` — vendored open-source corpora (MIT/Apache): huashu-design, next-slide (36 presets + 56 live style demos), html-ppt-skill (animations + canvas effects), visual-cognition-slides (pedagogy), skills-slides (tokens + anti-slop checklist), claude-slides, claude-design style gallery, Anthropic frontend-design/theme-factory, jquery-feyn; `library/vendor/` — GSAP, Motion, rough-notation, rough.js, vivus, Splitting. Start at `library/INDEX.md`.
-- `scripts/render.sh` (cross-platform screenshots), `scripts/audit.sh` (visibility and motion audit), `scripts/frames.sh` (entrance strips), `scripts/spring.py` (springs), `docs/screenshots/` (the images above).
+- `scripts/` — `render.sh`, `audit.sh`, `frames.sh`, `serve.py`, `gen-images.py`, `setup-playwright.sh`, `verify.sh`, `spring.py` (see Tools); `docs/screenshots/` (the images above).
 - `LOCAL.example.md` → `LOCAL.md` (machine paths; git-ignored), `.gitignore`, `LICENSE`.
 
 ## Share or publish

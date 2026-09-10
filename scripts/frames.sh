@@ -2,8 +2,10 @@
 # Capture one slide at several moments of its entrance and tile them into one strip — proves cascades and sequences.
 # Usage: frames.sh <deck.html> <slide-number> [budget-ms ...]      (default 900 1400 1900 2400 3000 6000)
 #        → <deck-dir>/frames_<n>.png (needs python3 + Pillow; otherwise the single f_<n>_<t>.png files stay). Delete when done.
+#        frames.sh <deck.html> <slide-number> --gif [step-ms] [end-ms]   → <deck-dir>/entrance_<n>.gif (640×360, one frame per step from 300 ms; default step 200, end 3500)
 set -euo pipefail
-DECK="$1"; N="$2"; shift 2; BUDGETS="${*:-900 1400 1900 2400 3000 6000}"
+DECK="$1"; N="$2"; shift 2; GIF=0
+if [ "${1:-}" = "--gif" ]; then GIF=1; STEP="${2:-200}"; END="${3:-3500}"; BUDGETS=$(seq 300 "$STEP" "$END" | tr '\n' ' '); else BUDGETS="${*:-900 1400 1900 2400 3000 6000}"; fi
 DIR="$(cd "$(dirname "$DECK")" && pwd)"; BASE="$(basename "$DECK")"
 detect_chrome() {
   if [ -n "${CHROME:-}" ]; then echo "$CHROME"; return; fi
@@ -19,10 +21,19 @@ if [[ "$CH" == /mnt/c/* ]] && command -v wslpath >/dev/null; then WIN_DIR="$(wsl
 for t in $BUDGETS; do
   "$CH" --headless=new --disable-gpu --hide-scrollbars --window-size=1920,1080 --virtual-time-budget="$t" --screenshot="${OUT}${N}_${t}.png" "$URL#$N" 2>/dev/null || true
 done
-python3 - "$DIR" "$N" $BUDGETS <<'PY' || { echo "frames: single files f_${N}_*.png kept (Pillow missing)"; exit 0; }
+python3 - "$DIR" "$N" "$GIF" $BUDGETS <<'PY' || { echo "frames: single files f_${N}_*.png kept (Pillow missing)"; exit 0; }
 import sys, os
 from PIL import Image, ImageDraw
-d, n, ts = sys.argv[1], sys.argv[2], sys.argv[3:]
+d, n, gif, ts = sys.argv[1], sys.argv[2], sys.argv[3] == '1', sys.argv[4:]
+if gif:
+    frames = []
+    for t in ts:
+        p = os.path.join(d, 'f_%s_%s.png' % (n, t))
+        if not os.path.exists(p): continue
+        frames.append(Image.open(p).convert('RGB').resize((640, 360), Image.LANCZOS).quantize(colors=128, method=Image.Quantize.MEDIANCUT)); os.remove(p)
+    out = os.path.join(d, 'entrance_%s.gif' % n)
+    if frames: frames[0].save(out, save_all=True, append_images=frames[1:], duration=[int(ts[1]) - int(ts[0]) if len(ts) > 1 else 200] * (len(frames) - 1) + [1500], loop=0, optimize=True); print(out, os.path.getsize(out))
+    sys.exit(0)
 W, H, cols = 640, 360, 3
 rows = (len(ts) + cols - 1) // cols
 sheet = Image.new('RGB', (cols * W + (cols + 1) * 10, rows * H + (rows + 1) * 10), (24, 24, 24)); dr = ImageDraw.Draw(sheet)

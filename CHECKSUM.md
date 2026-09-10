@@ -8,7 +8,7 @@ Two checks: a deterministic file manifest (`bash scripts/verify.sh`) and two LLM
 SKILL.md README.md LOCAL.example.md CHECKSUM.md
 reference/taste.md reference/motion-system.md reference/springs.css reference/perception.md reference/deck-ledger.md
 reference/components.md reference/luxury-type-motion.md reference/images.md reference/image-prompts.md reference/pitfalls.md reference/sources.md
-scripts/render.sh scripts/spring.py scripts/verify.sh scripts/audit.sh scripts/frames.sh
+scripts/render.sh scripts/spring.py scripts/verify.sh scripts/audit.sh scripts/frames.sh scripts/serve.py scripts/gen-images.py scripts/setup-playwright.sh scripts/pw_frames.py
 templates/lib/springs.css templates/assets/kafka.jpg templates/assets/archive.jpg templates/assets/desk.jpg templates/assets/feynman.jpg templates/assets/blackboard.jpg templates/assets/antenna.jpg
 templates/example-qed-v3-deck.html templates/example-blueprint-deck.html templates/example-qed-deck.html templates/example-keynote-noir-deck.html templates/example-aparat-deck.html
 templates/example-blueprint-design-system.html templates/example-blueprint-brand-book-a4.html

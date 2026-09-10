@@ -5,6 +5,9 @@
 - **Open a file for the user**: Linux `xdg-open`, macOS `open`, WSL `cmd.exe /c start "" "C:\path\file.html"`.
 - **Pasted images** land in `~/.claude/image-cache/<session>/N.(png|jpeg)`; files the user saved themselves usually arrive with a `source:` path (e.g. `~/Downloads/...`).
 - **Fonts**: online (Google Fonts). For offline shows embed woff2 as data URIs.
+- **Live preview** while a deck is being built: `python3 scripts/serve.py <deck-dir>` → open `http://localhost:8765/<deck>.html`; the tab reloads itself on every save and keeps the slide number.
+- **Images by API (optional)**: `GEMINI_API_KEY=…` (Google AI Studio) lets `scripts/gen-images.py <deck-dir>` generate the 3–4 images from the prompts in brief.md; without a key the prompts are printed for manual generation. `pip install google-genai`.
+- **Playwright (optional)**: `bash scripts/setup-playwright.sh` creates `.venv` with Playwright + a Linux/macOS/Windows Chromium for exact-time frames and entrance videos; everything works without it through the Chrome CLI.
 
 ## Example (Windows 11 + WSL2)
 

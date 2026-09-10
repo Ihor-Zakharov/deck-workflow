@@ -2,6 +2,13 @@
 LOCAL.md
 # verification and packaging leftovers
 s_*.png
+f_*.png
+frames_*.png
+entrance_*.gif
+pwframes_*.png
+pwentrance_*.gif
+pwvideo_*.webm
+.venv/
 *.zip
 __pycache__/
 .DS_Store
